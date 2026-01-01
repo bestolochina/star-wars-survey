@@ -29,13 +29,12 @@ def main() -> None:
     # print(df.info())
     # print(df.isna().sum())
 
-    cleaning.clean_seen_fun_columns(df)
-    cleaning.clean_seen_ep_columns(df)
-    cleaning.clean_rank_ep_columns(df)
-    cleaning.clean_rank_character_columns(df)
-    cleaning.clean_who_shot_first(df)
+    df = cleaning.clean_all(df)
 
-    columns = ["who_shot_first",]
+    columns = ['rating_han_solo', 'rating_luke_skywalker', 'rating_princess_leia_organa', 'rating_anakin_skywalker',
+        'rating_obi_wan_kenobi', 'rating_emperor_palpatine', 'rating_darth_vader', 'rating_lando_calrissian',
+        'rating_boba_fett', 'rating_c-3p0', 'rating_r2_d2', 'rating_jar_jar_binks', 'rating_padme_amidala',
+        'rating_yoda',]
     for col in columns:
         print(col)
         print(df[col].isna().sum())
