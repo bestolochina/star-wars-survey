@@ -1,6 +1,6 @@
 import pandas as pd
 
-from io_utils import load_raw_star_wars
+from src.io_utils import load_raw_star_wars
 
 
 def summarize_column(df: pd.DataFrame, col: str) -> None:

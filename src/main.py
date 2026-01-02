@@ -1,5 +1,5 @@
 from cleaning import clean_all
-from io_utils import load_raw_star_wars, save_clean_star_wars
+from src.io_utils import load_raw_star_wars, save_clean_star_wars
 
 
 def main() -> None:

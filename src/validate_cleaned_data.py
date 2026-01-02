@@ -1,6 +1,6 @@
 import pandas as pd
 
-from io_utils import load_raw_star_wars
+from src.io_utils import load_raw_star_wars
 from cleaning import clean_all
 
 def check_boolean_columns(df: pd.DataFrame, columns: list[str]) -> None:
