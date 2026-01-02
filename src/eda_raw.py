@@ -1,7 +1,6 @@
-from pathlib import Path
 import pandas as pd
 
-from io_utils import load_raw_data
+from io_utils import load_raw_star_wars
 
 
 def summarize_column(df: pd.DataFrame, col: str) -> None:
@@ -45,13 +44,8 @@ def missingness_report(df: pd.DataFrame, threshold: float = 0.2) -> None:
 
 
 if __name__ == "__main__":
-    # pd.set_option("display.max_columns", None)
-    # pd.set_option("display.width", None)
 
-    project_root = Path(__file__).resolve().parent.parent
-    path = project_root / "data" / "raw" / "StarWars.csv"
-
-    df = load_raw_data(path)
+    df = load_raw_star_wars()
 
     summarize_column(df, "who_shot_first")
     summarize_column(df, "gender")

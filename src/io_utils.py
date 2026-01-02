@@ -1,6 +1,16 @@
 from pathlib import Path
 import pandas as pd
 
+# ---------- project paths ----------
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+DATA_DIR = PROJECT_ROOT / "data"
+RAW_DIR = DATA_DIR / "raw"
+PROCESSED_DIR = DATA_DIR / "processed"
+
+RAW_FILE = RAW_DIR / "StarWars.csv"
+CLEAN_FILE = PROCESSED_DIR / "star_wars_clean.parquet"
+
 COLUMNS = [
     "respondent_id",
     "seen_star_wars",
@@ -42,21 +52,29 @@ COLUMNS = [
     "census_region",
 ]
 
-def load_raw_data(path: Path) -> pd.DataFrame:
+def load_raw_star_wars() -> pd.DataFrame:
     try:
         df = pd.read_csv(
-            path,
+            RAW_FILE,
             encoding="utf-8",
             skiprows=2,
             header=None,
         )
     except UnicodeDecodeError:
         df = pd.read_csv(
-            path,
+            RAW_FILE,
             encoding="ISO-8859-1",
             skiprows=2,
             header=None,
         )
 
+    assert df.shape[1] == len(COLUMNS), "Column count mismatch"
     df.columns = COLUMNS
     return df
+
+def save_clean_star_wars(df: pd.DataFrame) -> None:
+    PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
+    df.to_parquet(CLEAN_FILE, index=False)
+
+def load_clean_star_wars() -> pd.DataFrame:
+    return pd.read_parquet(CLEAN_FILE)

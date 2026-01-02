@@ -50,7 +50,7 @@ def clean_rank_character_columns(df: pd.DataFrame) -> pd.DataFrame:
         "Somewhat unfavorably": 2,
         "Very unfavorably": 1,
     }
-    # "Unfamiliar (N/A)" option for further analysis
+    # "Unfamiliar (N/A)" - option for further analysis
     for col in rank_character_columns:
         df[col] = df[col].map(rating_map).astype("Int64")
     return df
