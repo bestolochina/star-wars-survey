@@ -21,6 +21,54 @@ BOOLEAN_COLUMNS: list[str] = [
 ]
 
 
+def prepare_boolean_plot_data(summary: pd.DataFrame) -> pd.DataFrame:
+    """
+    Converts boolean summary table into percentages suitable for plotting.
+    """
+    return summary[["true_pct", "false_pct", "na_pct"]] * 100
+
+
+def plot_boolean_summary(
+    summary: pd.DataFrame,
+    *,
+    title: str = "Boolean Variable Distributions",
+    save_path: Path | None = None,
+) -> None:
+    """
+    Plots a stacked bar chart of True / False / NA percentages
+    for boolean survey variables.
+    """
+    plot_df: pd.DataFrame = prepare_boolean_plot_data(summary)
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    ax = plot_df.plot(
+        kind="bar",
+        stacked=True,
+        width=0.8,
+        ax=ax,  # 👈 IMPORTANT
+    )
+
+    ax.set_ylabel("Percentage of respondents")
+    ax.set_xlabel("Variable")
+    ax.set_title(title)
+
+    plt.xticks(rotation=45, ha="right")
+    plt.legend(title="Response", loc='lower right', bbox_to_anchor=(1.0, 1.05))
+
+    # Add percentage labels inside bars (optional but nice)
+    for container in ax.containers:
+        ax.bar_label(container, fmt="%.1f%%", label_type="center")
+
+    plt.tight_layout()
+
+    if save_path is not None:
+        save_path.parent.mkdir(parents=True, exist_ok=True)
+        plt.savefig(save_path)
+
+    plt.show()
+
+
 def summarize_boolean_column(df: pd.DataFrame, column: str) -> pd.Series:
     """
     Return counts and proportions for a boolean column (True / False / NA).
@@ -111,7 +159,15 @@ def main() -> None:
     pd.set_option("display.max_columns", None)
     pd.set_option("display.width", None)
 
-    run_boolean_eda()
+    df: pd.DataFrame = load_clean_star_wars()
+    summary: pd.DataFrame = summarize_boolean_columns(df, BOOLEAN_COLUMNS)
+
+    print(summary)
+
+    plot_boolean_summary(
+        summary,
+        save_path=Path("analysis/figures/boolean_summary.png"),
+    )
 
 
 if __name__ == "__main__":
