@@ -64,7 +64,7 @@ behavior and fandom.
 
 **Figure 1** (`analysis/figures/boolean_summary.png`) visualizes the
 distribution of True / False / NA across all boolean columns.
-![boolean_summary.png](../analysis/analysis/figures/boolean_summary.png)
+![boolean_summary.png](../analysis/figures/boolean_summary.png)
 ------------------------------------------------------------------------
 
 ## Episode Ranking and Scoring
@@ -86,7 +86,7 @@ Average scores show a clear pattern:
 
 **Figure 2** (`analysis/figures/episode_scores.png`) shows average
 episode scores by episode number.
-![episode_scores.png](../analysis/analysis/figures/episode_scores.png)
+![episode_scores.png](../analysis/figures/episode_scores.png)
 This confirms internal consistency and aligns with common fan discourse.
 
 ------------------------------------------------------------------------
@@ -112,7 +112,7 @@ Education is well-distributed across post-secondary categories.
 
 **Figure 3** (`analysis/figures/education_level.png`) shows the ordered
 education distribution.
-![education_level.png](../analysis/analysis/figures/education_level.png)
+![education_level.png](../analysis/figures/education_level.png)
 ### Household Income (Ordinal)
 
 -   \$50--99k is the most common bracket (**25.1%**)
@@ -122,7 +122,7 @@ Income non-response suggests caution in later subgroup analysis.
 
 **Figure 4** (`analysis/figures/household_income.png`) displays income
 distribution in ordinal order.
-![household_income.png](../analysis/analysis/figures/household_income.png)
+![household_income.png](../analysis/figures/household_income.png)
 ### Census Region
 
 All major U.S. census regions are represented. - East North Central,
@@ -131,7 +131,7 @@ Pacific, and South Atlantic are most common. - Missing region data:
 
 **Figure 5** (`analysis/figures/census_region.png`) shows regional
 distribution.
-![census_region.png](../analysis/analysis/figures/census_region.png)
+![census_region.png](../analysis/figures/census_region.png)
 ### "Who Shot First?"
 
 -   Han: **27.4%**
@@ -143,7 +143,7 @@ only relevant to a subset of respondents.
 
 **Figure 6** (`analysis/figures/who_shot_first.png`) illustrates this
 imbalance.
-![who_shot_first.png](../analysis/analysis/figures/who_shot_first.png)
+![who_shot_first.png](../analysis/figures/who_shot_first.png)
 ------------------------------------------------------------------------
 
 ## Data Quality Observations

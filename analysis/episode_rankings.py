@@ -71,7 +71,7 @@ def run_episode_rankings_eda() -> None:
 
     plot_episode_scores(
         avg_scores,
-        save_path=Path("analysis/figures/episode_scores.png"),
+        save_path=Path("figures/episode_scores.png"),
     )
 
 

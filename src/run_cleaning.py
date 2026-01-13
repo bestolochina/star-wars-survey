@@ -1,4 +1,4 @@
-from cleaning import clean_all
+from src.cleaning import clean_all
 from src.io_utils import load_raw_star_wars, save_clean_star_wars
 
 

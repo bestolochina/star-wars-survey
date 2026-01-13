@@ -104,7 +104,7 @@ def analyze_nominal_column(
         df,
         column,
         title=title,
-        save_path=Path("analysis/figures") / f"{column}.png",
+        save_path=Path("figures") / f"{column}.png",
     )
 
 def run_nominal_eda() -> None:

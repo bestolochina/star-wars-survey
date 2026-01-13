@@ -151,7 +151,7 @@ def run_boolean_eda() -> None:
         plot_boolean_distribution(
             df,
             column,
-            save_path=Path("analysis/figures") / f"{column}.png",
+            save_path=Path("figures") / f"{column}.png",
         )
 
 
@@ -166,7 +166,7 @@ def main() -> None:
 
     plot_boolean_summary(
         summary,
-        save_path=Path("analysis/figures/boolean_summary.png"),
+        save_path=Path("figures/boolean_summary.png"),
     )
 
 
