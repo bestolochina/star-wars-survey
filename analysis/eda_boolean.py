@@ -1,5 +1,5 @@
-from pathlib import Path
-
+from __future__ import annotations
+from src.paths import FIGURES_DIR
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -151,7 +151,7 @@ def run_boolean_eda() -> None:
         plot_boolean_distribution(
             df,
             column,
-            save_path=Path("figures") / f"{column}.png",
+            save_path=FIGURES_DIR / f"{column}.png",
         )
 
 
@@ -166,7 +166,7 @@ def main() -> None:
 
     plot_boolean_summary(
         summary,
-        save_path=Path("figures/boolean_summary.png"),
+        save_path=FIGURES_DIR / "figures/boolean_summary.png",
     )
 
 

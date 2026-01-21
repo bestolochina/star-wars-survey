@@ -1,5 +1,5 @@
-from pathlib import Path
-
+from __future__ import annotations
+from src.paths import FIGURES_DIR
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -71,7 +71,7 @@ def run_episode_rankings_eda() -> None:
 
     plot_episode_scores(
         avg_scores,
-        save_path=Path("figures/episode_scores.png"),
+        save_path=FIGURES_DIR / "figures/episode_scores.png",
     )
 
 

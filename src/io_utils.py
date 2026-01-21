@@ -1,15 +1,10 @@
-from pathlib import Path
+from src.paths import RAW_DATA_DIR, CLEAN_DATA_DIR
 import pandas as pd
 
 # ---------- project paths ----------
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-DATA_DIR = PROJECT_ROOT / "data"
-RAW_DIR = DATA_DIR / "raw"
-PROCESSED_DIR = DATA_DIR / "processed"
-
-RAW_FILE = RAW_DIR / "StarWars.csv"
-CLEAN_FILE = PROCESSED_DIR / "star_wars_clean.parquet"
+RAW_FILE = RAW_DATA_DIR / "star_wars.csv"
+CLEAN_FILE = CLEAN_DATA_DIR / "star_wars_clean.parquet"
 
 COLUMNS = [
     "respondent_id",
@@ -53,6 +48,8 @@ COLUMNS = [
 ]
 
 def load_raw_star_wars() -> pd.DataFrame:
+    """Load raw Star Wars survey CSV and assign canonical column names."""
+
     try:
         df = pd.read_csv(
             RAW_FILE,
@@ -73,7 +70,7 @@ def load_raw_star_wars() -> pd.DataFrame:
     return df
 
 def save_clean_star_wars(df: pd.DataFrame) -> None:
-    PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
+    CLEAN_DATA_DIR.mkdir(parents=True, exist_ok=True)
     df.to_parquet(CLEAN_FILE, index=False)
 
 def load_clean_star_wars() -> pd.DataFrame:

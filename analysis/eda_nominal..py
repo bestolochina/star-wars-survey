@@ -7,13 +7,12 @@ Assumptions:
 - Ordered categoricals are treated as ordinal, not nominal
 """
 
-
-from pathlib import Path
+from __future__ import annotations
+from src.paths import FIGURES_DIR
 from src.io_utils import load_clean_star_wars
 import matplotlib.pyplot as plt
 import pandas as pd
 from pandas.api.types import CategoricalDtype
-
 
 # For every nominal column, we will answer:
 # What are the unique values?
@@ -104,7 +103,7 @@ def analyze_nominal_column(
         df,
         column,
         title=title,
-        save_path=Path("figures") / f"{column}.png",
+        save_path=FIGURES_DIR / f"{column}.png",
     )
 
 def run_nominal_eda() -> None:
