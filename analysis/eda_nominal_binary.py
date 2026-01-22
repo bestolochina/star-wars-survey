@@ -50,6 +50,7 @@ def plot_nominal_binary(
     ax.set_xlabel("")
     ax.set_title(title)
     ax.legend(title="")
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=30, ha="center")
 
     for container in ax.containers:
         ax.bar_label(container, fmt="%.1f%%", label_type="center")
@@ -76,6 +77,78 @@ def main() -> None:
         title="Star Wars Fandom by Gender",
         save_path = FIGURES_DIR /
                     "gender_fan_star_wars.png",
+    )
+
+    print("\nCounts:")
+    print(counts)
+
+    print("\nRow percentages (%):")
+    print(pct)
+
+    counts, pct = nominal_binary_crosstab(
+        df,
+        nominal_col="education_level",
+        binary_col="fan_star_wars",
+    )
+
+    plot_nominal_binary(
+        pct,
+        title="Star Wars Fandom by Education Level",
+        save_path=FIGURES_DIR / "education_fan_star_wars.png",
+    )
+
+    print("\nCounts:")
+    print(counts)
+
+    print("\nRow percentages (%):")
+    print(pct)
+
+    counts, pct = nominal_binary_crosstab(
+        df,
+        nominal_col="household_income",
+        binary_col="fan_star_wars",
+    )
+
+    plot_nominal_binary(
+        pct,
+        title="Star Wars Fandom by Household Income Level",
+        save_path=FIGURES_DIR / "household_income_fan_star_wars.png",
+    )
+
+    print("\nCounts:")
+    print(counts)
+
+    print("\nRow percentages (%):")
+    print(pct)
+
+    counts, pct = nominal_binary_crosstab(
+        df,
+        nominal_col="census_region",
+        binary_col="fan_star_wars",
+    )
+
+    plot_nominal_binary(
+        pct,
+        title="Star Wars Fandom by Census Region",
+        save_path=FIGURES_DIR / "census_region_fan_star_wars.png",
+    )
+
+    print("\nCounts:")
+    print(counts)
+
+    print("\nRow percentages (%):")
+    print(pct)
+
+    counts, pct = nominal_binary_crosstab(
+        df,
+        nominal_col="age_group",
+        binary_col="fan_star_wars",
+    )
+
+    plot_nominal_binary(
+        pct,
+        title="Star Wars Fandom by Age Group",
+        save_path=FIGURES_DIR / "age_group_fan_star_wars.png",
     )
 
     print("\nCounts:")
