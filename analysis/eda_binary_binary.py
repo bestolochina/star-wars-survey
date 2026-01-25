@@ -1,4 +1,5 @@
 from __future__ import annotations
+from pathlib import Path
 from src.paths import FIGURES_DIR
 import matplotlib.pyplot as plt
 import pandas as pd

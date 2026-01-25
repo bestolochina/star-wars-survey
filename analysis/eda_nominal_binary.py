@@ -1,4 +1,5 @@
 from __future__ import annotations
+from pathlib import Path
 from src.paths import FIGURES_DIR
 import pandas as pd
 from src.io_utils import load_clean_star_wars
@@ -21,7 +22,7 @@ def nominal_binary_crosstab(
         dropna=False,
         normalize=False
     )
-    expected_cols = [False, True, pd.NA]
+    expected_cols = [True, False, pd.NA]
     counts = counts.reindex(
         columns=[c for c in expected_cols if c in counts.columns],
         fill_value=0,
@@ -49,13 +50,44 @@ def plot_nominal_binary(
     ax.set_ylabel("Percentage (%)")
     ax.set_xlabel("")
     ax.set_title(title)
-    ax.legend(title="")
-    ax.set_xticklabels(ax.get_xticklabels(), rotation=30, ha="center")
 
+    ax.legend(
+        title="",
+        loc="lower right",
+        bbox_to_anchor=(1, 1.05),
+        ncol=1,  # len(percentages.columns),
+        # frameon=False,
+    )
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=20, ha="right")
+
+    # Loop over containers (stacked segments)
     for container in ax.containers:
-        ax.bar_label(container, fmt="%.1f%%", label_type="center")
+        # Label only non-zero bars
+        labels: list[str] = [
+            f"{bar.get_height():.1f}%" if bar.get_height() > 0 else ""
+            for bar in container
+        ]
+        ax.bar_label(container, labels=labels, label_type="center")
 
-    plt.tight_layout()
+    # Handle zero-height bars separately
+    for i, col in enumerate(percentages.columns):
+        values = percentages[col].values
+
+        for j, value in enumerate(values):
+            if value == 0:
+                # Total height of the stack at this x-position
+                stack_top: float = percentages.iloc[j, :].sum()
+
+                ax.text(
+                    j,
+                    stack_top + 0.5,
+                    "0.0%",
+                    ha="center",
+                    va="bottom",
+                    fontsize=9,
+                )
+
+    plt.tight_layout(rect=(0, 0, 1, 0.95))
 
     if save_path is not None:
         save_path.parent.mkdir(parents=True, exist_ok=True)
@@ -66,96 +98,35 @@ def plot_nominal_binary(
 def main() -> None:
     df = load_clean_star_wars()
 
-    counts, pct = nominal_binary_crosstab(
-        df,
-        nominal_col="gender",
-        binary_col="fan_star_wars",
-    )
+    nominals = [
+        ["gender", "Star Wars Fandom by Gender", FIGURES_DIR / "gender_fan_star_wars.png"],
+        ["education_level", "Star Wars Fandom by Education Level", FIGURES_DIR / "education_fan_star_wars.png"],
+        ["household_income", "Star Wars Fandom by Household Income Level", FIGURES_DIR / "household_income_fan_star_wars.png"],
+        ["census_region", "Star Wars Fandom by Census Region", FIGURES_DIR / "census_region_fan_star_wars.png"],
+        ["age_group", "Star Wars Fandom by Age Group", FIGURES_DIR / "age_group_fan_star_wars.png"]
+    ]
 
-    plot_nominal_binary(
-        pct,
-        title="Star Wars Fandom by Gender",
-        save_path = FIGURES_DIR /
-                    "gender_fan_star_wars.png",
-    )
+    for nom_col, nom_title, save_path in nominals:
 
-    print("\nCounts:")
-    print(counts)
+        counts, pct = nominal_binary_crosstab(
+            df,
+            nominal_col=nom_col,
+            binary_col="fan_star_wars",
+        )
 
-    print("\nRow percentages (%):")
-    print(pct)
+        plot_nominal_binary(
+            pct,
+            title=nom_title,
+            save_path=save_path,
+        )
 
-    counts, pct = nominal_binary_crosstab(
-        df,
-        nominal_col="education_level",
-        binary_col="fan_star_wars",
-    )
+        print("\nCounts:")
+        print(counts)
 
-    plot_nominal_binary(
-        pct,
-        title="Star Wars Fandom by Education Level",
-        save_path=FIGURES_DIR / "education_fan_star_wars.png",
-    )
+        print("\nRow percentages (%):")
+        print(pct)
 
-    print("\nCounts:")
-    print(counts)
 
-    print("\nRow percentages (%):")
-    print(pct)
-
-    counts, pct = nominal_binary_crosstab(
-        df,
-        nominal_col="household_income",
-        binary_col="fan_star_wars",
-    )
-
-    plot_nominal_binary(
-        pct,
-        title="Star Wars Fandom by Household Income Level",
-        save_path=FIGURES_DIR / "household_income_fan_star_wars.png",
-    )
-
-    print("\nCounts:")
-    print(counts)
-
-    print("\nRow percentages (%):")
-    print(pct)
-
-    counts, pct = nominal_binary_crosstab(
-        df,
-        nominal_col="census_region",
-        binary_col="fan_star_wars",
-    )
-
-    plot_nominal_binary(
-        pct,
-        title="Star Wars Fandom by Census Region",
-        save_path=FIGURES_DIR / "census_region_fan_star_wars.png",
-    )
-
-    print("\nCounts:")
-    print(counts)
-
-    print("\nRow percentages (%):")
-    print(pct)
-
-    counts, pct = nominal_binary_crosstab(
-        df,
-        nominal_col="age_group",
-        binary_col="fan_star_wars",
-    )
-
-    plot_nominal_binary(
-        pct,
-        title="Star Wars Fandom by Age Group",
-        save_path=FIGURES_DIR / "age_group_fan_star_wars.png",
-    )
-
-    print("\nCounts:")
-    print(counts)
-
-    print("\nRow percentages (%):")
-    print(pct)
 
 
 if __name__ == "__main__":

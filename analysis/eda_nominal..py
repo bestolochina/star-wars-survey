@@ -8,6 +8,7 @@ Assumptions:
 """
 
 from __future__ import annotations
+from pathlib import Path
 from src.paths import FIGURES_DIR
 from src.io_utils import load_clean_star_wars
 import matplotlib.pyplot as plt
