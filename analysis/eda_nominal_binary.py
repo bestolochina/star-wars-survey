@@ -98,35 +98,41 @@ def plot_nominal_binary(
 def main() -> None:
     df = load_clean_star_wars()
 
-    nominals = [
-        ["gender", "Star Wars Fandom by Gender", FIGURES_DIR / "gender_fan_star_wars.png"],
-        ["education_level", "Star Wars Fandom by Education Level", FIGURES_DIR / "education_fan_star_wars.png"],
-        ["household_income", "Star Wars Fandom by Household Income Level", FIGURES_DIR / "household_income_fan_star_wars.png"],
-        ["census_region", "Star Wars Fandom by Census Region", FIGURES_DIR / "census_region_fan_star_wars.png"],
-        ["age_group", "Star Wars Fandom by Age Group", FIGURES_DIR / "age_group_fan_star_wars.png"]
+    binary_columns = [
+        ("fan_star_wars", "Star Wars Fandom"),
+        ("fan_star_trek", "Star Trek Fandom"),
     ]
 
-    for nom_col, nom_title, save_path in nominals:
+    nominal_columns = [
+        ("gender", "Gender"),
+        ("education_level", "Education Level"),
+        ("household_income", "Household Income Level"),
+        ("census_region", "Census Region"),
+        ("age_group", "Age Group"),
+    ]
 
-        counts, pct = nominal_binary_crosstab(
-            df,
-            nominal_col=nom_col,
-            binary_col="fan_star_wars",
-        )
+    for bin_col, bin_title in binary_columns:
+        for nom_col, nom_title in nominal_columns:
 
-        plot_nominal_binary(
-            pct,
-            title=nom_title,
-            save_path=save_path,
-        )
+            title = bin_title + " by " + nom_title
+            save_path = FIGURES_DIR / f"{nom_col}_{bin_col}.png"
+            counts, pct = nominal_binary_crosstab(
+                df,
+                nominal_col=nom_col,
+                binary_col=bin_col,
+            )
 
-        print("\nCounts:")
-        print(counts)
+            plot_nominal_binary(
+                pct,
+                title=title,
+                save_path=save_path,
+            )
 
-        print("\nRow percentages (%):")
-        print(pct)
+            print("\nCounts:")
+            print(counts)
 
-
+            print("\nRow percentages (%):")
+            print(pct)
 
 
 if __name__ == "__main__":
