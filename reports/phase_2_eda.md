@@ -255,8 +255,9 @@ Boxplots are well-suited for ordinal data and highlight:
 ![episode_rank_boxplot.png](../analysis/figures/episode_rank_boxplot.png)
 
 #### Distribution of Episode Rankings (Boxplot) — Observations
-* Episodes IV and V have lower median ranks and tighter interquartile ranges, indicating both strong and consistent preference.
-* Episodes I–III show wider dispersion, suggesting more disagreement among respondents about their relative quality.
+* Episodes I, II, V, and VI have similar interquartile ranges (IQR = 2), indicating comparable and relatively consistent ranking dispersion among respondents.
+* Episodes III and IV show wider interquartile ranges (IQR = 3), suggesting greater disagreement in how respondents ranked these episodes.
+* Episode V has the lowest median rank (best central preference), while Episode III has the highest median rank, indicating weaker overall reception despite overlapping spreads.
 
 ---
 
