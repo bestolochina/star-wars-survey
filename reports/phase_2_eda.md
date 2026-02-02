@@ -200,3 +200,95 @@ These descriptive patterns suggest that the two franchises occupy distinct cultu
 No causal claims are made at this stage.
 
 ---
+
+## Phase 2.3 — Episode Rankings (Ordinal EDA)
+
+### Variables
+
+* Episode ranking variables:
+
+  * `rank_ep1` – Episode I
+  * `rank_ep2` – Episode II
+  * `rank_ep3` – Episode III
+  * `rank_ep4` – Episode IV
+  * `rank_ep5` – Episode V
+  * `rank_ep6` – Episode VI
+* Rankings are ordinal: **1 = best, 6 = worst**
+* Missing rankings were excluded from analysis
+
+---
+
+### Average Episode Scores
+
+To provide a high-level summary, episode rankings were transformed into preference scores:
+
+* Score = `7 − rank` (higher = better)
+* Mean scores were computed per episode
+
+This view allows quick comparison of overall episode popularity, but does not capture the full distribution of rankings.
+
+**Figure:** `episode_average_scores.png`
+![episode_average_scores.png](../analysis/figures/episode_average_scores.png)
+
+#### Average Episode Scores — Observations
+* Episodes V and VI have the highest average scores, indicating the strongest overall preference.
+* Episodes I–III score consistently lower, suggesting weaker reception compared to the original trilogy.
+
+---
+
+### Distribution of Episode Rankings (Boxplot)
+
+Boxplots were used to summarize the distribution of rankings for each episode.
+
+* Median rank (primary measure) shown as a red line
+* Mean rank shown as a blue triangle
+* Interquartile range reflects dispersion of opinions
+* Rankings are plotted with inverted y-axis (rank 1 at the top)
+
+Boxplots are well-suited for ordinal data and highlight:
+
+* Relative central tendency
+* Variability in audience opinion
+* Differences between mean and median (skewness)
+
+**Figure:** `episode_rank_boxplot.png`
+![episode_rank_boxplot.png](../analysis/figures/episode_rank_boxplot.png)
+
+#### Distribution of Episode Rankings (Boxplot) — Observations
+* Episodes IV and V have lower median ranks and tighter interquartile ranges, indicating both strong and consistent preference.
+* Episodes I–III show wider dispersion, suggesting more disagreement among respondents about their relative quality.
+
+---
+
+### Rank Distribution by Episode (Stacked Bar Chart)
+
+To examine how respondents assigned each rank, normalized stacked bar charts were created.
+
+* Each bar represents one episode
+* Segments represent the percentage of respondents assigning each rank (1–6)
+* Percentages are shown for sufficiently large segments
+
+This visualization reveals:
+
+* How often episodes receive top or bottom rankings
+* Whether popularity is driven by consistent high rankings or polarized opinions
+* Differences not visible in summary statistics alone
+
+**Figure:** `episode_rank_stacked.png`
+![episode_rank_stacked.png](../analysis/figures/episode_rank_stacked.png)
+
+#### Rank Distribution by Episode (Stacked Bar Chart) — Observations
+* Episode V clearly leads the rankings, receiving the largest share of top positions (ranks 1–2).
+* Episodes IV and VI also perform strongly, with a noticeably higher proportion of top rankings than Episodes I–III.
+* Episodes II and III show a greater concentration of low rankings (ranks 5–6), indicating comparatively weaker reception.
+
+---
+
+### Notes on Visualization Choices
+
+* Kernel-smoothed distribution plots (e.g., violin plots) were not retained
+* Episode rankings are discrete ordinal data, making distribution smoothing potentially misleading
+* Boxplots and stacked bar charts provide clearer and more interpretable representations for this variable type
+
+---
+

@@ -86,7 +86,7 @@ Average scores show a clear pattern:
 
 **Figure 2** (`analysis/figures/episode_scores.png`) shows average
 episode scores by episode number.
-![episode_scores.png](../analysis/figures/episode_scores.png)
+![episode_average_scores.png](../analysis/figures/episode_average_scores.png)
 This confirms internal consistency and aligns with common fan discourse.
 
 ------------------------------------------------------------------------
