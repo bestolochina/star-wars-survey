@@ -1,5 +1,8 @@
 from __future__ import annotations
 from pathlib import Path
+
+import numpy as np
+
 from src.paths import FIGURES_DIR
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -15,6 +18,14 @@ EPISODE_RANK_COLUMNS: dict[str, str] = {
     "rank_ep4": "Episode IV",
     "rank_ep5": "Episode V",
     "rank_ep6": "Episode VI",
+}
+RANK_COLORS = {
+    1: "#1a9641",  # dark green
+    2: "#a6d96a",
+    3: "#fdae61",
+    4: "#f46d43",
+    5: "#d73027",
+    6: "#a50026",  # dark red
 }
 
 def compute_episode_average_scores(df: pd.DataFrame) -> pd.Series:
@@ -224,6 +235,107 @@ def plot_episode_rank_stacked(
     plt.savefig(save_path)
     plt.show()
 
+def plot_episode_rank_histograms(
+    long_df: pd.DataFrame,
+    *,
+    save_path: Path,
+) -> None:
+    episodes = list(EPISODE_RANK_COLUMNS.values())
+    n = len(episodes)
+
+    fig, axes = plt.subplots(
+        nrows=n,
+        ncols=1,
+        figsize=(9, 1.5 * n),
+        sharex=True,
+        sharey=True,
+    )
+
+    fig.text(
+        0.01, 0.01,
+        "Bar colors represent ranking quality (green = best, red = worst)",
+        fontsize=9,
+        alpha=0.7,
+    )
+
+    bins = np.arange(0.5, 7.5, 1)
+    total_per_episode = long_df.groupby("episode").size()
+
+    for ax, episode in zip(axes, episodes):
+        data = long_df.loc[long_df["episode"] == episode, "rank"]
+        counts, _, bars = ax.hist(
+            data,
+            bins=bins,
+            edgecolor="black",
+        )
+
+        ymax = ax.get_ylim()[1]
+        ax.set_ylim(0, ymax * 1.06)
+
+        offset = ax.get_ylim()[1] * 0.015
+
+        # recolor bars by rank
+        for bar, rank in zip(bars, range(1, 7)):
+            bar.set_facecolor(RANK_COLORS[rank])
+
+            pct = counts[rank - 1] / total_per_episode[episode] * 100
+            if pct >= 3:
+                ax.text(
+                    bar.get_x() + bar.get_width() / 2,
+                    bar.get_height() + offset,
+                    f"{pct:.1f}%",
+                    ha="center",
+                    va="bottom",
+                    fontsize=8,
+                    bbox=dict(
+                        boxstyle="round,pad=0.2",
+                        facecolor="white",
+                        edgecolor="none",
+                        alpha=0.8,
+                    ),
+                )
+
+        # statistics
+        mean = data.mean()
+        median = data.median()
+        q1, q3 = data.quantile([0.25, 0.75])
+
+        ax.axvspan(q1, q3, alpha=0.2, color="gray", label="IQR")
+        ax.axvline(median, linestyle="-", linewidth=2, color="black", alpha=0.8, label="Median",)
+        ax.axvline(mean, linestyle="--", linewidth=2, color="#2b83ba", alpha=0.8, label="Mean",)
+
+        ax.set_ylabel(episode, rotation=0, labelpad=40, va="center")
+        ax.grid(axis="y", alpha=0.3)
+
+    axes[-1].set_xlabel("Rank (1 = best)")
+
+    # single legend (top-right)
+    handles = [
+        plt.Line2D([0], [0], color="black", linestyle="-", linewidth=2, label="Median"),
+        plt.Line2D([0], [0], color="#2b83ba", linestyle="--", linewidth=2, label="Mean"),
+        plt.Rectangle((0, 0), 1, 1, color="gray", alpha=0.2, label="IQR"),
+    ]
+
+    fig.legend(
+        handles=handles,
+        loc="upper right",
+        bbox_to_anchor=(0.98, 0.98),
+    )
+
+    fig.suptitle("Episode Rank Distributions with Summary Statistics")
+    plt.tight_layout(rect=(0, 0, 1, 0.96))
+
+    save_path.parent.mkdir(parents=True, exist_ok=True)
+    plt.savefig(save_path)
+    plt.show()
+
+def sanity_check_rank_percentages(long_df: pd.DataFrame) -> pd.DataFrame:
+    freq = (
+        pd.crosstab(long_df["episode"], long_df["rank"], normalize="index")
+        * 100
+    )
+    return freq.round(1)
+
 def main() -> None:
     df = load_clean_star_wars()
 
@@ -235,21 +347,28 @@ def main() -> None:
 
     long_df = melt_episode_ranks(df)
 
-    plot_episode_rank_boxplot(
-        long_df,
-        save_path=FIGURES_DIR / "episode_rank_boxplot.png",
-    )
+    print(sanity_check_rank_percentages(long_df))
+
+    # plot_episode_rank_boxplot(
+    #     long_df,
+    #     save_path=FIGURES_DIR / "episode_rank_boxplot.png",
+    # )
 
     # plot_episode_rank_violin(
     #     long_df,
     #     save_path=FIGURES_DIR / "episode_rank_violin.png",
     # )
 
-    freq = compute_rank_frequencies(long_df)
-    plot_episode_rank_stacked(
-        freq,
-        save_path=FIGURES_DIR / "episode_rank_stacked.png",
+    plot_episode_rank_histograms(
+        long_df,
+        save_path=FIGURES_DIR / "episode_rank_histograms.png",
     )
+
+    # freq = compute_rank_frequencies(long_df)
+    # plot_episode_rank_stacked(
+    #     freq,
+    #     save_path=FIGURES_DIR / "episode_rank_stacked.png",
+    # )
 
 
 if __name__ == "__main__":
