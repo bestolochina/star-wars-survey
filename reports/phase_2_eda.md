@@ -1,8 +1,8 @@
----
 
+---
 # Phase 2 — Bivariate Exploratory Analysis
 
-## Phase 2.1: Binary × Binary Relationships
+## Phase 2.1: Binary & Binary / Binary & Nominal Relationships
 
 This phase explores relationships between pairs of binary (boolean) variables.
 The goal is **descriptive understanding**, validation of survey logic, and identification of meaningful associations — **not** causal inference or hypothesis testing.
@@ -10,7 +10,6 @@ The goal is **descriptive understanding**, validation of survey logic, and ident
 All results are presented as **contingency tables with row-wise percentages**, supported by visual heatmaps (generated but not embedded here).
 
 ---
-
 ## 2.1.1 Seen Star Wars × Star Wars Fandom
 
 **Variables**
@@ -102,7 +101,7 @@ This may reflect broader engagement with science fiction media rather than franc
 ![seen_star_wars_vs_fan_star_trek_heatmap.png](../analysis/figures/seen_star_wars_vs_fan_star_trek_heatmap.png)
 ---
 
-## Phase 2.1 Summary
+## Binary & Binary Relationships Summary
 
 Across all binary × binary analyses:
 
@@ -121,9 +120,7 @@ Below is a **ready-to-drop-in update** for `reports/phase_2_eda.md`.
 
 ---
 
-# Phase 2 — Bivariate Exploratory Analysis
-
-## 2.2 Nominal × Binary Analysis
+### 2.1.4 Star Wars Fandom by Demographics (`fan_star_wars`)
 
 This section explores how **demographic (nominal) variables** relate to two key binary outcomes:
 
@@ -131,10 +128,6 @@ This section explores how **demographic (nominal) variables** relate to two key 
 * `fan_star_trek`
 
 For each pairing, row-wise percentages are reported, and stacked bar charts are referenced to visualize relative differences across categories.
-
----
-
-### 2.2.1 Star Wars Fandom by Demographics (`fan_star_wars`)
 
 **Figure 2.2.1a–e** show the proportion of respondents identifying as Star Wars fans across demographic groups.
 ![gender_fan_star_wars.png](../analysis/figures/gender_fan_star_wars.png)
@@ -160,7 +153,7 @@ Star Wars fandom peaks among respondents aged 30–44 (72.5%) and declines with 
 
 ---
 
-### 2.2.2 Star Trek Fandom by Demographics (`fan_star_trek`)
+### 2.1.5 Star Trek Fandom by Demographics (`fan_star_trek`)
 
 **Figure 2.2.2a–e** present the same demographic breakdown for Star Trek fandom, enabling direct comparison with Star Wars.
 ![gender_fan_star_trek.png](../analysis/figures/gender_fan_star_trek.png)
@@ -186,7 +179,7 @@ Star Trek fandom increases with age up to the 45–60 group (49.5%) and then dec
 
 ---
 
-### 2.2.3 Comparative Observations
+### 2.1.6 Comparative Observations
 
 Across all demographic dimensions:
 
@@ -197,16 +190,9 @@ Across all demographic dimensions:
 
 These descriptive patterns suggest that the two franchises occupy distinct cultural and demographic niches, despite partial audience overlap.
 
-No causal claims are made at this stage.
-
 ---
 
-Alright, let’s lock Phase 2.3 in cleanly and precisely.
-Below is **ready-to-paste content** for `phase_2_eda.md`, written to match what the histograms *actually show* (and what your numeric summaries confirm).
-
----
-
-## Phase 2.3 — Episode Ranking Distributions (Ordinal Analysis)
+## Phase 2.2 — Episode Ranking Distributions (Ordinal Analysis)
 
 ### Figures
 
@@ -281,5 +267,7 @@ Below is **ready-to-paste content** for `phase_2_eda.md`, written to match what 
 
 ---
 
+## Phase 2.3 — Episode Rankings by Demographic Group
+*(In progress)*
 
 

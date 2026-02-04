@@ -338,37 +338,20 @@ def sanity_check_rank_percentages(long_df: pd.DataFrame) -> pd.DataFrame:
 
 def main() -> None:
     df = load_clean_star_wars()
-
     avg_scores = compute_episode_average_scores(df)
+    long_df = melt_episode_ranks(df)
+
     plot_episode_average_scores(
         avg_scores,
         save_path=FIGURES_DIR / "episode_average_scores.png",
     )
 
-    long_df = melt_episode_ranks(df)
-
     print(sanity_check_rank_percentages(long_df))
-
-    # plot_episode_rank_boxplot(
-    #     long_df,
-    #     save_path=FIGURES_DIR / "episode_rank_boxplot.png",
-    # )
-
-    # plot_episode_rank_violin(
-    #     long_df,
-    #     save_path=FIGURES_DIR / "episode_rank_violin.png",
-    # )
 
     plot_episode_rank_histograms(
         long_df,
         save_path=FIGURES_DIR / "episode_rank_histograms.png",
     )
-
-    # freq = compute_rank_frequencies(long_df)
-    # plot_episode_rank_stacked(
-    #     freq,
-    #     save_path=FIGURES_DIR / "episode_rank_stacked.png",
-    # )
 
 
 if __name__ == "__main__":
