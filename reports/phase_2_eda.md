@@ -120,7 +120,7 @@ Below is a **ready-to-drop-in update** for `reports/phase_2_eda.md`.
 
 ---
 
-### 2.1.4 Star Wars Fandom by Demographics (`fan_star_wars`)
+## 2.1.4 Star Wars Fandom by Demographics (`fan_star_wars`)
 
 This section explores how **demographic (nominal) variables** relate to two key binary outcomes:
 
@@ -153,7 +153,7 @@ Star Wars fandom peaks among respondents aged 30–44 (72.5%) and declines with 
 
 ---
 
-### 2.1.5 Star Trek Fandom by Demographics (`fan_star_trek`)
+## 2.1.5 Star Trek Fandom by Demographics (`fan_star_trek`)
 
 **Figure 2.2.2a–e** present the same demographic breakdown for Star Trek fandom, enabling direct comparison with Star Wars.
 ![gender_fan_star_trek.png](../analysis/figures/gender_fan_star_trek.png)
@@ -192,11 +192,12 @@ These descriptive patterns suggest that the two franchises occupy distinct cultu
 
 ---
 
-## Phase 2.2 — Episode Ranking Distributions (Ordinal Analysis)
+## Phase 2.2 Categorical & Ordinal Relationships
 
-### Figures
 
-* `episode_rank_histograms.png` — Stacked histograms of episode rankings with Mean, Median, and IQR
+## Phase 2.2.1 — Episode Ranking Distributions (Ordinal Analysis)
+
+**Figure 2.2.1.a** show the distribution of each episode rankings with Mean, Median, and IQR.
 ![episode_rank_histograms.png](../analysis/figures/episode_rank_histograms.png)
 ---
 
@@ -267,7 +268,109 @@ These descriptive patterns suggest that the two franchises occupy distinct cultu
 
 ---
 
-## Phase 2.3 — Episode Rankings by Demographic Group
+## 2.2.2 Character Rating Distributions
+
+**Figure 2.2.2.a** presents the distribution of ratings for all character variables.
+![character\_rating\_distributions.png](../analysis/figures/character_rating_distributions.png)
+
+Across all character rating variables, **missingness is substantial (≈30–45%)**, indicating that ratings are conditional on respondent familiarity rather than universally held opinions. This reflects a selection effect rather than random nonresponse.
+
+### Core protagonists
+
+**Luke Skywalker**
+
+* Extremely strong ceiling effect, with a dominant concentration at the highest rating.
+* Minimal use of low ratings indicates near-universal positive evaluation among raters.
+
+**Han Solo**
+
+* Similar ceiling effect to Luke, though with slightly more mid-scale usage.
+* Distribution suggests broad appeal with limited polarization.
+
+**Princess Leia Organa**
+
+* High concentration at top ratings, with marginally greater dispersion than Luke or Han.
+* Indicates strong approval with some differentiation among respondents.
+
+**Yoda**
+
+* Pronounced ceiling effect paired with moderate missingness.
+* Ratings suggest iconic status rather than narrative-driven evaluation.
+
+**R2-D2**
+
+* One of the strongest ceiling effects across all characters.
+* Extremely limited use of lower ratings implies near-consensus approval.
+
+**C-3P0**
+
+* Still positively skewed, but with noticeably greater mid-scale usage than R2-D2.
+* Suggests appreciation tempered by irritation or comedic divisiveness.
+
+---
+
+### Prequel-era and supporting protagonists
+
+**Anakin Skywalker**
+
+* Broad distribution across the full scale.
+* Indicates mixed reception, likely reflecting differences between trilogy portrayals.
+
+**Obi-Wan Kenobi**
+
+* Strongly positive skew with less extreme ceiling effects than Luke or Yoda.
+* Distribution suggests widespread approval with some evaluative nuance.
+
+**Padmé Amidala**
+
+* Moderate ceiling effect combined with higher missingness.
+* Indicates approval among familiar respondents but weaker cultural salience.
+
+**Lando Calrissian**
+
+* Positive skew with visible mid-scale mass.
+* Suggests general likability without iconic consensus.
+
+---
+
+### Antagonists and controversial characters
+
+**Darth Vader**
+
+* Broad distribution with substantial mass at both high and mid-scale values.
+* Reflects polarized interpretation between admiration and moral negativity.
+
+**Emperor Palpatine**
+
+* Heavily mid- to low-skewed distribution.
+* Ratings appear to encode narrative role rather than personal likability.
+
+**Boba Fett**
+
+* Wide dispersion despite limited screen presence.
+* Indicates cult popularity alongside indifference among other respondents.
+
+**Jar Jar Binks**
+
+* Strong left skew with dominant low ratings.
+* Represents the clearest case of negative consensus in the dataset.
+
+---
+
+### Methodological note
+
+Character ratings exhibit **non-uniform scale usage**, strong **ceiling effects**, and **conditional missingness**. In this context, numeric summaries (mean, median, IQR) would mask polarization and selection effects rather than clarify them. Distributional inspection therefore provides the most faithful descriptive representation.
+
+Overall, these patterns indicate that character ratings capture a mixture of **likability**, **cultural symbolism**, and **narrative role**, which must be considered explicitly in any later comparative or demographic analysis.
+
+---
+
+> These distributional patterns motivate Phase 2.3, where episode rankings and selected character ratings are examined by demographic group, with particular attention to ceiling effects, polarization, and conditional missingness when interpreting group-level differences.
+
+
+---
+
+## Phase 2.3 — Episode Rankings and Character ratings by Demographic Group
 *(In progress)*
 
 
