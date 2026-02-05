@@ -8,7 +8,7 @@ from matplotlib.lines import Line2D
 from src.io_utils import load_clean_star_wars
 import math
 
-RATING_COLUMNS: dict[str, str] = {
+CHARACTER_RATING_COLUMNS: dict[str, str] = {
     "rating_han_solo":              "Han Solo",
     "rating_luke_skywalker":        "Luke Skywalker",
     "rating_princess_leia_organa":  "Princess Leia Organa",
@@ -26,7 +26,7 @@ RATING_COLUMNS: dict[str, str] = {
 }
 
 def overall_rating_behavior(df: pd.DataFrame, save_path: Path) -> None:
-    columns = list(RATING_COLUMNS)
+    columns = list(CHARACTER_RATING_COLUMNS)
 
     missing_summary = (
         df[columns]
@@ -63,7 +63,7 @@ def overall_rating_behavior(df: pd.DataFrame, save_path: Path) -> None:
         })
 
         counts.plot(kind="bar", ax=axes[i])
-        axes[i].set_title(RATING_COLUMNS[column])
+        axes[i].set_title(CHARACTER_RATING_COLUMNS[column])
         axes[i].set_ylim(0, global_max)   # ✅ same Y scale
         axes[i].set_xlabel("")
         axes[i].set_ylabel("Count")
