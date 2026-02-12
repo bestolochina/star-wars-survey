@@ -371,6 +371,83 @@ Overall, these patterns indicate that character ratings capture a mixture of **l
 ---
 
 ## Phase 2.3 — Episode Rankings and Character ratings by Demographic Group
-*(In progress)*
 
+---
+
+# 2.3.1 Episode Ranking Distributions by Gender
+
+**Figure 2.3.1.a** presents episode ranking distributions separately for male and female respondents. Rankings are shown as histograms with overlaid median (solid line), mean (dashed line), and interquartile range (shaded region). Percentages are computed within each episode × gender group.
+
+![episode\_ranking\_gender.png](../analysis/figures/episode_ranking_gender.png)
+
+### Overall structure
+
+Across both genders, the broad ranking hierarchy remains consistent:
+
+* **Episode V** (The Empire Strikes Back) is the dominant entry, with approximately one-third of respondents in both groups assigning it rank 1. Dispersion is low, and the median lies firmly at the top of the scale.
+* **Episode II** is consistently among the lowest-ranked films, with large mass at ranks 5 and 6 across both genders.
+* The original trilogy (Episodes IV–VI) generally occupies higher ranking positions than the prequel trilogy (Episodes I–III), regardless of gender.
+
+Thus, episode-to-episode variation is substantially larger than gender-based variation.
+
+---
+
+### Episode V: Strong consensus across genders
+
+* Males: 35.9% rank it 1; 63.1% rank it within the top two.
+* Females: 33.0% rank it 1; 62.0% rank it within the top two.
+* Median is 1 for both groups; IQR tightly concentrated near ranks 1–2.
+
+Gender differences here are minimal, suggesting near-universal cross-gender approval.
+
+---
+
+### Episodes I–III: Modest gender shifts
+
+The prequel trilogy shows slightly more gender differentiation:
+
+**Episode I**
+
+* Females are somewhat less likely to assign the lowest rank (rank 6) compared to males (13.1% vs 26.7%).
+* Female distribution is more concentrated in mid-to-lower ranks (3–4).
+
+**Episode II**
+
+* Both groups rank it poorly overall.
+* Males show heavier mass at rank 5 (38.3%), while females distribute more evenly across ranks 3–5.
+
+**Episode III**
+
+* Females assign rank 6 slightly more frequently than males (27.7% vs 24.4%).
+* Dispersion is similar across groups, with medians around the lower-middle of the ranking scale.
+
+Overall, gender differences for the prequels are present but modest in magnitude relative to the general preference ordering.
+
+---
+
+### Episode IV: Slight polarization among females
+
+* Males: 26.5% assign rank 1.
+* Females: 22.7% assign rank 1, but 23.4% assign rank 6.
+
+Female respondents display a somewhat broader distribution, with both high and low extreme rankings more visible. This suggests greater heterogeneity in evaluation rather than a clear directional shift.
+
+---
+
+### Episode VI: Divergence at the extremes
+
+* Males cluster around mid-to-high ranks (2–3), with relatively low mass at rank 6 (13.7%).
+* Females show a more bimodal structure, with noticeable mass at both rank 1 (19.4%) and rank 6 (20.7%).
+
+This indicates that Episode VI may generate more polarized reactions among female respondents than male respondents.
+
+---
+
+### Interpretation
+
+Gender differences in episode rankings exist but are secondary to the dominant global preference structure. The hierarchy of episodes—particularly the strong preference for Episode V and the relative weakness of Episode II—remains stable across groups.
+
+Where differences emerge, they primarily reflect **dispersion and polarization effects** rather than complete reversals of ranking order. These patterns suggest that gender influences the intensity and spread of evaluations more than the fundamental ordering of the films.
+
+---
 

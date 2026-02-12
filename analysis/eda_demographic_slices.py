@@ -55,7 +55,12 @@ DEMOGRAPHICS_COLUMNS: dict[str, dict[str, str]] = {
         "Male": "Male",
         "Female": "Female",
     },
-    # Future:
+    "age_group": {
+        "18-29": "18-29",
+        "30-44": "30-44",
+        "45-60": "45-60",
+        "60+": "60+",
+    }
     # "education": {"High school": "High school", "Bachelor": "Bachelor", ...}
 }
 
