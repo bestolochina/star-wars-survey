@@ -451,3 +451,148 @@ Where differences emerge, they primarily reflect **dispersion and polarization e
 
 ---
 
+# 2.3.2 Episode Ranking Distributions by Age Group
+
+**Figure 2.3.2.a** shows episode ranking distributions across four age groups: 18–29, 30–44, 45–60, and 60+. As in the previous section, rankings are shown as histograms with mean, median, and interquartile range overlays. Percentages are computed within each episode × age group.
+
+![episode\_ranking\_age\_group.png](../analysis/figures/episode_ranking_age_group.png)
+
+---
+
+## 1. A Stable Anchor: Episode V Across Generations
+
+Episode V remains the top-ranked film in every age group:
+
+* Rank 1 share:
+
+  * 18–29: 31.1%
+  * 30–44: 37.7%
+  * 45–60: 37.1%
+  * 60+: 31.1%
+* Combined top-two share exceeds 57% in all groups and reaches over 70% in ages 30–44.
+
+This indicates strong intergenerational consensus. While intensity varies slightly (strongest among 30–60), Episode V functions as a cross-cohort anchor in the franchise.
+
+---
+
+## 2. Prequel Trilogy: Clear Generational Gradient
+
+The most pronounced age effect appears in Episodes I–III.
+
+### Episode I
+
+Rank 1 share:
+
+* 18–29: 11.7%
+* 30–44: 7.2%
+* 45–60: 14.2%
+* 60+: 27.6%
+
+Surprisingly, the 60+ group assigns rank 1 far more often than younger groups. At the same time, the 30–44 group shows the strongest negative skew (34.3% rank 6).
+
+This produces a non-monotonic pattern rather than a simple “younger like prequels more” story.
+
+---
+
+### Episode II
+
+Consistently weak across all age groups, but especially among 30–44:
+
+* 30–44: 44.4% assign rank 5.
+* 45–60: 35.8% assign rank 5.
+* 18–29: more dispersed across 4–6.
+* 60+: slightly less concentrated at rank 5 than middle-aged groups.
+
+Episode II is broadly disfavored, but strongest rejection appears among middle cohorts.
+
+---
+
+### Episode III
+
+Displays a clearer generational divide:
+
+* 18–29: relatively balanced, with meaningful mass in ranks 1–4.
+* 30–44 and 45–60: heavy concentration in ranks 5–6 (~53% combined for both groups).
+* 60+: split between mid and low ranks, but 24.9% assign rank 6.
+
+Younger respondents (18–29) are noticeably more favorable toward Episode III compared to middle-aged groups.
+
+---
+
+## 3. Original Trilogy: Generational Reordering
+
+### Episode IV
+
+Rank 1 share:
+
+* 18–29: 21.1%
+* 30–44: 27.1%
+* 45–60: 29.2%
+* 60+: 19.7%
+
+Middle cohorts (30–60) show strongest preference for Episode IV.
+The 60+ group exhibits more dispersion, with 25.9% assigning rank 6 — indicating polarization rather than uniform reverence.
+
+---
+
+### Episode VI
+
+Clear generational split:
+
+* 30–44: heavily concentrated at ranks 2–3 (57% combined).
+* 45–60: strong concentration at rank 2 (34.6%).
+* 60+: 25.9% assign rank 6 (highest among groups).
+* 18–29: broader distribution, including 16.7% at rank 6.
+
+Episode VI shows increasing dispersion at the youngest and oldest ends of the spectrum.
+
+---
+
+## 4. Cohort Patterns
+
+Three structural patterns emerge:
+
+### (1) Middle-Aged Cohort Consolidation (30–44)
+
+* Strongest endorsement of Episode V.
+* Strongest rejection of Episode II.
+* Generally tight distributions.
+* Reflects high internal consensus.
+
+### (2) Younger Cohort Moderation (18–29)
+
+* More balanced distributions across ranks.
+* Less extreme rejection of prequels.
+* Greater tolerance across trilogy boundaries.
+
+### (3) Oldest Cohort Polarization (60+)
+
+* Higher rank 1 share for Episode I.
+* High rank 6 shares for Episodes IV and VI.
+* Wider dispersion across multiple films.
+
+This suggests the 60+ group exhibits less uniform adherence to the dominant franchise hierarchy.
+
+---
+
+## 5. Interpretation
+
+Unlike gender, age introduces **meaningful structural variation** in episode evaluations.
+
+Key effects include:
+
+* Generational differences in prequel reception.
+* Strong middle-cohort consolidation around Episode V.
+* Increased dispersion and polarization at the oldest age bracket.
+
+However, the fundamental hierarchy—Episode V at the top and Episode II near the bottom—remains intact across all age groups.
+
+Age therefore modifies intensity and dispersion more strongly than it overturns the global ordering.
+
+---
+
+If you’d like, next we can:
+
+* Refine this into a tighter “final report” version, or
+* Add a short cross-reference forward to **2.3.3 (Income)**, or
+* Do something more analytical (e.g., compute cohort-level mean rank tables to quantify effect size).

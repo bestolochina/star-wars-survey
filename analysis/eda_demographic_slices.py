@@ -589,32 +589,7 @@ def plot_rank_histograms_single_slice_horizontal_grid(
     plt.savefig(save_path)
     plt.show()
 
-
-# =========================
-# MAIN
-# =========================
-
-def main() -> None:
-    df = load_clean_star_wars()
-
-    # long_df = melt_variable(
-    #     df,
-    #     variable_columns=EPISODE_RANK_COLUMNS,
-    #     variable_name="episode ranking",
-    #     value_name="rank",
-    # )
-    #
-    # plot_rank_histograms_single_slice_horizontal_grid(
-    #     long_df,
-    #     variable_name="episode ranking",
-    #     value_name="rank",
-    #     slice_column="gender",
-    #     slice_title="Gender",
-    #     slice_config=DEMOGRAPHICS_COLUMNS,
-    #     better="low",
-    #     save_path=FIGURES_DIR / "episode_ranking_gender.png",
-    # )
-
+def character_rating_gender(df: pd.DataFrame) -> None:
     long_df = melt_variable(
         df,
         variable_columns=CHARACTER_RATING_COLUMNS,
@@ -642,6 +617,73 @@ def main() -> None:
             slice_config=DEMOGRAPHICS_COLUMNS,
         )
     )
+
+def episode_ranking_gender(df: pd.DataFrame) -> None:
+    long_df = melt_variable(
+        df,
+        variable_columns=EPISODE_RANK_COLUMNS,
+        variable_name="episode ranking",
+        value_name="rank",
+    )
+
+    plot_rank_histograms_single_slice_horizontal_grid(
+        long_df,
+        variable_name="episode ranking",
+        value_name="rank",
+        slice_column="gender",
+        slice_title="Gender",
+        slice_config=DEMOGRAPHICS_COLUMNS,
+        better="low",
+        save_path=FIGURES_DIR / "episode_ranking_gender.png",
+    )
+
+    print(
+        sanity_check_rank_percentages_multi(
+            long_df,
+            variable_name="episode ranking",
+            value_name="rank",
+            slice_column="gender",
+            slice_config=DEMOGRAPHICS_COLUMNS,
+        )
+    )
+
+def episode_ranking_age_group(df: pd.DataFrame) -> None:
+    long_df = melt_variable(
+        df,
+        variable_columns=EPISODE_RANK_COLUMNS,
+        variable_name="episode ranking",
+        value_name="rank",
+    )
+
+    plot_rank_histograms_single_slice_horizontal_grid(
+        long_df,
+        variable_name="episode ranking",
+        value_name="rank",
+        slice_column="age_group",
+        slice_title="Age group",
+        slice_config=DEMOGRAPHICS_COLUMNS,
+        better="low",
+        save_path=FIGURES_DIR / "episode_ranking_age_group.png",
+    )
+
+    print(
+        sanity_check_rank_percentages_multi(
+            long_df,
+            variable_name="episode ranking",
+            value_name="rank",
+            slice_column="age_group",
+            slice_config=DEMOGRAPHICS_COLUMNS,
+        )
+    )
+
+# =========================
+# MAIN
+# =========================
+
+def main() -> None:
+    df = load_clean_star_wars()
+
+    episode_ranking_age_group(df)
 
 
 if __name__ == "__main__":
