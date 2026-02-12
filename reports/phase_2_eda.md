@@ -591,8 +591,122 @@ Age therefore modifies intensity and dispersion more strongly than it overturns 
 
 ---
 
-If you’d like, next we can:
+Good. Income looks structurally weaker than age — which is interesting in itself.
 
-* Refine this into a tighter “final report” version, or
-* Add a short cross-reference forward to **2.3.3 (Income)**, or
-* Do something more analytical (e.g., compute cohort-level mean rank tables to quantify effect size).
+Here is a **draft of Section 2.3.3 (Household Income)** consistent with your prior sections.
+
+---
+
+# 2.3.3 Episode Ranking Distributions by Household Income
+
+**Figure 2.3.3.a** presents episode ranking distributions across five household income brackets:
+$0–24k, $25–49k, $50–99k, $100–149k, and $150k+.
+
+Percentages are computed within each episode × income group.
+
+![episode\_ranking\_income.png](../analysis/figures/episode_ranking_household_income.png)
+
+---
+
+## 1. Structural Stability Across Income
+
+The most immediate observation is structural consistency:
+
+* **Episode V** remains the dominant entry in every income bracket.
+* **Episode II** consistently concentrates mass in ranks 5–6.
+* The original trilogy generally outperforms the prequel trilogy in all income groups.
+
+Unlike age, income does not meaningfully reorder the global hierarchy of episodes.
+
+---
+
+## 2. Episode V: Uniform Cross-Income Dominance
+
+Rank 1 share by income:
+
+* $0–24k: 36.7%
+* $25–49k: 39.5%
+* $50–99k: 32.4%
+* $100–149k: 35.7%
+* $150k+: 39.0%
+
+Top-two shares exceed 60% in all brackets.
+
+There is no clear monotonic relationship between income and preference strength. The dominance of Episode V appears income-invariant.
+
+---
+
+## 3. Episode II: Consistent Rejection, Slight Middle-Upper Concentration
+
+Episode II is weakest across brackets, with especially strong rank-5 concentration in middle-to-upper income groups:
+
+* $50–99k: 42.4% assign rank 5.
+* $100–149k: 38.3% assign rank 5.
+* $150k+: 32.5% assign rank 5 and 22.1% rank 6.
+
+Lower-income groups show slightly more dispersion across ranks 2–6.
+
+The pattern suggests modest intensification of rejection in middle-income cohorts but no reversal of ordering.
+
+---
+
+## 4. Prequel Trilogy: Mild Dispersion Differences
+
+### Episode I
+
+Rank 1 share ranges from 11.7% to 17.7% across brackets — relatively narrow variation.
+
+The $50–99k and $100–149k groups show higher mass at rank 4 (30%+), suggesting middle-tier positioning rather than extreme rejection.
+
+No clear income gradient emerges.
+
+---
+
+### Episode III
+
+Upper-income groups ($100k+) show heavier mass at ranks 5–6 (approx. 55–57% combined), suggesting somewhat stronger negative positioning.
+
+Lower-income groups distribute more evenly across mid ranks (3–4).
+
+Still, magnitude differences remain moderate.
+
+---
+
+## 5. Episode IV and VI: Minor Polarization in Upper Brackets
+
+### Episode IV
+
+* Rank 1 share increases in higher brackets (31.2% for $150k+).
+* However, $100–149k shows notable polarization, with 28.7% assigning rank 6.
+
+This indicates dispersion rather than uniform preference shift.
+
+---
+
+### Episode VI
+
+Higher-income groups show strong clustering around ranks 2–3:
+
+* $150k+: 39.0% assign rank 3.
+* $100–149k: 35.7% assign rank 3.
+
+Lower-income groups display slightly broader dispersion, including higher rank-6 shares.
+
+---
+
+## 6. Comparative Interpretation
+
+Relative to gender and especially age:
+
+* Income effects are present but comparatively weak.
+* There is no systematic monotonic gradient (e.g., “higher income → stronger original trilogy preference”).
+* Variation primarily manifests in dispersion and intensity rather than reordering.
+
+In terms of segmentation strength:
+
+> Age > Gender ≈ Income (tentative, pending education and region).
+
+We will formally evaluate this ordering in Section 2.3.6 once all demographic slices are complete.
+
+---
+
