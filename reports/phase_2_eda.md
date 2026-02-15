@@ -710,3 +710,121 @@ We will formally evaluate this ordering in Section 2.3.6 once all demographic sl
 
 ---
 
+# 2.3.4 Episode Ranking Distributions by Education Level
+
+**Figure 2.3.4.a** presents episode ranking distributions across education levels:
+
+* Less than High School
+* High School
+* Some College / Associate
+* Bachelor’s
+* Graduate
+
+Percentages are computed within each episode × education group.
+
+*Note:* The “Less than HS” category contains only **n = 3** respondents. It is displayed for completeness but excluded from substantive interpretation due to insufficient sample size.
+
+![episode_ranking_education_level.png](../analysis/figures/episode_ranking_education_level.png)
+
+---
+
+## 1. Structural Stability Across Education Levels
+
+Excluding the “Less than HS” group (n=3), the overall episode hierarchy remains stable:
+
+* **Episode V** is the dominant entry across all education levels.
+* **Episode IV** consistently ranks near the top.
+* **Episode II** clusters toward ranks 5–6.
+* The original trilogy outperforms the prequel trilogy in every education category.
+
+Unlike age, education does not reorder the global ranking structure.
+
+---
+
+## 2. Episode V: Slight Strengthening with Higher Education
+
+Rank 1 share by education:
+
+* High School: 25.4%
+* Some College: 33.9%
+* Bachelor’s: 37.8%
+* Graduate: 34.1%
+
+Top-two concentration increases modestly among Bachelor’s and Graduate respondents.
+
+The effect appears incremental rather than structural: Episode V is widely preferred across all education levels.
+
+---
+
+## 3. Episode II: Rejection More Concentrated Among Higher Education
+
+Rank 5 share:
+
+* High School: 29.6%
+* Some College: 28.7%
+* Bachelor’s: 42.4%
+* Graduate: 38.5%
+
+Higher-education respondents exhibit stronger clustering at rank 5.
+
+Rank 6 also increases modestly among Bachelor’s and Graduate groups.
+
+This suggests somewhat sharper negative positioning among more educated cohorts.
+
+---
+
+## 4. Episode III: Mild Downward Shift with Higher Education
+
+Rank 6 share:
+
+* High School: 18.3%
+* Some College: 20.5%
+* Bachelor’s: 31.4%
+* Graduate: 28.3%
+
+Bachelor’s and Graduate groups show heavier lower-rank concentration relative to High School respondents.
+
+However, the episode does not become dominant in any group, nor does it radically shift in ordering.
+
+---
+
+## 5. Episode IV and VI: Broad Cross-Education Appeal
+
+### Episode IV
+
+Rank 1 share:
+
+* High School: 22.5%
+* Some College: 17.3%
+* Bachelor’s: 29.0%
+* Graduate: 28.8%
+
+Upper education groups show somewhat stronger top-ranking concentration, but mid-rank dispersion remains present.
+
+---
+
+### Episode VI
+
+Displays consistent clustering around ranks 2–3 across all education levels.
+
+No strong education-based polarization is observed.
+
+---
+
+## 6. Comparative Interpretation
+
+Relative to previously examined demographics:
+
+* Education produces visible but moderate shifts in intensity.
+* There is no major reordering of episode hierarchy.
+* Effects resemble those observed for income.
+
+Tentative segmentation strength ranking so far:
+
+> Age > Gender > (Income ≈ Education)
+
+We will formalize this comparison in Section 2.3.6 after completing the regional slice.
+
+---
+
+
