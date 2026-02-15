@@ -76,6 +76,17 @@ DEMOGRAPHICS_COLUMNS: dict[str, dict[str, str]] = {
         "Bachelor’s": "Bachelor’s",
         "Graduate": "Graduate",
     },
+    "census_region": {
+        "East North Central": "East North Central",
+        "Pacific": "Pacific",
+        "South Atlantic": "South Atlantic",
+        "Middle Atlantic": "Middle Atlantic",
+        "West South Central": "West South Central",
+        "West North Central": "West North Central",
+        "Mountain": "Mountain",
+        "New England": "New England",
+        "East South Central": "East South Central",
+    }
 }
 
 
@@ -669,6 +680,35 @@ def episode_ranking_education_level(df: pd.DataFrame) -> None:
         ).to_string()
     )
 
+def episode_ranking_census_region(df: pd.DataFrame) -> None:
+    long_df = melt_variable(
+        df,
+        variable_columns=EPISODE_RANK_COLUMNS,
+        variable_name="episode ranking",
+        value_name="rank",
+    )
+
+    plot_rank_histograms_single_slice_horizontal_grid(
+        long_df,
+        variable_name="episode ranking",
+        value_name="rank",
+        better="low",
+        slice_column="census_region",
+        slice_title="Census region",
+        slice_config=DEMOGRAPHICS_COLUMNS,
+        save_path=FIGURES_DIR / "episode_ranking_census_region.png",
+    )
+
+    print(
+        sanity_check_rank_percentages_multi(
+            long_df,
+            variable_name="episode ranking",
+            value_name="rank",
+            slice_column="census_region",
+            slice_config=DEMOGRAPHICS_COLUMNS,
+        ).to_string()
+    )
+
 # =========================
 # MAIN
 # =========================
@@ -676,7 +716,7 @@ def episode_ranking_education_level(df: pd.DataFrame) -> None:
 def main() -> None:
     df = load_clean_star_wars()
 
-    episode_ranking_education_level(df)
+    episode_ranking_census_region(df)
 
 
 if __name__ == "__main__":

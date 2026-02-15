@@ -827,4 +827,117 @@ We will formalize this comparison in Section 2.3.6 after completing the regional
 
 ---
 
+# 2.3.5 Episode Ranking Distributions by Census Region
+
+**Figure 2.3.5.a** presents episode ranking distributions across U.S. census regions:
+
+* East North Central
+* West North Central
+* Middle Atlantic
+* South Atlantic
+* East South Central
+* West South Central
+* Mountain
+* Pacific
+* New England
+
+Percentages are computed within each episode × region group.
+
+![episode\_ranking\_region.png](../analysis/figures/episode_ranking_census_region.png)
+
+---
+
+## 1. Strong Structural Stability Across Regions
+
+Across all nine regions, the overall hierarchy remains remarkably consistent:
+
+* **Episode V** dominates rank 1 everywhere.
+* **Episode IV** is consistently among the strongest entries.
+* **Episode II** clusters at ranks 5–6 in all regions.
+* The original trilogy outperforms the prequel trilogy across the country.
+
+No region reverses the global episode ordering.
+
+Relative to age, regional variation is modest.
+
+---
+
+## 2. Episode V: Nationwide Dominance
+
+Rank 1 share by region:
+
+* Ranges from **26.5% (Mountain)** to **39.8% (South Atlantic)**.
+* Most regions cluster between 30–38%.
+
+Top-two concentration exceeds ~55–65% in nearly all regions.
+
+There is no clear geographic gradient (e.g., coastal vs inland, north vs south). Episode V’s appeal appears geographically invariant.
+
+---
+
+## 3. Episode II: Uniformly Weak Across Regions
+
+Rank 5 share:
+
+* Typically between 32–44%.
+* Particularly high in Mountain (44.1%) and East South Central (53.1%).
+
+Rank 6 share also remains substantial across regions.
+
+The rejection pattern is consistent nationwide, with only intensity differences.
+
+---
+
+## 4. Episode III: Moderate Regional Dispersion
+
+Rank 6 share:
+
+* Higher in Mountain (30.9%) and East South Central (34.4%).
+* Lower in Pacific (23.3%) and Middle Atlantic (26.1%).
+
+While some southern and mountain regions show stronger lower-rank concentration, differences remain incremental rather than structural.
+
+---
+
+## 5. Episode IV: Broad Regional Appeal with Mild Polarization
+
+Rank 1 share:
+
+* Peaks in East South Central (34.4%).
+* Also strong in Pacific (28.1%) and Middle Atlantic (29.0%).
+
+However, some regions show heavier lower-rank mass (e.g., West South Central rank 6 = 28.9%).
+
+This indicates mild dispersion but not geographic reordering.
+
+---
+
+## 6. Episode VI: Consistent Mid-Upper Placement
+
+Across regions:
+
+* Strong clustering at ranks 2–3.
+* Particularly high rank-3 concentration in East South Central (43.8%).
+
+No region exhibits extreme polarization relative to others.
+
+---
+
+## 7. Comparative Interpretation
+
+Relative to other demographic variables:
+
+* Regional variation is present but limited.
+* No systematic geographic gradient emerges.
+* Episode hierarchy remains stable nationwide.
+
+Tentative segmentation strength ordering now appears:
+
+> Age > Gender > (Income ≈ Education ≈ Region)
+
+Regional identity appears less predictive of ranking behavior than generational cohort.
+
+---
+
+
 
