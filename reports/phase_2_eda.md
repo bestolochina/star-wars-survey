@@ -37,7 +37,7 @@ No logically impossible combinations (e.g. “fan without having seen”) are ob
 * The cleaned boolean variables behave exactly as expected.
 
 *(See Figure 2.1: Seen Star Wars × Star Wars Fandom heatmap.)*
-![seen_star_wars_vs_fan_star_wars_heatmap.png](../analysis/figures/seen_star_wars_vs_fan_star_wars_heatmap.png)
+![seen_star_wars_vs_fan_star_wars_heatmap.png](figures/seen_star_wars_vs_fan_star_wars_heatmap.png)
 ---
 
 ## 2.1.2 Star Wars Fandom × Star Trek Fandom
@@ -68,7 +68,7 @@ Rather than being mutually exclusive, the two fandoms substantially overlap.
 * This finding motivates later demographic stratification (Phase 2.2).
 
 *(See Figure 2.2: Star Wars Fandom × Star Trek Fandom heatmap.)*
-![fan_star_wars_vs_fan_star_trek_heatmap.png](../analysis/figures/fan_star_wars_vs_fan_star_trek_heatmap.png)
+![fan_star_wars_vs_fan_star_trek_heatmap.png](figures/fan_star_wars_vs_fan_star_trek_heatmap.png)
 ---
 
 ## 2.1.3 Seen Star Wars × Star Trek Fandom
@@ -98,7 +98,7 @@ This may reflect broader engagement with science fiction media rather than franc
 * Further analysis by demographic groups is warranted.
 
 *(See Figure 2.3: Seen Star Wars × Star Trek Fandom heatmap.)*
-![seen_star_wars_vs_fan_star_trek_heatmap.png](../analysis/figures/seen_star_wars_vs_fan_star_trek_heatmap.png)
+![seen_star_wars_vs_fan_star_trek_heatmap.png](figures/seen_star_wars_vs_fan_star_trek_heatmap.png)
 ---
 
 ## Binary & Binary Relationships Summary
@@ -130,7 +130,7 @@ This section explores how **demographic (nominal) variables** relate to two key 
 For each pairing, row-wise percentages are reported, and stacked bar charts are referenced to visualize relative differences across categories.
 
 **Figure 2.2.1a–e** show the proportion of respondents identifying as Star Wars fans across demographic groups.
-![gender_fan_star_wars.png](../analysis/figures/gender_fan_star_wars.png)
+![gender_fan_star_wars.png](figures/gender_fan_star_wars.png)
 #### Gender
 
 Male respondents report a higher likelihood of identifying as Star Wars fans (71.6%) compared to female respondents (59.9%). Respondents with missing gender values show similar fan proportions but are few in number.
@@ -156,7 +156,7 @@ Star Wars fandom peaks among respondents aged 30–44 (72.5%) and declines with 
 ## 2.1.5 Star Trek Fandom by Demographics (`fan_star_trek`)
 
 **Figure 2.2.2a–e** present the same demographic breakdown for Star Trek fandom, enabling direct comparison with Star Wars.
-![gender_fan_star_trek.png](../analysis/figures/gender_fan_star_trek.png)
+![gender_fan_star_trek.png](figures/gender_fan_star_trek.png)
 #### Gender
 
 Male respondents are substantially more likely to identify as Star Trek fans (47.5%) than female respondents (34.1%). This gender gap is notably larger than for Star Wars fandom.
@@ -198,7 +198,7 @@ These descriptive patterns suggest that the two franchises occupy distinct cultu
 ## Phase 2.2.1 — Episode Ranking Distributions (Ordinal Analysis)
 
 **Figure 2.2.1.a** show the distribution of each episode rankings with Mean, Median, and IQR.
-![episode_rank_histograms.png](../analysis/figures/episode_rank_histograms.png)
+![episode_rank_histograms.png](figures/episode_rank_histograms.png)
 ---
 
 ### Key observations
@@ -271,7 +271,7 @@ These descriptive patterns suggest that the two franchises occupy distinct cultu
 ## 2.2.2 Character Rating Distributions
 
 **Figure 2.2.2.a** presents the distribution of ratings for all character variables.
-![character\_rating\_distributions.png](../analysis/figures/character_rating_distributions.png)
+![character\_rating\_distributions.png](figures/character_rating_distributions.png)
 
 Across all character rating variables, **missingness is substantial (≈30–45%)**, indicating that ratings are conditional on respondent familiarity rather than universally held opinions. This reflects a selection effect rather than random nonresponse.
 
@@ -378,7 +378,7 @@ Overall, these patterns indicate that character ratings capture a mixture of **l
 
 **Figure 2.3.1.a** presents episode ranking distributions separately for male and female respondents. Rankings are shown as histograms with overlaid median (solid line), mean (dashed line), and interquartile range (shaded region). Percentages are computed within each episode × gender group.
 
-![episode\_ranking\_gender.png](../analysis/figures/episode_ranking_gender.png)
+![episode\_ranking\_gender.png](figures/episode_ranking_gender.png)
 
 ### Overall structure
 
@@ -455,7 +455,7 @@ Where differences emerge, they primarily reflect **dispersion and polarization e
 
 **Figure 2.3.2.a** shows episode ranking distributions across four age groups: 18–29, 30–44, 45–60, and 60+. As in the previous section, rankings are shown as histograms with mean, median, and interquartile range overlays. Percentages are computed within each episode × age group.
 
-![episode\_ranking\_age\_group.png](../analysis/figures/episode_ranking_age_group.png)
+![episode\_ranking\_age\_group.png](figures/episode_ranking_age_group.png)
 
 ---
 
@@ -604,7 +604,7 @@ $0–24k, $25–49k, $50–99k, $100–149k, and $150k+.
 
 Percentages are computed within each episode × income group.
 
-![episode\_ranking\_income.png](../analysis/figures/episode_ranking_household_income.png)
+![episode\_ranking\_income.png](figures/episode_ranking_household_income.png)
 
 ---
 
@@ -724,7 +724,7 @@ Percentages are computed within each episode × education group.
 
 *Note:* The “Less than HS” category contains only **n = 3** respondents. It is displayed for completeness but excluded from substantive interpretation due to insufficient sample size.
 
-![episode_ranking_education_level.png](../analysis/figures/episode_ranking_education_level.png)
+![episode_ranking_education_level.png](figures/episode_ranking_education_level.png)
 
 ---
 
@@ -843,7 +843,7 @@ We will formalize this comparison in Section 2.3.6 after completing the regional
 
 Percentages are computed within each episode × region group.
 
-![episode\_ranking\_region.png](../analysis/figures/episode_ranking_census_region.png)
+![episode\_ranking\_region.png](figures/episode_ranking_census_region.png)
 
 ---
 

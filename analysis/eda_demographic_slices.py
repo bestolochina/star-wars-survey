@@ -5,127 +5,20 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from src.paths import FIGURES_DIR
 from src.io_utils import load_clean_star_wars
+from analysis.metrics.segmentation_metrics import compute_segmentation_metrics, build_comparison_table
+from analysis.transforms.reshaping import melt_variable
 from typing import Literal
-
-
-# =========================
-# CONFIGURATION DICTIONARIES
-# =========================
-
-# Mapping from dataset column names to human-readable character names
-CHARACTER_RATING_COLUMNS: dict[str, str] = {
-    "rating_han_solo":              "Han Solo",
-    "rating_luke_skywalker":        "Luke Skywalker",
-    "rating_princess_leia_organa":  "Princess Leia Organa",
-    "rating_anakin_skywalker":      "Anakin Skywalker",
-    "rating_obi_wan_kenobi":        "Obi Wan Kenobi",
-    "rating_emperor_palpatine":     "Emperor Palpatine",
-    "rating_darth_vader":           "Darth Vader",
-    "rating_lando_calrissian":      "Lando Calrissian",
-    "rating_boba_fett":             "Boba Fett",
-    "rating_c-3p0":                 "C-3P0",
-    "rating_r2_d2":                 "R2-D2",
-    "rating_jar_jar_binks":         "Jar-Jar Binks",
-    "rating_padme_amidala":         "Padme Amidala",
-    "rating_yoda":                  "Yoda",
-}
-
-# Mapping from dataset column names to readable episode labels
-EPISODE_RANK_COLUMNS: dict[str, str] = {
-    "rank_ep1": "Episode I",
-    "rank_ep2": "Episode II",
-    "rank_ep3": "Episode III",
-    "rank_ep4": "Episode IV",
-    "rank_ep5": "Episode V",
-    "rank_ep6": "Episode VI",
-}
-
-# Colors used for each ranking (1 = best, 6 = worst)
-RANK_COLORS = {
-    1: "#1a9641",   # dark green
-    2: "#a6d96a",
-    3: "#fdae61",
-    4: "#f46d43",
-    5: "#d73027",
-    6: "#a50026",   # dark red
-}
-
-# Allowed demographic slices and their display order
-DEMOGRAPHICS_COLUMNS: dict[str, dict[str, str]] = {
-    "gender": {
-        "Male": "Male",
-        "Female": "Female",
-    },
-    "age_group": {
-        "18-29": "18-29",
-        "30-44": "30-44",
-        "45-60": "45-60",
-        "60+": "60+",
-    },
-    "household_income": {
-        "$0–24k": "$0–24k",
-        "$25–49k": "$25–49k",
-        "$50–99k": "$50–99k",
-        "$100–149k": "$100–149k",
-        "$150k+": "$150k+",
-    },
-    "education_level": {
-        "Less than HS": "Less than HS",
-        "High school": "High school",
-        "Some college / Associate": "Some college / Associate",
-        "Bachelor’s": "Bachelor’s",
-        "Graduate": "Graduate",
-    },
-    "census_region": {
-        "East North Central": "East North Central",
-        "Pacific": "Pacific",
-        "South Atlantic": "South Atlantic",
-        "Middle Atlantic": "Middle Atlantic",
-        "West South Central": "West South Central",
-        "West North Central": "West North Central",
-        "Mountain": "Mountain",
-        "New England": "New England",
-        "East South Central": "East South Central",
-    }
-}
-
+from src.config import (
+    CHARACTER_RATING_COLUMNS,
+    EPISODE_RANK_COLUMNS,
+    DEMOGRAPHICS_COLUMNS,
+    RANK_COLORS,
+    MIN_GROUP_SIZE,
+)
 
 # =========================
 # DATA TRANSFORMATION
 # =========================
-
-def melt_variable(
-    df: pd.DataFrame,
-    *,
-    variable_columns: dict[str, str],
-    variable_name: str,
-    value_name: str,
-) -> pd.DataFrame:
-    """
-    Converts wide-format ranking columns into long format
-    while preserving all demographic and respondent-level columns.
-    """
-
-    # Select all columns that are NOT part of the variable being melted
-    id_vars = [col for col in df.columns if col not in variable_columns]
-
-    # Convert wide columns (e.g., rank_ep1, rank_ep2, ...) into long format
-    long_df = df.melt(
-        id_vars=id_vars,                     # columns to keep as identifiers
-        value_vars=variable_columns.keys(),  # columns to unpivot
-        var_name=variable_name,              # name of new variable column
-        value_name=value_name,               # name of new value column
-    )
-
-    # Map internal column names to human-readable labels
-    long_df[variable_name] = long_df[variable_name].map(variable_columns)
-
-    # Drop rows where the user did not provide a rating
-    long_df = long_df.dropna(subset=[value_name])
-
-    # Return the cleaned long-format dataframe
-    return long_df
-
 
 def sanity_check_rank_percentages_multi(
     long_df: pd.DataFrame,
@@ -185,157 +78,6 @@ def sanity_check_rank_percentages_multi(
 # PLOTTING
 # =========================
 
-def plot_rank_histograms_single_slice(
-    long_df: pd.DataFrame,
-    *,
-    variable_name: str,
-    value_name: str,
-    slice_column: str,
-    slice_title: str,
-    slice_config: dict[str, dict[str, str]],
-    save_path: Path,
-) -> None:
-    """
-    Plots histograms of rankings for a single slice dimension (e.g. gender OR education).
-    """
-
-    # Validate that the slice column exists in the configuration
-    if slice_column not in slice_config:
-        raise ValueError(
-            f"Unknown slice column '{slice_column}'. "
-            f"Available options: {list(slice_config.keys())}"
-        )
-
-    # Extract the ordered slice values (e.g., ["Male", "Female"])
-    slice_map = slice_config[slice_column]
-    slices = list(slice_map.keys())
-
-    # Extract the ordered variable values (e.g., Episode I → Episode VI)
-    variables = long_df[variable_name].dropna().unique().tolist()
-
-    # Build subplot labels and filtering keys
-    subplot_labels: list[str] = []
-    subplot_pairs: list[tuple[str, str]] = []
-
-    # Create every (variable × slice) combination
-    for variable in variables:
-        for raw_value in slices:
-            subplot_labels.append(f"{variable} — {slice_map[raw_value]}")
-            subplot_pairs.append((variable, raw_value))
-
-    # Count total number of subplots
-    n = len(subplot_labels)
-
-    # Create vertical subplot layout
-    fig, axes = plt.subplots(
-        nrows=n,
-        ncols=1,
-        figsize=(9, 1.5 * n),
-        sharex=True,
-        sharey=True,
-    )
-
-    # Add figure caption
-    fig.text(
-        0.01, 0.01,
-        "Bar colors represent ranking quality (green = best, red = worst)",
-        fontsize=9,
-        alpha=0.7,
-    )
-
-    # Define bins so each rank (1–6) gets its own bar
-    bins = np.arange(0.5, 7.5, 1)
-
-    # Iterate over subplots
-    for ax, label, (variable, raw_value) in zip(axes, subplot_labels, subplot_pairs):
-
-        # Filter to the current slice (e.g. only Male respondents)
-        slice_df = long_df.loc[long_df[slice_column] == raw_value]
-
-        # Filter to the current variable (e.g. Episode V)
-        data = slice_df.loc[slice_df[variable_name] == variable, value_name]
-
-        # Count how many valid responses exist
-        total = len(data)
-
-        # Handle empty slices gracefully
-        if total == 0:
-            ax.text(0.5, 0.5, "No data", ha="center", va="center", transform=ax.transAxes)
-            ax.set_ylabel(label, rotation=0, labelpad=40, va="center")
-            ax.grid(axis="y", alpha=0.3)
-            continue
-
-        # Draw histogram
-        counts, _, bars = ax.hist(data, bins=bins, edgecolor="black")
-
-        # Add headroom for labels
-        ymax = ax.get_ylim()[1]
-        ax.set_ylim(0, ymax * 1.06)
-
-        # Label offset
-        offset = ax.get_ylim()[1] * 0.015
-
-        # Color bars and add percentages
-        for bar, rank in zip(bars, range(1, 7)):
-            bar.set_facecolor(RANK_COLORS[rank])
-            pct = counts[rank - 1] / total * 100
-
-            if pct >= 3:
-                ax.text(
-                    bar.get_x() + bar.get_width() / 2,
-                    bar.get_height() + offset,
-                    f"{pct:.1f}%",
-                    ha="center",
-                    va="bottom",
-                    fontsize=8,
-                    bbox=dict(
-                        boxstyle="round,pad=0.2",
-                        facecolor="white",
-                        edgecolor="none",
-                        alpha=0.8,
-                    ),
-                )
-
-        # Compute summary statistics
-        mean = data.mean()
-        median = data.median()
-        q1, q3 = data.quantile([0.25, 0.75])
-
-        # Draw summary overlays
-        ax.axvspan(q1, q3, alpha=0.2, color="gray")
-        ax.axvline(median, linestyle="-", linewidth=2, color="black", alpha=0.8)
-        ax.axvline(mean, linestyle="--", linewidth=2, color="#2b83ba", alpha=0.8)
-
-        # Label subplot
-        ax.set_ylabel(label, rotation=0, labelpad=40, va="center")
-        ax.grid(axis="y", alpha=0.3)
-
-    # Label x-axis once
-    axes[-1].set_xlabel("Rank (1 = best)")
-
-    # Global legend
-    handles = [
-        plt.Line2D([0], [0], color="black", linestyle="-", linewidth=2, label="Median"),
-        plt.Line2D([0], [0], color="#2b83ba", linestyle="--", linewidth=2, label="Mean"),
-        plt.Rectangle((0, 0), 1, 1, color="gray", alpha=0.2, label="IQR"),
-    ]
-
-    fig.legend(handles=handles, loc="upper right", bbox_to_anchor=(0.98, 0.98))
-
-    # Global title
-    fig.suptitle(f"{variable_name.title()} Distributions by {slice_title}")
-
-    # Layout polish
-    plt.tight_layout(rect=(0, 0, 1, 0.96))
-
-    # Ensure output directory exists
-    save_path.parent.mkdir(parents=True, exist_ok=True)
-
-    # Save figure
-    plt.savefig(save_path)
-
-    # Show figure
-    plt.show()
 
 def plot_rank_histograms_single_slice_horizontal_grid(
     long_df: pd.DataFrame,
@@ -716,7 +458,7 @@ def episode_ranking_census_region(df: pd.DataFrame) -> None:
 def main() -> None:
     df = load_clean_star_wars()
 
-    episode_ranking_census_region(df)
+    print(build_comparison_table(df).to_string())
 
 
 if __name__ == "__main__":
