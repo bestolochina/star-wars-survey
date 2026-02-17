@@ -1,8 +1,13 @@
-import pandas as pd
-from analysis.transforms.reshaping import melt_variable
-from src.config import EPISODE_RANK_COLUMNS, MIN_GROUP_SIZE
+# analysis/metrics/segmentation_metrics.py
 
-from typing import Any
+import pandas as pd
+from typing import Any, Dict
+from src.config import MIN_GROUP_SIZE
+
+
+# ==========================================================
+# CORE SEGMENTATION METRIC (PURE COMPUTATION)
+# ==========================================================
 
 def compute_segmentation_metrics(
     long_df: pd.DataFrame,
@@ -15,7 +20,6 @@ def compute_segmentation_metrics(
 
     df = long_df.copy()
 
-    # Exclude specified groups if provided
     if exclude_groups is not None:
         df = df.loc[~df[demographic_column].isin(exclude_groups)]
 
@@ -27,7 +31,7 @@ def compute_segmentation_metrics(
     valid_groups = group_sizes[group_sizes >= MIN_GROUP_SIZE].index
     df = df[df[demographic_column].isin(valid_groups)]
 
-    # Compute mean rank per group × episode
+    # Mean rank per episode × demographic group
     mean_rank = (
         df.groupby([episode_column, demographic_column], observed=True)[rank_column]
         .mean()
@@ -35,21 +39,14 @@ def compute_segmentation_metrics(
         .sort_index()
     )
 
-    # Range across groups per episode
+    # Divergence metrics
     range_per_episode = mean_rank.max(axis=1) - mean_rank.min(axis=1)
-
-    # Standard deviation across groups per episode
     sd_per_episode = mean_rank.std(axis=1)
 
-    # Aggregate metrics
-    avg_range = range_per_episode.mean()
-    avg_sd = sd_per_episode.mean()
-    max_range = range_per_episode.max()
-
     summary = {
-        "avg_range": avg_range,
-        "avg_sd": avg_sd,
-        "max_range": max_range,
+        "avg_range": range_per_episode.mean(),
+        "avg_sd": sd_per_episode.mean(),
+        "max_range": range_per_episode.max(),
     }
 
     return {
@@ -59,61 +56,146 @@ def compute_segmentation_metrics(
         "summary": summary,
     }
 
-def build_comparison_table(df: pd.DataFrame) -> pd.DataFrame:
-    long_df = melt_variable(
-        df,
-        variable_columns=EPISODE_RANK_COLUMNS,
-        variable_name="episode ranking",
-        value_name="rank",
-    )
 
-    age_group_metrics = compute_segmentation_metrics(
-        long_df,
-        demographic_column="age_group",
-        episode_column="episode ranking",
-        rank_column="rank",
-    )
+# ==========================================================
+# COMPUTE ALL DEMOGRAPHIC SEGMENTATION METRICS ONCE
+# ==========================================================
 
-    gender_metrics = compute_segmentation_metrics(
-        long_df,
-        demographic_column="gender",
-        episode_column="episode ranking",
-        rank_column="rank",
-    )
+def compute_all_segmentation_metrics(
+    episode_long: pd.DataFrame,
+) -> Dict[str, dict[str, Any]]:
 
-    household_income_metrics = compute_segmentation_metrics(
-        long_df,
-        demographic_column="household_income",
-        episode_column="episode ranking",
-        rank_column="rank",
-    )
+    demographics = {
+        "gender": "gender",
+        "age_group": "age_group",
+        "household_income": "household_income",
+        "education_level": "education_level",
+        "census_region": "census_region",
+    }
 
-    education_level_metrics = compute_segmentation_metrics(
-        long_df,
-        demographic_column="education_level",
-        episode_column="episode ranking",
-        rank_column="rank",
-        exclude_groups=["Less than HS"],
-    )
+    results = {}
 
-    census_region_metrics = compute_segmentation_metrics(
-        long_df,
-        demographic_column="census_region",
-        episode_column="episode ranking",
-        rank_column="rank",
-    )
+    for key, column in demographics.items():
+
+        exclude = ["Less than HS"] if column == "education_level" else None
+
+        metrics = compute_segmentation_metrics(
+            episode_long,
+            demographic_column=column,
+            episode_column="episode",
+            rank_column="rank",
+            exclude_groups=exclude,
+        )
+
+        results[key] = metrics
+
+    return results
+
+
+# ==========================================================
+# BUILD COMPARISON TABLE FROM STORED METRICS
+# ==========================================================
+
+def build_comparison_table_from_metrics(
+    metrics_store: Dict[str, dict[str, Any]],
+) -> pd.DataFrame:
+
+    readable_labels = {
+        "gender": "Gender",
+        "age_group": "Age Group",
+        "household_income": "Household Income",
+        "education_level": "Education Level",
+        "census_region": "Census Region",
+    }
 
     comparison = pd.DataFrame.from_dict(
         {
-            "Gender": gender_metrics["summary"],
-            "Age": age_group_metrics["summary"],
-            "Income": household_income_metrics["summary"],
-            "Education": education_level_metrics["summary"],
-            "Region": census_region_metrics["summary"],
+            readable_labels[key]: metrics_store[key]["summary"]
+            for key in metrics_store
         },
         orient="index",
     )
 
-    comparison = comparison.sort_values("avg_range", ascending=False)
+    return comparison.sort_values("avg_range", ascending=False)
 
-    return comparison
+
+# ==========================================================
+# EPISODE-LEVEL DIVERGENCE TABLES
+# ==========================================================
+
+def build_episode_divergence_table(
+    metrics: dict[str, Any],
+) -> pd.DataFrame:
+
+    episode_table = pd.DataFrame({
+        "range": metrics["range_per_episode"],
+        "sd": metrics["sd_per_episode"],
+    })
+
+    return episode_table.sort_values("range", ascending=False)
+
+
+def build_all_episode_divergence_tables_from_metrics(
+    metrics_store: Dict[str, dict[str, Any]],
+) -> dict[str, pd.DataFrame]:
+
+    return {
+        key: build_episode_divergence_table(metrics)
+        for key, metrics in metrics_store.items()
+    }
+
+
+# ==========================================================
+# EPISODE DRIVER EXTRACTION
+# ==========================================================
+
+def extract_episode_drivers(
+    metrics: dict[str, Any],
+    *,
+    top_n: int = 2,
+) -> pd.DataFrame:
+
+    mean_rank = metrics["mean_rank_matrix"]
+    range_per_episode = metrics["range_per_episode"]
+
+    top_episodes = (
+        range_per_episode
+        .sort_values(ascending=False)
+        .head(top_n)
+        .index
+    )
+
+    results = []
+
+    for episode in top_episodes:
+
+        row = mean_rank.loc[episode]
+
+        best_group = row.idxmin()
+        worst_group = row.idxmax()
+
+        best_value = row.min()
+        worst_value = row.max()
+
+        results.append({
+            "episode": episode,
+            "best_group": best_group,
+            "best_mean_rank": best_value,
+            "worst_group": worst_group,
+            "worst_mean_rank": worst_value,
+            "rank_gap": worst_value - best_value,
+        })
+
+    return pd.DataFrame(results)
+
+
+def extract_all_episode_drivers(
+    metrics_store: Dict[str, dict[str, Any]],
+    *,
+    top_n: int = 2,
+) -> dict[str, pd.DataFrame]:
+
+    return {
+        key: extract_episode_drivers(metrics, top_n=top_n)
+        for key, metrics in metrics_store.items()
+    }

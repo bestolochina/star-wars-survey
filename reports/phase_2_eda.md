@@ -939,5 +939,135 @@ Regional identity appears less predictive of ranking behavior than generational 
 
 ---
 
+# 2.3.6 Comparative Strength of Demographic Effects
+
+While Sections 2.3.1–2.3.5 visually examined episode ranking distributions across individual demographic variables, this section summarizes their relative impact using a quantitative comparison table.
+
+## Objective
+
+To determine which demographic variable produces the strongest variation in episode ranking preferences.
+
+Rather than relying solely on visual inspection of multiple plots, we compute divergence metrics that measure how much ranking distributions differ across subgroups within each demographic.
+
+---
+
+## Methodology
+
+For each demographic variable:
+
+* **Age Group**
+* **Census Region**
+* **Household Income**
+* **Education Level**
+* **Gender**
+
+we calculated summary statistics describing the dispersion of episode ranking proportions across subgroups:
+
+* **avg_range** — Average range of ranking proportions across subgroups
+* **avg_sd** — Average standard deviation of ranking proportions
+* **max_range** — Maximum observed range for any episode
+
+Higher values indicate stronger differentiation in ranking preferences between subgroups.
+
+---
+
+## Results
+
+| Demographic      | avg_range | avg_sd | max_range |
+| ---------------- | --------- | ------ | --------- |
+| Age Group        | 0.7487    | 0.3337 | 1.3374    |
+| Census Region    | 0.6412    | 0.1957 | 0.8087    |
+| Household Income | 0.4775    | 0.1862 | 0.6852    |
+| Education Level  | 0.4187    | 0.2096 | 0.5641    |
+| Gender           | 0.2924    | 0.2068 | 0.6085    |
+
+---
+
+## Interpretation
+
+* **Age Group** exhibits the strongest divergence in episode rankings by a clear margin.
+* **Census Region** also shows meaningful variation, though less pronounced than age.
+* **Household Income** and **Education Level** demonstrate moderate differentiation.
+* **Gender** has the weakest overall effect on ranking variation.
+
+The results indicate that generational differences are the dominant demographic driver of episode ranking preferences in the dataset.
+
+---
+
+## Analytical Implications
+
+This comparative table:
+
+* Provides a structured summary of Sections 2.3.1–2.3.5.
+* Confirms that age-based segmentation should be prioritized in subsequent analysis.
+* Suggests that regional effects are secondary but still meaningful.
+* Indicates that gender-based segmentation may yield limited differentiation for ranking analysis.
+
+This quantitative comparison strengthens the transition from descriptive slicing to more formal segmentation in later phases.
+
+---
+
+# 2.3.7 Episode-Level Drivers of Age-Based Divergence
+
+Following the comparative demographic summary in Section 2.3.6, we decompose the age-based divergence to identify which specific episodes account for the observed variation.
+
+## Episode-Level Divergence
+
+The episode-level range in mean ranks across age groups is shown below:
+
+| Episode     | Mean Rank Range |
+| ----------- | --------------- |
+| Episode I   | **1.337**       |
+| Episode IV  | 0.876           |
+| Episode VI  | 0.643           |
+| Episode III | 0.571           |
+| Episode II  | 0.548           |
+| Episode V   | 0.518           |
+
+Episode I is a clear outlier, exhibiting substantially greater divergence than all other films.
+
+---
+
+## Subgroup Drivers
+
+### Episode I
+
+* Best-ranked by: **60+** (mean rank = 3.01)
+* Worst-ranked by: **30–44** (mean rank = 4.35)
+* Rank gap: **1.34**
+
+This indicates strong polarization, with middle-aged respondents (30–44) expressing the least favorable evaluation relative to older respondents.
+
+---
+
+### Episode IV
+
+* Best-ranked by: **30–44** (mean rank = 2.93)
+* Worst-ranked by: **60+** (mean rank = 3.81)
+* Rank gap: 0.88
+
+---
+
+### Episode VI
+
+* Best-ranked by: **30–44** (mean rank = 2.71)
+* Worst-ranked by: **60+** (mean rank = 3.36)
+* Rank gap: 0.64
+
+---
+
+## Interpretation
+
+Age-based divergence is not uniform across the saga. Rather:
+
+* Episode I is the primary driver of generational differentiation.
+* Episodes IV and VI show moderate age-related variation.
+* Episode V exhibits the lowest age-based dispersion, indicating broad consensus across generations.
+
+The pattern suggests that divergence arises from selective polarization around specific installments rather than systematic disagreement across the entire series.
+
+---
+
+
 
 
