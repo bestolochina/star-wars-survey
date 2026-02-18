@@ -4,48 +4,82 @@ import pandas as pd
 from typing import List, Literal
 
 from analysis.transforms.reshaping import melt_variable
-from src.paths import FIGURES_DIR
-from src.config import DEMOGRAPHICS_COLUMNS, EPISODE_RANK_COLUMNS
-
+from analysis.metrics.distribution_metrics import (
+    validate_rank_percentage_sums,
+    build_all_rank_distribution_tables,
+)
 from analysis.visualization.rank_histograms import (
     plot_rank_histograms_single_slice_horizontal_grid,
 )
-from analysis.metrics.distribution_metrics import (
-    sanity_check_rank_percentages_multi,
+from src.paths import FIGURES_DIR
+from src.config import (
+    DEMOGRAPHICS_COLUMNS,
+    EPISODE_RANK_COLUMNS,
 )
+
 
 DEMOGRAPHICS: List[str] = list(DEMOGRAPHICS_COLUMNS.keys())
 
 
+# ==========================================================
+# MASTER PIPELINE
+# ==========================================================
+
 def run_phase_1(df: pd.DataFrame) -> None:
 
-    print("\n--- Phase 1: Distributional Structure ---\n")
+    print("\n=== PHASE 1: DISTRIBUTIONAL STRUCTURE ===")
 
     save_dir = FIGURES_DIR / "phase1"
     save_dir.mkdir(parents=True, exist_ok=True)
 
-    variable_columns = EPISODE_RANK_COLUMNS
-    variable_name = "episode ranking"
-    value_name = "rank"
-    better: Literal["low", "high"] = "low"
-
+    # 1️⃣ Melt episode rankings
     df_long = melt_variable(
         df,
-        variable_columns=variable_columns,
-        variable_name=variable_name,
-        value_name=value_name,
+        variable_columns=EPISODE_RANK_COLUMNS,
+        variable_name="episode",
+        value_name="rank",
     )
+
+    # 2️⃣ Validate rank distributions
+    validation = validate_rank_percentage_sums(
+        df_long,
+        demographic_columns=DEMOGRAPHICS,
+        episode_column="episode",
+        rank_column="rank",
+    )
+
+    print("\n--- Validation Summary ---")
+    print(validation["valid"].value_counts())
+
+    if not validation["valid"].all():
+        raise ValueError("Rank percentage validation failed.")
+
+    # 3️⃣ Build distribution tables (report-ready)
+    distribution_tables = build_all_rank_distribution_tables(
+        df_long,
+        episode_column="episode",
+        rank_column="rank",
+        slice_config=DEMOGRAPHICS_COLUMNS,
+    )
+
+    # (Optional) Print a preview
+    for demo, table in distribution_tables.items():
+        print(f"\n--- Distribution Table: {demo} ---")
+        print(table.head())
+
+    # 4️⃣ Generate histogram grids
+    print("\n--- Generating Distribution Plots ---")
+
+    better: Literal["low", "high"] = "low"
 
     for demo in DEMOGRAPHICS:
 
-        print(f"Generating histogram grid for {demo}...")
-
-        save_path = save_dir / f"episode_ranking_{demo}.png"
+        save_path = save_dir / f"episode_distribution_{demo}.png"
 
         plot_rank_histograms_single_slice_horizontal_grid(
             long_df=df_long,
-            variable_name=variable_name,
-            value_name=value_name,
+            variable_name="episode",
+            value_name="rank",
             slice_column=demo,
             slice_title=demo.replace("_", " ").title(),
             slice_config=DEMOGRAPHICS_COLUMNS,
@@ -53,11 +87,5 @@ def run_phase_1(df: pd.DataFrame) -> None:
             save_path=save_path,
         )
 
-    sanity_check_rank_percentages_multi(
-        df_long,
-        demographic_columns=DEMOGRAPHICS,
-        episode_column=variable_name,
-        rank_column=value_name,
-    )
-
+    print(f"\nPhase 1 plots saved to: {save_dir}")
     print("\nPhase 1 complete.\n")

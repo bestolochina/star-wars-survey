@@ -2,7 +2,13 @@
 
 import pandas as pd
 from dataclasses import dataclass
+
 from src.paths import PHASE2_FIGURES_DIR
+from src.config import (
+    EPISODE_RANK_COLUMNS,
+    CHARACTER_RATING_COLUMNS,
+)
+
 from analysis.transforms.reshaping import melt_variable
 from analysis.metrics.segmentation_metrics import (
     compute_all_segmentation_metrics,
@@ -14,10 +20,6 @@ from analysis.visualization.segmentation_plots import (
     plot_segmentation_comparison,
     plot_episode_divergence_heatmap,
     plot_episode_drivers,
-)
-from src.config import (
-    EPISODE_RANK_COLUMNS,
-    CHARACTER_RATING_COLUMNS,
 )
 
 
@@ -65,20 +67,20 @@ def build_phase2_data(df: pd.DataFrame) -> Phase2Data:
 
 def run_phase_2(df: pd.DataFrame) -> None:
 
+    print("\n=== PHASE 2: DEMOGRAPHIC SEGMENTATION ===")
+
     save_dir = PHASE2_FIGURES_DIR
     save_dir.mkdir(parents=True, exist_ok=True)
-
-    print("\n=== PHASE 2: DEMOGRAPHIC SEGMENTATION ===")
 
     # 1️⃣ Melt once
     phase2_data = build_phase2_data(df)
 
-    # 2️⃣ Compute segmentation metrics once
+    # 2️⃣ Compute segmentation metrics
     metrics_store = compute_all_segmentation_metrics(
         phase2_data.episode_long
     )
 
-    # 3️⃣ Comparison table
+    # 3️⃣ Segmentation comparison table
     comparison_table = build_comparison_table_from_metrics(
         metrics_store
     )
@@ -108,10 +110,10 @@ def run_phase_2(df: pd.DataFrame) -> None:
         print(table)
 
     # ======================================================
-    # 6️⃣ VISUALIZATION LAYER
+    # VISUALIZATION LAYER (SEGMENTATION ONLY)
     # ======================================================
 
-    print("\n--- Generating Plots ---")
+    print("\n--- Generating Segmentation Plots ---")
 
     plot_segmentation_comparison(
         comparison_table,
@@ -128,4 +130,5 @@ def run_phase_2(df: pd.DataFrame) -> None:
         save_dir=save_dir,
     )
 
-    print(f"\nPlots saved to: {save_dir}")
+    print(f"\nPhase 2 plots saved to: {save_dir}")
+    print("\nPhase 2 complete.\n")
