@@ -1,171 +1,87 @@
-# Star Wars Survey Analysis — Project Definition
-
-## 1. Project goal
-
-Analyze the FiveThirtyEight *Star Wars Survey* with a strong emphasis on **distribution-aware ranking analysis**, avoiding over-aggregation and misleading summaries.
-
-Primary questions:
-
-* How are Star Wars episodes ranked overall?
-* How do **different demographic groups** rank episodes differently?
-* Where do averages hide disagreement or polarization?
-
-This project prioritizes **interpretability, statistical honesty, and visual clarity** over visual novelty.
+# PROJECT.md
+Star Wars Survey — End-to-End Professional Analysis
 
 ---
 
-## 2. Data assumptions
+## 1. Vision
 
-* Source: FiveThirtyEight Star Wars Survey (cleaned version via `load_clean_star_wars()`)
-* Rankings are ordinal: **1 = best, 6 = worst**
-* Missing rankings are dropped **per-episode**, never imputed
-* No weighting of respondents unless explicitly introduced later
+This project is designed to be a professional, portfolio-level data analysis demonstrating:
 
----
+- Structured thinking
+- Statistical rigor
+- Clean reproducible code
+- Professional reporting discipline
+- Automated artifact management
 
-## 3. Analytical principles (non-negotiable)
-
-### 3.1 Distribution first
-
-* Means alone are insufficient for ordinal rankings
-* Every summary must be visually or numerically tied to the **full rank distribution**
-
-### 3.2 Avoid misleading smoothness
-
-* Kernel density estimates (e.g. violins) must be justified
-* Discrete ranks should be shown with **exact frequencies** whenever possible
-
-### 3.3 Consistency checks
-
-* Visuals must not contradict numeric summaries
-* Sanity checks (e.g. percentage tables) are mandatory when introducing new plots
-
-### 3.4 No demographic mixing (until instructed)
-
-* Demographic slices are analyzed **one at a time**
-* Never combine gender, age, income, etc. in a single plot or table at this stage
+It is NOT a notebook experiment.
+It is a structured analytical product.
 
 ---
 
-## 4. Project structure
+## 2. Architecture
 
-### 4.1 Phase 1 — Data cleaning (completed)
+### Data Layer
+- Raw survey data
+- Cleaned dataset
+- Derived demographic variables
 
-* Clean rankings
-* Standardize episode labels
-* Drop missing ranks per episode
+### Analysis Layer
+- eda_base.py
+- eda_demographic_slices.py
+- Statistical testing modules
+- Cross-tabulation utilities
 
-### 4.2 Phase 2 — Exploratory Data Analysis (current)
+### Output Layer
+- Plots (PNG)
+- Tables (CSV)
+- Registry file
+- Build logs
+- phase_2_eda.md
 
-#### 2.1 Overall episode rankings
-
-* Average score (for intuition only)
-* Distribution-aware plots
-
-#### 2.2 Distribution diagnostics
-
-**Accepted plots:**
-
-* Stacked histograms (per episode)
-* Boxplots (with mean + median explicitly marked)
-
-**Discouraged / optional:**
-
-* Violin plots (only with explicit bandwidth control and explanation)
-
-#### 2.3 Demographic slices (**very important**)
-
-For **each demographic separately**:
-
-* Gender
-* Age group
-* Income
-* Education
-* Region
-
-Core question:
-
-> *How does this group rank episodes differently?*
-
-Rules:
-
-* One demographic per analysis block
-* Same plot types as overall analysis (for comparability)
-* Explicit comparison to overall distribution
+### Reporting Layer (Professional Standard B)
+- Automatic figure numbering
+- Automatic table numbering
+- CSV export for every table
+- Traceable artifact registry
+- Reproducible builds
 
 ---
 
-## 5. Visualization standards
+## 3. Analytical Structure
 
-### 5.1 Histograms (preferred)
+### Phase 1 — Data Cleaning
+- Column normalization
+- Missing handling
+- Demographic binning
 
-* One subplot per episode
-* Exact rank bins (1–6)
-* Color-coded by rank (best → worst gradient)
-* Annotated with:
+### Phase 2 — EDA
+2.1 Overall distributions  
+2.2 Core fandom metrics  
+2.3 Demographic slices (CRITICAL)
 
-  * Percentages
-  * Mean
-  * Median
-  * IQR (shaded)
+### Phase 3 — Statistical Validation
+- Hypothesis testing
+- Effect size estimation
+- Robustness checks
 
-### 5.2 Boxplots
-
-* Mean (triangle marker)
-* Median (distinct line)
-* No fliers unless explicitly justified
-* Legend required
-
-### 5.3 Stacked bars
-
-* Used sparingly
-* Must include percentage labels
-* Only acceptable when exact frequency comparison is the goal
+### Phase 4 — Interpretation
+- Narrative insights
+- Business framing
+- Portfolio positioning
 
 ---
 
-## 6. Reporting rules
+## 4. Output Quality Standard
 
-* Each figure gets **1–2 analytical bullets**
-* No descriptive filler (e.g. “This chart shows…”)
-* Observations must be:
+Every section must include:
 
-  * Data-driven
-  * Precise (mention ranks, spread, concentration)
-  * Consistent with numeric summaries
+- Numbers
+- Percentages
+- Sample sizes
+- Statistical validation
+- Interpretation
+- Clear references to figures/tables
 
----
-
-## 7. What "done" means (Phase 2)
-
-Phase 2 is complete when:
-
-* Overall ranking distributions are fully analyzed
-* Each demographic slice has:
-
-  * Comparable plots
-  * Clear deviation or confirmation of overall trends
-* No plot contradicts tabulated percentages or summary statistics
-
----
-
-## 8. Explicit exclusions (for now)
-
-* Predictive modeling
-* Hypothesis testing / p-values
-* Multivariate demographic interactions
-* Recommendation systems
-
-These may appear in later phases, but **not during Phase 2**.
-
----
-
-## 9. Style & tone constraints
-
-* Analytical, not promotional
-* No unjustified praise or narrative dramatization
-* Clarity > cleverness
-
----
-
-*This document is the authoritative reference for the project. Any new analysis, plot, or report must conform to it unless explicitly revised.*
+No decorative analysis.
+No plot-only commentary.
+Every claim must be numerically grounded.

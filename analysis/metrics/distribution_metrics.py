@@ -176,9 +176,6 @@ def build_all_rank_distribution_tables(
     slice_config: dict[str, dict[str, str]],
 ) -> dict[str, pd.DataFrame]:
 
-    output_dir = PHASE1_TABLES_DIR
-    output_dir.mkdir(parents=True, exist_ok=True)
-
     tables = {}
 
     for demographic_column in slice_config.keys():
@@ -189,9 +186,6 @@ def build_all_rank_distribution_tables(
             rank_column=rank_column,
             slice_config=slice_config,
         )
-
-        file_path = output_dir / f"rank_distribution_{demographic_column}.csv"
-        tables[demographic_column].to_csv(file_path)
 
     return tables
 

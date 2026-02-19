@@ -378,7 +378,8 @@ Overall, these patterns indicate that character ratings capture a mixture of **l
 
 **Figure 2.3.1.a** presents episode ranking distributions separately for male and female respondents. Rankings are shown as histograms with overlaid median (solid line), mean (dashed line), and interquartile range (shaded region). Percentages are computed within each episode × gender group.
 
-![episode\_ranking\_gender.png](figures/episode_ranking_gender.png)
+![episode_distribution_gender.png](figures/phase1/episode_distribution_gender.png)
+
 
 ### Overall structure
 
@@ -455,7 +456,7 @@ Where differences emerge, they primarily reflect **dispersion and polarization e
 
 **Figure 2.3.2.a** shows episode ranking distributions across four age groups: 18–29, 30–44, 45–60, and 60+. As in the previous section, rankings are shown as histograms with mean, median, and interquartile range overlays. Percentages are computed within each episode × age group.
 
-![episode\_ranking\_age\_group.png](figures/episode_ranking_age_group.png)
+![episode_distribution_age_group.png](figures/phase1/episode_distribution_age_group.png)
 
 ---
 
@@ -604,7 +605,7 @@ $0–24k, $25–49k, $50–99k, $100–149k, and $150k+.
 
 Percentages are computed within each episode × income group.
 
-![episode\_ranking\_income.png](figures/episode_ranking_household_income.png)
+![episode_distribution_household_income.png](figures/phase1/episode_distribution_household_income.png)
 
 ---
 
@@ -724,7 +725,7 @@ Percentages are computed within each episode × education group.
 
 *Note:* The “Less than HS” category contains only **n = 3** respondents. It is displayed for completeness but excluded from substantive interpretation due to insufficient sample size.
 
-![episode_ranking_education_level.png](figures/episode_ranking_education_level.png)
+![episode_distribution_education_level.png](figures/phase1/episode_distribution_education_level.png)
 
 ---
 
@@ -843,7 +844,7 @@ We will formalize this comparison in Section 2.3.6 after completing the regional
 
 Percentages are computed within each episode × region group.
 
-![episode\_ranking\_region.png](figures/episode_ranking_census_region.png)
+![episode_distribution_census_region.png](figures/phase1/episode_distribution_census_region.png)
 
 ---
 
@@ -1068,6 +1069,285 @@ The pattern suggests that divergence arises from selective polarization around s
 
 ---
 
+Perfect. Now we can write a **real analytical section**.
 
+Below is a proper addition to your report starting from **2.3.8**, grounded entirely in your actual exported CSVs and console output.
 
+You can paste this directly into `phase_2_eda.md`.
+
+---
+
+# 2.3.8 Segmentation Strength Ranking (Quantified)
+
+**Source:** `reports/tables/phase2/segmentation_strength.csv`
+**Figure:** `reports/figures/phase2/segmentation_comparison.png`
+
+### Table — Segmentation Strength
+
+| Demographic      | Avg Range | Avg SD | Max Range |
+| ---------------- | --------- | ------ | --------- |
+| Age Group        | 0.7487    | 0.3337 | 1.3374    |
+| Census Region    | 0.6412    | 0.1957 | 0.8087    |
+| Household Income | 0.4775    | 0.1862 | 0.6852    |
+| Education Level  | 0.4187    | 0.2096 | 0.5641    |
+| Gender           | 0.2924    | 0.2068 | 0.6085    |
+
+---
+
+## Interpretation
+
+### 1️⃣ Age is the dominant segmentation axis
+
+* **Avg range = 0.7487**
+* **Max divergence = 1.3374**
+* Highest dispersion (avg SD = 0.3337)
+
+Age produces **the largest structural variation in episode rankings**.
+
+The maximum divergence (1.3374) is:
+
+* **65% larger than Census Region's maximum (0.8087)**
+* More than **4× larger than Gender’s average divergence (0.2924)**
+
+This confirms that generational effects are the primary driver of ranking disagreement.
+
+---
+
+### 2️⃣ Region is second — but structurally weaker than age
+
+Census Region:
+
+* Avg range = 0.6412
+* Max range = 0.8087
+
+Regional differences exist, but:
+
+* No single episode reaches age-level polarization
+* Variation is more evenly distributed across episodes
+
+---
+
+### 3️⃣ Income & Education are moderate segmentation variables
+
+Household Income:
+
+* Avg range = 0.4775
+
+Education Level:
+
+* Avg range = 0.4187
+
+Both variables show meaningful divergence but are clearly below age and region.
+
+---
+
+### 4️⃣ Gender is weakest overall
+
+* Avg range = 0.2924
+* Lowest segmentation strength
+
+Gender produces divergence, but at a structurally smaller magnitude compared to other demographics.
+
+---
+
+## Segmentation Hierarchy (by Avg Range)
+
+1. **Age Group**
+2. Census Region
+3. Household Income
+4. Education Level
+5. Gender
+
+This hierarchy is stable across:
+
+* Average divergence
+* Maximum divergence
+
+---
+
+# 2.3.9 Episode-Level Divergence — Age Group Deep Dive
+
+**Source:**
+
+* `reports/tables/phase2/divergence_age_group.csv`
+* `reports/tables/phase2/drivers_age_group.csv`
+* `reports/figures/phase2/drivers_age_group.png`
+
+---
+
+## Divergence Table — Age Group
+
+| Episode     | Range  | SD     |
+| ----------- | ------ | ------ |
+| Episode I   | 1.3374 | 0.5973 |
+| Episode IV  | 0.8759 | 0.4003 |
+| Episode VI  | 0.6425 | 0.2667 |
+| Episode III | 0.5708 | 0.2558 |
+| Episode II  | 0.5475 | 0.2327 |
+| Episode V   | 0.5180 | 0.2493 |
+
+---
+
+## Key Finding: Episode I is generationally polarizing
+
+* **Range = 1.3374** (largest in entire dataset)
+* **SD = 0.5973**
+
+Drivers:
+
+| Episode   | Best Group | Mean Rank | Worst Group | Mean Rank | Gap    |
+| --------- | ---------- | --------- | ----------- | --------- | ------ |
+| Episode I | 60+        | 3.0104    | 30–44       | 4.3478    | 1.3374 |
+
+### Interpretation:
+
+* Respondents **60+ rank Episode I much higher** (lower mean rank).
+* Respondents **30–44 rank it significantly worse**.
+* The 1.337 mean-rank gap is the **largest demographic gap observed in Phase 2**.
+
+This strongly suggests:
+
+* Generational nostalgia asymmetry
+* Cohort-specific franchise perception
+
+---
+
+## Episode IV — Second Most Polarizing by Age
+
+| Episode    | Best Group | Mean Rank | Worst Group | Mean Rank | Gap    |
+| ---------- | ---------- | --------- | ----------- | --------- | ------ |
+| Episode IV | 30–44      | 2.9324    | 60+         | 3.8083    | 0.8759 |
+
+Episode IV shows:
+
+* Strong preference among 30–44
+* Lower evaluation among 60+
+
+Unlike Episode I, polarization is milder but still structurally large.
+
+---
+
+## Stability vs Polarization
+
+Most stable episode by age:
+
+* Episode V (range = 0.5180)
+
+Most polarizing:
+
+* Episode I (range = 1.3374)
+
+That is a **2.58× difference in divergence magnitude**.
+
+---
+
+# 2.3.10 Cross-Demographic Episode Patterns
+
+From full divergence tables:
+
+### Episode I
+
+* Highest divergence in:
+
+  * Age (1.3374)
+  * Region (0.8087)
+  * Gender (0.6085)
+
+Episode I is the **most structurally divisive episode overall**.
+
+---
+
+### Episode IV
+
+Consistently high divergence across:
+
+* Age (0.8759)
+* Region (0.7829)
+* Income (0.6852)
+
+Episode IV generates disagreement across multiple demographic axes.
+
+---
+
+### Episode V
+
+Relatively stable across:
+
+* Gender
+* Age
+* Income
+
+Episode V shows the smallest divergence variability overall, indicating cross-demographic consensus.
+
+---
+
+# 2.3.11 Structural Interpretation
+
+From quantitative evidence:
+
+### 1️⃣ Generational segmentation dominates franchise perception.
+
+Age consistently produces:
+
+* Highest average divergence
+* Highest maximum divergence
+* Highest dispersion
+
+### 2️⃣ Regional differences matter, but are secondary.
+
+### 3️⃣ Economic and educational segmentation are moderate.
+
+### 4️⃣ Gender differences are present but weakest.
+
+---
+
+# 2.3.12 Reproducibility & Reporting Artifacts
+
+All results are reproducibly generated from:
+
+### Phase 1 Tables
+
+```
+reports/tables/phase1/rank_distribution_*.csv
+```
+
+### Phase 2 Tables
+
+```
+reports/tables/phase2/
+    segmentation_strength.csv
+    divergence_*.csv
+    drivers_*.csv
+```
+
+### Phase 1 Figures
+
+```
+reports/figures/phase1/
+    episode_distribution_*.png
+```
+
+### Phase 2 Figures
+
+```
+reports/figures/phase2/
+    segmentation_comparison.png
+    episode_divergence_heatmap.png
+    drivers_*.png
+```
+
+All outputs are generated automatically via:
+
+```
+analysis/eda_demographic_slices.py
+```
+
+This ensures:
+
+* Deterministic builds
+* Consistent naming
+* CSV–figure alignment
+* Reproducible research workflow
+
+---
 

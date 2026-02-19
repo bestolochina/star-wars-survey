@@ -2,8 +2,7 @@
 
 import pandas as pd
 from dataclasses import dataclass
-
-from src.paths import PHASE2_FIGURES_DIR
+from src.paths import PHASE2_FIGURES_DIR, PHASE2_TABLES_DIR
 from src.config import (
     EPISODE_RANK_COLUMNS,
     CHARACTER_RATING_COLUMNS,
@@ -72,6 +71,9 @@ def run_phase_2(df: pd.DataFrame) -> None:
     save_dir = PHASE2_FIGURES_DIR
     save_dir.mkdir(parents=True, exist_ok=True)
 
+    tables_dir = PHASE2_TABLES_DIR
+    tables_dir.mkdir(parents=True, exist_ok=True)
+
     # 1️⃣ Melt once
     phase2_data = build_phase2_data(df)
 
@@ -86,7 +88,7 @@ def run_phase_2(df: pd.DataFrame) -> None:
     )
 
     print("\n--- Segmentation Comparison ---")
-    print(comparison_table)
+    print(comparison_table.to_string())
 
     # 4️⃣ Episode divergence tables
     episode_tables = build_all_episode_divergence_tables_from_metrics(
@@ -96,7 +98,7 @@ def run_phase_2(df: pd.DataFrame) -> None:
     print("\n--- Episode Divergence Tables ---")
     for demo, table in episode_tables.items():
         print(f"\n[{demo}]")
-        print(table)
+        print(table.to_string())
 
     # 5️⃣ Episode drivers
     drivers = extract_all_episode_drivers(
@@ -107,7 +109,33 @@ def run_phase_2(df: pd.DataFrame) -> None:
     print("\n--- Episode Drivers ---")
     for demo, table in drivers.items():
         print(f"\n[{demo}]")
-        print(table)
+        print(table.to_string())
+
+    # ======================================================
+    # EXPORT TABLES
+    # ======================================================
+
+    print("\n--- Exporting Phase 2 Tables ---")
+
+    # 1️⃣ Segmentation comparison
+    comparison_table.to_csv(
+        tables_dir / "segmentation_strength.csv"
+    )
+
+    # 2️⃣ Divergence tables
+    for demo, table in episode_tables.items():
+        table.to_csv(
+            tables_dir / f"divergence_{demo}.csv"
+        )
+
+    # 3️⃣ Episode drivers
+    for demo, table in drivers.items():
+        table.to_csv(
+            tables_dir / f"drivers_{demo}.csv",
+            index=False,
+        )
+
+    print(f"Phase 2 tables saved to: {tables_dir}")
 
     # ======================================================
     # VISUALIZATION LAYER (SEGMENTATION ONLY)

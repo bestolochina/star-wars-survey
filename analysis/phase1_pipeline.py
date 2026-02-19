@@ -11,7 +11,7 @@ from analysis.metrics.distribution_metrics import (
 from analysis.visualization.rank_histograms import (
     plot_rank_histograms_single_slice_horizontal_grid,
 )
-from src.paths import FIGURES_DIR
+from src.paths import FIGURES_DIR, PHASE1_TABLES_DIR
 from src.config import (
     DEMOGRAPHICS_COLUMNS,
     EPISODE_RANK_COLUMNS,
@@ -49,7 +49,7 @@ def run_phase_1(df: pd.DataFrame) -> None:
     )
 
     print("\n--- Validation Summary ---")
-    print(validation["valid"].value_counts())
+    print(validation["valid"].value_counts().to_string())
 
     if not validation["valid"].all():
         raise ValueError("Rank percentage validation failed.")
@@ -62,10 +62,22 @@ def run_phase_1(df: pd.DataFrame) -> None:
         slice_config=DEMOGRAPHICS_COLUMNS,
     )
 
-    # (Optional) Print a preview
+    tables_dir = PHASE1_TABLES_DIR
+    tables_dir.mkdir(parents=True, exist_ok=True)
+
+    print("\n--- Exporting Phase 1 Tables ---")
+
+    for demo, table in distribution_tables.items():
+        table.to_csv(
+            tables_dir / f"rank_distribution_{demo}.csv"
+        )
+
+    print(f"Phase 1 tables saved to: {tables_dir}")
+
+    # Print tables
     for demo, table in distribution_tables.items():
         print(f"\n--- Distribution Table: {demo} ---")
-        print(table.head())
+        print(table.to_string())
 
     # 4️⃣ Generate histogram grids
     print("\n--- Generating Distribution Plots ---")
