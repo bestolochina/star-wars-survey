@@ -1,3 +1,3 @@
-episode,best_group,best_mean_rank,worst_group,worst_mean_rank,rank_gap
+variable,best_group,best_mean_value,worst_group,worst_mean_value,value_gap
 Episode I,Female,3.4292929292929295,Male,4.037825059101655,0.6085321298087254
 Episode IV,Male,2.9976359338061465,Female,3.544080604534005,0.5464446707278587

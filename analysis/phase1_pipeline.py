@@ -1,78 +1,109 @@
 # analysis/phase1_pipeline.py
 
+from __future__ import annotations
+
 import pandas as pd
 from typing import List, Literal
 
 from analysis.transforms.reshaping import melt_variable
 from analysis.metrics.distribution_metrics import (
-    validate_rank_percentage_sums,
-    build_all_rank_distribution_tables,
+    validate_ordinal_percentage_sums,
+    build_all_ordinal_distribution_tables,
 )
 from analysis.visualization.rank_histograms import (
     plot_rank_histograms_single_slice_horizontal_grid,
 )
-from src.paths import FIGURES_DIR, PHASE1_TABLES_DIR
-from src.config import (
-    DEMOGRAPHICS_COLUMNS,
-    EPISODE_RANK_COLUMNS,
-)
-
-
-DEMOGRAPHICS: List[str] = list(DEMOGRAPHICS_COLUMNS.keys())
+from src.paths import PHASE1_FIGURES_DIR, PHASE1_TABLES_DIR
+from src.config import DEMOGRAPHICS_COLUMNS
 
 
 # ==========================================================
-# MASTER PIPELINE
+# GENERIC DISTRIBUTION PIPELINE
 # ==========================================================
 
-def run_phase_1(df: pd.DataFrame) -> None:
+def run_distribution_phase(
+    df: pd.DataFrame,
+    *,
+    variable_columns: dict[str, str],
+    variable_name: str,
+    value_name: str,
+    better: Literal["low", "high"],
+    output_prefix: str,
+) -> None:
+    """
+    Generic distribution analysis pipeline.
 
-    print("\n=== PHASE 1: DISTRIBUTIONAL STRUCTURE ===")
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Clean survey dataframe.
 
-    save_dir = FIGURES_DIR / "phase1"
+    variable_columns : List[str]
+        Columns representing ranking/rating variables.
+
+    variable_name : str
+        Name for melted variable column (e.g. "episode", "character").
+
+    value_name : str
+        Name for value column (e.g. "rank", "rating").
+
+    better : Literal["low", "high"]
+        Indicates whether lower or higher values are better.
+
+    output_prefix : str
+        Used for naming output files (e.g. "episode", "character").
+    """
+
+    print(f"\n=== DISTRIBUTION PHASE: {variable_name.upper()} ===")
+
+    save_dir = PHASE1_TABLES_DIR / output_prefix
     save_dir.mkdir(parents=True, exist_ok=True)
 
-    # 1️⃣ Melt episode rankings
+    tables_dir = PHASE1_TABLES_DIR / output_prefix
+    tables_dir.mkdir(parents=True, exist_ok=True)
+
+    demographics: List[str] = list(DEMOGRAPHICS_COLUMNS.keys())
+
+    # 1️⃣ Melt variable
     df_long = melt_variable(
         df,
-        variable_columns=EPISODE_RANK_COLUMNS,
-        variable_name="episode",
-        value_name="rank",
+        variable_columns=variable_columns,
+        variable_name=variable_name,
+        value_name=value_name,
     )
 
-    # 2️⃣ Validate rank distributions
-    validation = validate_rank_percentage_sums(
+    # 2️⃣ Validate percentage sums
+    validation = validate_ordinal_percentage_sums(
         df_long,
-        demographic_columns=DEMOGRAPHICS,
-        episode_column="episode",
-        rank_column="rank",
+        demographic_columns=demographics,
+        episode_column=variable_name,
+        rank_column=value_name,
     )
 
     print("\n--- Validation Summary ---")
     print(validation["valid"].value_counts().to_string())
 
     if not validation["valid"].all():
-        raise ValueError("Rank percentage validation failed.")
+        raise ValueError(
+            f"{variable_name} percentage validation failed."
+        )
 
-    # 3️⃣ Build distribution tables (report-ready)
-    distribution_tables = build_all_rank_distribution_tables(
+    # 3️⃣ Build distribution tables
+    distribution_tables = build_all_ordinal_distribution_tables(
         df_long,
-        episode_column="episode",
-        rank_column="rank",
+        episode_column=variable_name,
+        rank_column=value_name,
         slice_config=DEMOGRAPHICS_COLUMNS,
     )
 
-    tables_dir = PHASE1_TABLES_DIR
-    tables_dir.mkdir(parents=True, exist_ok=True)
-
-    print("\n--- Exporting Phase 1 Tables ---")
+    print("\n--- Exporting Distribution Tables ---")
 
     for demo, table in distribution_tables.items():
         table.to_csv(
-            tables_dir / f"rank_distribution_{demo}.csv"
+            tables_dir / f"{output_prefix}_distribution_{demo}.csv"
         )
 
-    print(f"Phase 1 tables saved to: {tables_dir}")
+    print(f"Tables saved to: {tables_dir}")
 
     # Print tables
     for demo, table in distribution_tables.items():
@@ -82,16 +113,16 @@ def run_phase_1(df: pd.DataFrame) -> None:
     # 4️⃣ Generate histogram grids
     print("\n--- Generating Distribution Plots ---")
 
-    better: Literal["low", "high"] = "low"
+    for demo in demographics:
 
-    for demo in DEMOGRAPHICS:
-
-        save_path = save_dir / f"episode_distribution_{demo}.png"
+        save_path = (
+            save_dir / f"{output_prefix}_distribution_{demo}.png"
+        )
 
         plot_rank_histograms_single_slice_horizontal_grid(
             long_df=df_long,
-            variable_name="episode",
-            value_name="rank",
+            variable_name=variable_name,
+            value_name=value_name,
             slice_column=demo,
             slice_title=demo.replace("_", " ").title(),
             slice_config=DEMOGRAPHICS_COLUMNS,
@@ -99,5 +130,5 @@ def run_phase_1(df: pd.DataFrame) -> None:
             save_path=save_path,
         )
 
-    print(f"\nPhase 1 plots saved to: {save_dir}")
-    print("\nPhase 1 complete.\n")
+    print(f"\nPlots saved to: {save_dir}")
+    print(f"\nDistribution phase for {variable_name} complete.\n")

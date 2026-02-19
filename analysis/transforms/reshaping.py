@@ -1,5 +1,6 @@
-import pandas as pd
+# analysis/transforms/reshaping.py
 
+import pandas as pd
 def melt_variable(
     df: pd.DataFrame,
     *,

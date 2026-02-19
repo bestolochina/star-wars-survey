@@ -1,0 +1,3 @@
+variable,best_group,best_mean_value,worst_group,worst_mean_value,value_gap
+Anakin Skywalker,$0–24k,3.4831460674157304,$100–149k,3.9902912621359223,0.5071451947201919
+Jar-Jar Binks,$150k+,2.515151515151515,$25–49k,2.9767441860465116,0.46159267089499645

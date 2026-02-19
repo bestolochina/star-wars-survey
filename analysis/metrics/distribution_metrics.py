@@ -10,7 +10,7 @@ from src.paths import PHASE1_TABLES_DIR
 # LOW-LEVEL METRIC ENGINE
 # ==========================================================
 
-def compute_rank_percentage_distribution(
+def compute_ordinal_percentage_distribution(
     df: pd.DataFrame,
     *,
     demographic_column: str,
@@ -97,7 +97,7 @@ def compute_rank_percentage_distribution(
 #
 #     return combined
 
-def build_rank_distribution_table(
+def build_ordinal_distribution_table(
     df: pd.DataFrame,
     *,
     demographic_column: str,
@@ -168,7 +168,7 @@ def build_rank_distribution_table(
 
     return combined
 
-def build_all_rank_distribution_tables(
+def build_all_ordinal_distribution_tables(
     df: pd.DataFrame,
     *,
     episode_column: str,
@@ -179,7 +179,7 @@ def build_all_rank_distribution_tables(
     tables = {}
 
     for demographic_column in slice_config.keys():
-        tables[demographic_column] = build_rank_distribution_table(
+        tables[demographic_column] = build_ordinal_distribution_table(
             df,
             demographic_column=demographic_column,
             episode_column=episode_column,
@@ -194,7 +194,7 @@ def build_all_rank_distribution_tables(
 # VALIDATION UTILITY
 # ==========================================================
 
-def validate_rank_percentage_sums(
+def validate_ordinal_percentage_sums(
     df: pd.DataFrame,
     *,
     demographic_columns: List[str],
@@ -213,7 +213,7 @@ def validate_rank_percentage_sums(
 
     for demo in demographic_columns:
 
-        dist = compute_rank_percentage_distribution(
+        dist = compute_ordinal_percentage_distribution(
             df,
             demographic_column=demo,
             episode_column=episode_column,

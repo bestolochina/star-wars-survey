@@ -378,7 +378,7 @@ Overall, these patterns indicate that character ratings capture a mixture of **l
 
 **Figure 2.3.1.a** presents episode ranking distributions separately for male and female respondents. Rankings are shown as histograms with overlaid median (solid line), mean (dashed line), and interquartile range (shaded region). Percentages are computed within each episode × gender group.
 
-![episode_distribution_gender.png](figures/phase1/episode_distribution_gender.png)
+![episode_distribution_gender.png](figures/phase1/episode/episode_distribution_gender.png)
 
 
 ### Overall structure
@@ -456,7 +456,7 @@ Where differences emerge, they primarily reflect **dispersion and polarization e
 
 **Figure 2.3.2.a** shows episode ranking distributions across four age groups: 18–29, 30–44, 45–60, and 60+. As in the previous section, rankings are shown as histograms with mean, median, and interquartile range overlays. Percentages are computed within each episode × age group.
 
-![episode_distribution_age_group.png](figures/phase1/episode_distribution_age_group.png)
+![episode_distribution_age_group.png](figures/phase1/episode/episode_distribution_age_group.png)
 
 ---
 
@@ -605,7 +605,7 @@ $0–24k, $25–49k, $50–99k, $100–149k, and $150k+.
 
 Percentages are computed within each episode × income group.
 
-![episode_distribution_household_income.png](figures/phase1/episode_distribution_household_income.png)
+![episode_distribution_household_income.png](figures/phase1/episode/episode_distribution_household_income.png)
 
 ---
 
@@ -725,7 +725,7 @@ Percentages are computed within each episode × education group.
 
 *Note:* The “Less than HS” category contains only **n = 3** respondents. It is displayed for completeness but excluded from substantive interpretation due to insufficient sample size.
 
-![episode_distribution_education_level.png](figures/phase1/episode_distribution_education_level.png)
+![episode_distribution_education_level.png](figures/phase1/episode/episode_distribution_education_level.png)
 
 ---
 
@@ -844,7 +844,7 @@ We will formalize this comparison in Section 2.3.6 after completing the regional
 
 Percentages are computed within each episode × region group.
 
-![episode_distribution_census_region.png](figures/phase1/episode_distribution_census_region.png)
+![episode_distribution_census_region.png](figures/phase1/episode/episode_distribution_census_region.png)
 
 ---
 
@@ -1069,18 +1069,10 @@ The pattern suggests that divergence arises from selective polarization around s
 
 ---
 
-Perfect. Now we can write a **real analytical section**.
-
-Below is a proper addition to your report starting from **2.3.8**, grounded entirely in your actual exported CSVs and console output.
-
-You can paste this directly into `phase_2_eda.md`.
-
----
-
 # 2.3.8 Segmentation Strength Ranking (Quantified)
 
-**Source:** `reports/tables/phase2/segmentation_strength.csv`
-**Figure:** `reports/figures/phase2/segmentation_comparison.png`
+**Source:** `reports/tables/phase2/episode/segmentation_strength.csv`
+**Figure:** `reports/figures/phase2/episode/segmentation_comparison.png`
 
 ### Table — Segmentation Strength
 
@@ -1169,9 +1161,9 @@ This hierarchy is stable across:
 
 **Source:**
 
-* `reports/tables/phase2/divergence_age_group.csv`
-* `reports/tables/phase2/drivers_age_group.csv`
-* `reports/figures/phase2/drivers_age_group.png`
+* `reports/tables/phase2/episode/divergence_age_group.csv`
+* `reports/tables/phase2/episode/drivers_age_group.csv`
+* `reports/figures/phase2/episode/drivers_age_group.png`
 
 ---
 

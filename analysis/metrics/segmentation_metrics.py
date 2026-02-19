@@ -1,5 +1,7 @@
 # analysis/metrics/segmentation_metrics.py
 
+from __future__ import annotations
+
 import pandas as pd
 from typing import Any, Dict
 from src.config import MIN_GROUP_SIZE
@@ -13,16 +15,18 @@ def compute_segmentation_metrics(
     long_df: pd.DataFrame,
     *,
     demographic_column: str,
-    episode_column: str,
-    rank_column: str,
+    variable_column: str,
+    value_column: str,
     exclude_groups: list[str] | None = None,
 ) -> dict[str, Any]:
 
     df = long_df.copy()
 
+    # Optional exclusion (e.g. small or special categories)
     if exclude_groups is not None:
         df = df.loc[~df[demographic_column].isin(exclude_groups)]
 
+    # Enforce minimum group size
     group_sizes = (
         df.groupby(demographic_column, observed=True)
         .size()
@@ -31,38 +35,41 @@ def compute_segmentation_metrics(
     valid_groups = group_sizes[group_sizes >= MIN_GROUP_SIZE].index
     df = df[df[demographic_column].isin(valid_groups)]
 
-    # Mean rank per episode × demographic group
-    mean_rank = (
-        df.groupby([episode_column, demographic_column], observed=True)[rank_column]
+    # Mean value per variable × demographic group
+    mean_matrix = (
+        df.groupby([variable_column, demographic_column], observed=True)[value_column]
         .mean()
         .unstack(demographic_column)
         .sort_index()
     )
 
     # Divergence metrics
-    range_per_episode = mean_rank.max(axis=1) - mean_rank.min(axis=1)
-    sd_per_episode = mean_rank.std(axis=1)
+    range_per_variable = mean_matrix.max(axis=1) - mean_matrix.min(axis=1)
+    sd_per_variable = mean_matrix.std(axis=1)
 
     summary = {
-        "avg_range": range_per_episode.mean(),
-        "avg_sd": sd_per_episode.mean(),
-        "max_range": range_per_episode.max(),
+        "avg_range": range_per_variable.mean(),
+        "avg_sd": sd_per_variable.mean(),
+        "max_range": range_per_variable.max(),
     }
 
     return {
-        "mean_rank_matrix": mean_rank,
-        "range_per_episode": range_per_episode,
-        "sd_per_episode": sd_per_episode,
+        "mean_matrix": mean_matrix,
+        "range_per_variable": range_per_variable,
+        "sd_per_variable": sd_per_variable,
         "summary": summary,
     }
 
 
 # ==========================================================
-# COMPUTE ALL DEMOGRAPHIC SEGMENTATION METRICS ONCE
+# COMPUTE ALL DEMOGRAPHIC SEGMENTATION METRICS
 # ==========================================================
 
 def compute_all_segmentation_metrics(
-    episode_long: pd.DataFrame,
+    long_df: pd.DataFrame,
+    *,
+    variable_column: str,
+    value_column: str,
 ) -> Dict[str, dict[str, Any]]:
 
     demographics = {
@@ -73,17 +80,17 @@ def compute_all_segmentation_metrics(
         "census_region": "census_region",
     }
 
-    results = {}
+    results: Dict[str, dict[str, Any]] = {}
 
     for key, column in demographics.items():
 
         exclude = ["Less than HS"] if column == "education_level" else None
 
         metrics = compute_segmentation_metrics(
-            episode_long,
+            long_df,
             demographic_column=column,
-            episode_column="episode",
-            rank_column="rank",
+            variable_column=variable_column,
+            value_column=value_column,
             exclude_groups=exclude,
         )
 
@@ -120,46 +127,46 @@ def build_comparison_table_from_metrics(
 
 
 # ==========================================================
-# EPISODE-LEVEL DIVERGENCE TABLES
+# VARIABLE-LEVEL DIVERGENCE TABLES
 # ==========================================================
 
-def build_episode_divergence_table(
+def build_variable_divergence_table(
     metrics: dict[str, Any],
 ) -> pd.DataFrame:
 
-    episode_table = pd.DataFrame({
-        "range": metrics["range_per_episode"],
-        "sd": metrics["sd_per_episode"],
+    variable_table = pd.DataFrame({
+        "range": metrics["range_per_variable"],
+        "sd": metrics["sd_per_variable"],
     })
 
-    return episode_table.sort_values("range", ascending=False)
+    return variable_table.sort_values("range", ascending=False)
 
 
-def build_all_episode_divergence_tables_from_metrics(
+def build_all_variable_divergence_tables_from_metrics(
     metrics_store: Dict[str, dict[str, Any]],
 ) -> dict[str, pd.DataFrame]:
 
     return {
-        key: build_episode_divergence_table(metrics)
+        key: build_variable_divergence_table(metrics)
         for key, metrics in metrics_store.items()
     }
 
 
 # ==========================================================
-# EPISODE DRIVER EXTRACTION
+# DRIVER EXTRACTION
 # ==========================================================
 
-def extract_episode_drivers(
+def extract_variable_drivers(
     metrics: dict[str, Any],
     *,
     top_n: int = 2,
 ) -> pd.DataFrame:
 
-    mean_rank = metrics["mean_rank_matrix"]
-    range_per_episode = metrics["range_per_episode"]
+    mean_matrix = metrics["mean_matrix"]
+    range_per_variable = metrics["range_per_variable"]
 
-    top_episodes = (
-        range_per_episode
+    top_variables = (
+        range_per_variable
         .sort_values(ascending=False)
         .head(top_n)
         .index
@@ -167,9 +174,9 @@ def extract_episode_drivers(
 
     results = []
 
-    for episode in top_episodes:
+    for variable in top_variables:
 
-        row = mean_rank.loc[episode]
+        row = mean_matrix.loc[variable]
 
         best_group = row.idxmin()
         worst_group = row.idxmax()
@@ -178,24 +185,24 @@ def extract_episode_drivers(
         worst_value = row.max()
 
         results.append({
-            "episode": episode,
+            "variable": variable,
             "best_group": best_group,
-            "best_mean_rank": best_value,
+            "best_mean_value": best_value,
             "worst_group": worst_group,
-            "worst_mean_rank": worst_value,
-            "rank_gap": worst_value - best_value,
+            "worst_mean_value": worst_value,
+            "value_gap": worst_value - best_value,
         })
 
     return pd.DataFrame(results)
 
 
-def extract_all_episode_drivers(
+def extract_all_variable_drivers(
     metrics_store: Dict[str, dict[str, Any]],
     *,
     top_n: int = 2,
 ) -> dict[str, pd.DataFrame]:
 
     return {
-        key: extract_episode_drivers(metrics, top_n=top_n)
+        key: extract_variable_drivers(metrics, top_n=top_n)
         for key, metrics in metrics_store.items()
     }
