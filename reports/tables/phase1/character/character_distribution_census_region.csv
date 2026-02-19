@@ -1,0 +1,127 @@
+census_region,character,1,2,3,4,5,n
+East North Central,Anakin Skywalker,3.3,11.6,17.4,36.4,31.4,121
+East North Central,Boba Fett,8.3,13.0,35.2,21.3,22.2,108
+East North Central,C-3P0,0.0,2.3,8.4,28.2,61.1,131
+East North Central,Darth Vader,20.6,9.2,9.9,17.6,42.7,131
+East North Central,Emperor Palpatine,18.8,11.9,34.7,16.8,17.8,101
+East North Central,Han Solo,0.0,0.0,4.5,19.7,75.8,132
+East North Central,Jar-Jar Binks,29.6,13.0,23.5,18.3,15.7,115
+East North Central,Lando Calrissian,1.9,9.4,30.2,34.0,24.5,106
+East North Central,Luke Skywalker,0.0,0.0,3.8,27.1,69.2,133
+East North Central,Obi Wan Kenobi,0.0,0.0,3.1,20.5,76.4,127
+East North Central,Padme Amidala,5.8,9.7,35.9,26.2,22.3,103
+East North Central,Princess Leia Organa,0.8,0.0,3.8,25.8,69.7,132
+East North Central,R2-D2,0.0,0.0,6.8,24.2,68.9,132
+East North Central,Yoda,0.0,1.5,6.8,12.9,78.8,132
+Pacific,Anakin Skywalker,3.1,10.7,18.3,34.4,33.6,131
+Pacific,Boba Fett,4.4,13.3,41.6,21.2,19.5,113
+Pacific,C-3P0,1.4,5.6,12.0,28.2,52.8,142
+Pacific,Darth Vader,13.5,12.1,14.9,21.3,38.3,141
+Pacific,Emperor Palpatine,16.4,8.2,43.6,20.9,10.9,110
+Pacific,Han Solo,0.0,0.7,10.6,16.3,72.3,141
+Pacific,Jar-Jar Binks,28.7,14.8,25.4,13.1,18.0,122
+Pacific,Lando Calrissian,0.9,8.0,40.2,32.1,18.8,112
+Pacific,Luke Skywalker,0.0,3.5,7.7,28.7,60.1,143
+Pacific,Obi Wan Kenobi,0.0,1.4,7.1,22.0,69.5,141
+Pacific,Padme Amidala,4.5,8.2,34.5,28.2,24.5,110
+Pacific,Princess Leia Organa,0.0,2.8,10.6,27.5,59.2,142
+Pacific,R2-D2,0.7,0.7,7.7,24.6,66.2,142
+Pacific,Yoda,0.7,0.0,6.4,22.0,70.9,141
+South Atlantic,Anakin Skywalker,8.3,6.6,19.0,34.7,31.4,121
+South Atlantic,Boba Fett,5.6,9.3,38.9,28.7,17.6,108
+South Atlantic,C-3P0,0.0,2.3,8.6,28.9,60.2,128
+South Atlantic,Darth Vader,17.4,10.6,7.6,28.0,36.4,132
+South Atlantic,Emperor Palpatine,15.9,11.2,25.2,22.4,25.2,107
+South Atlantic,Han Solo,0.0,0.8,3.8,19.2,76.2,130
+South Atlantic,Jar-Jar Binks,30.4,8.9,26.8,19.6,14.3,112
+South Atlantic,Lando Calrissian,0.0,7.7,36.5,33.7,22.1,104
+South Atlantic,Luke Skywalker,0.8,0.8,2.3,25.0,71.2,132
+South Atlantic,Obi Wan Kenobi,0.8,0.0,7.0,21.1,71.1,128
+South Atlantic,Padme Amidala,5.9,11.8,31.4,29.4,21.6,102
+South Atlantic,Princess Leia Organa,0.8,0.8,3.8,23.7,71.0,131
+South Atlantic,R2-D2,0.8,1.5,5.3,22.9,69.5,131
+South Atlantic,Yoda,1.6,0.0,5.5,25.0,68.0,128
+Middle Atlantic,Anakin Skywalker,5.8,12.8,14.0,32.6,34.9,86
+Middle Atlantic,Boba Fett,11.8,13.2,36.8,19.7,18.4,76
+Middle Atlantic,C-3P0,3.3,2.2,11.0,25.3,58.2,91
+Middle Atlantic,Darth Vader,21.5,11.8,9.7,16.1,40.9,93
+Middle Atlantic,Emperor Palpatine,26.2,5.0,27.5,25.0,16.2,80
+Middle Atlantic,Han Solo,1.1,1.1,2.2,23.1,72.5,91
+Middle Atlantic,Jar-Jar Binks,35.7,15.5,13.1,20.2,15.5,84
+Middle Atlantic,Lando Calrissian,2.6,9.0,30.8,42.3,15.4,78
+Middle Atlantic,Luke Skywalker,1.1,2.2,4.3,30.1,62.4,93
+Middle Atlantic,Obi Wan Kenobi,2.2,1.1,5.5,17.6,73.6,91
+Middle Atlantic,Padme Amidala,11.5,7.7,21.8,29.5,29.5,78
+Middle Atlantic,Princess Leia Organa,2.2,1.1,5.4,32.3,59.1,93
+Middle Atlantic,R2-D2,2.2,3.3,7.6,17.4,69.6,92
+Middle Atlantic,Yoda,2.2,1.1,3.3,17.4,76.1,92
+West South Central,Anakin Skywalker,1.4,11.3,14.1,39.4,33.8,71
+West South Central,Boba Fett,3.0,22.4,43.3,13.4,17.9,67
+West South Central,C-3P0,0.0,2.7,8.1,33.8,55.4,74
+West South Central,Darth Vader,14.9,14.9,8.1,20.3,41.9,74
+West South Central,Emperor Palpatine,12.9,14.5,35.5,27.4,9.7,62
+West South Central,Han Solo,0.0,1.4,4.2,19.4,75.0,72
+West South Central,Jar-Jar Binks,21.2,16.7,21.2,25.8,15.2,66
+West South Central,Lando Calrissian,0.0,9.5,42.9,28.6,19.0,63
+West South Central,Luke Skywalker,0.0,2.7,2.7,21.3,73.3,75
+West South Central,Obi Wan Kenobi,1.3,2.7,2.7,14.7,78.7,75
+West South Central,Padme Amidala,1.7,6.8,35.6,33.9,22.0,59
+West South Central,Princess Leia Organa,0.0,1.3,2.7,32.0,64.0,75
+West South Central,R2-D2,0.0,0.0,8.0,14.7,77.3,75
+West South Central,Yoda,1.3,2.7,9.3,9.3,77.3,75
+West North Central,Anakin Skywalker,5.6,11.1,19.4,33.3,30.6,72
+West North Central,Boba Fett,3.4,16.9,30.5,22.0,27.1,59
+West North Central,C-3P0,1.4,2.7,5.4,23.0,67.6,74
+West North Central,Darth Vader,23.0,14.9,2.7,23.0,36.5,74
+West North Central,Emperor Palpatine,15.0,15.0,28.3,26.7,15.0,60
+West North Central,Han Solo,0.0,2.7,1.4,18.9,77.0,74
+West North Central,Jar-Jar Binks,29.5,11.5,16.4,16.4,26.2,61
+West North Central,Lando Calrissian,3.4,13.6,33.9,25.4,23.7,59
+West North Central,Luke Skywalker,1.4,1.4,4.1,23.0,70.3,74
+West North Central,Obi Wan Kenobi,1.4,1.4,2.8,19.4,75.0,72
+West North Central,Padme Amidala,3.6,10.9,21.8,25.5,38.2,55
+West North Central,Princess Leia Organa,2.6,1.3,5.3,21.1,69.7,76
+West North Central,R2-D2,2.7,1.4,5.4,20.3,70.3,74
+West North Central,Yoda,1.4,0.0,6.8,20.5,71.2,73
+Mountain,Anakin Skywalker,9.2,15.4,12.3,32.3,30.8,65
+Mountain,Boba Fett,7.3,14.5,32.7,27.3,18.2,55
+Mountain,C-3P0,1.5,1.5,13.8,29.2,53.8,65
+Mountain,Darth Vader,21.5,18.5,10.8,18.5,30.8,65
+Mountain,Emperor Palpatine,31.4,7.8,35.3,13.7,11.8,51
+Mountain,Han Solo,0.0,0.0,6.1,13.6,80.3,66
+Mountain,Jar-Jar Binks,29.1,20.0,29.1,14.5,7.3,55
+Mountain,Lando Calrissian,1.8,9.1,36.4,38.2,14.5,55
+Mountain,Luke Skywalker,0.0,0.0,4.5,32.8,62.7,67
+Mountain,Obi Wan Kenobi,0.0,1.5,4.5,22.7,71.2,66
+Mountain,Padme Amidala,3.7,7.4,40.7,27.8,20.4,54
+Mountain,Princess Leia Organa,0.0,1.5,6.0,22.4,70.1,67
+Mountain,R2-D2,0.0,1.5,6.1,25.8,66.7,66
+Mountain,Yoda,0.0,3.0,3.0,17.9,76.1,67
+New England,Anakin Skywalker,3.5,10.5,26.3,38.6,21.1,57
+New England,Boba Fett,9.8,17.6,25.5,23.5,23.5,51
+New England,C-3P0,0.0,1.7,13.8,27.6,56.9,58
+New England,Darth Vader,17.2,12.1,15.5,24.1,31.0,58
+New England,Emperor Palpatine,22.9,12.5,25.0,18.8,20.8,48
+New England,Han Solo,0.0,1.7,6.9,15.5,75.9,58
+New England,Jar-Jar Binks,27.8,16.7,31.5,18.5,5.6,54
+New England,Lando Calrissian,0.0,9.8,21.6,39.2,29.4,51
+New England,Luke Skywalker,0.0,1.7,6.9,24.1,67.2,58
+New England,Obi Wan Kenobi,3.4,0.0,5.2,19.0,72.4,58
+New England,Padme Amidala,4.3,10.6,36.2,23.4,25.5,47
+New England,Princess Leia Organa,0.0,3.4,8.6,20.7,67.2,58
+New England,R2-D2,0.0,1.7,10.3,25.9,62.1,58
+New England,Yoda,1.7,1.7,3.4,12.1,81.0,58
+East South Central,Anakin Skywalker,10.0,6.7,16.7,33.3,33.3,30
+East South Central,Boba Fett,11.1,14.8,29.6,25.9,18.5,27
+East South Central,C-3P0,0.0,0.0,6.5,25.8,67.7,31
+East South Central,Darth Vader,22.6,9.7,12.9,16.1,38.7,31
+East South Central,Emperor Palpatine,16.7,8.3,29.2,16.7,29.2,24
+East South Central,Han Solo,0.0,0.0,6.2,15.6,78.1,32
+East South Central,Jar-Jar Binks,25.9,14.8,18.5,18.5,22.2,27
+East South Central,Lando Calrissian,0.0,14.8,40.7,18.5,25.9,27
+East South Central,Luke Skywalker,0.0,0.0,6.2,12.5,81.2,32
+East South Central,Obi Wan Kenobi,0.0,0.0,9.4,9.4,81.2,32
+East South Central,Padme Amidala,0.0,4.0,24.0,32.0,40.0,25
+East South Central,Princess Leia Organa,0.0,0.0,3.2,12.9,83.9,31
+East South Central,R2-D2,0.0,0.0,6.2,18.8,75.0,32
+East South Central,Yoda,0.0,0.0,9.4,12.5,78.1,32

@@ -33,8 +33,8 @@ def plot_segmentation_comparison(
         ax=ax,
     )
 
-    ax.set_title("Average Episode Rank Divergence by Demographic")
-    ax.set_ylabel("Average Rank Range")
+    ax.set_title("Average Divergence by Demographic")
+    ax.set_ylabel("Average Value Range")
     ax.set_xlabel("Demographic")
 
     plt.xticks(rotation=45, ha="right")
@@ -46,10 +46,10 @@ def plot_segmentation_comparison(
 
 
 # ==========================================================
-# 2️⃣ EPISODE DIVERGENCE HEATMAP
+# 2️⃣ VARIABLE DIVERGENCE HEATMAP
 # ==========================================================
 
-def plot_episode_divergence_heatmap(
+def plot_variable_divergence_heatmap(
     metrics_store: Dict[str, dict],
     *,
     save_dir: str,
@@ -57,18 +57,14 @@ def plot_episode_divergence_heatmap(
 
     _ensure_dir(save_dir)
 
-    # Build aligned matrix
     series_list = []
 
     for demo, metrics in metrics_store.items():
-        s = metrics["range_per_episode"].copy()
+        s = metrics["range_per_variable"].copy()
         s.name = demo
         series_list.append(s)
 
-    # Align all series by index (episodes)
     heatmap_df = pd.concat(series_list, axis=1)
-
-    # Force numeric dtype
     heatmap_df = heatmap_df.astype(float)
 
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -84,13 +80,13 @@ def plot_episode_divergence_heatmap(
     ax.set_yticks(range(len(heatmap_df.index)))
     ax.set_yticklabels(heatmap_df.index)
 
-    ax.set_title("Episode Divergence Heatmap (Rank Range)")
+    ax.set_title("Variable Divergence Heatmap (Range)")
 
     fig.colorbar(im, ax=ax)
 
     plt.tight_layout()
 
-    filepath = os.path.join(save_dir, "episode_divergence_heatmap.png")
+    filepath = os.path.join(save_dir, "variable_divergence_heatmap.png")
     plt.savefig(filepath, dpi=300)
     plt.close()
 
@@ -99,7 +95,7 @@ def plot_episode_divergence_heatmap(
 # 3️⃣ DRIVER VISUALIZATION
 # ==========================================================
 
-def plot_episode_drivers(
+def plot_variable_drivers(
     drivers: Dict[str, pd.DataFrame],
     *,
     save_dir: str,
@@ -115,13 +111,13 @@ def plot_episode_drivers(
         fig, ax = plt.subplots(figsize=(8, 4))
 
         ax.barh(
-            df["episode"],
-            df["rank_gap"],
+            df["variable"],
+            df["value_gap"],
         )
 
-        ax.set_title(f"Top Episode Drivers – {demo}")
-        ax.set_xlabel("Rank Gap (Worst - Best)")
-        ax.set_ylabel("Episode")
+        ax.set_title(f"Top Drivers – {demo}")
+        ax.set_xlabel("Value Gap (Worst - Best)")
+        ax.set_ylabel("Variable")
 
         plt.tight_layout()
 

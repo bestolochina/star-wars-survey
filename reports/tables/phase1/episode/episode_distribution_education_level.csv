@@ -1,0 +1,31 @@
+education_level,episode,1,2,3,4,5,6,n
+Less than HS,Episode I,0.0,0.0,0.0,33.3,33.3,33.3,3
+Less than HS,Episode II,0.0,0.0,0.0,0.0,66.7,33.3,3
+Less than HS,Episode III,0.0,33.3,33.3,0.0,0.0,33.3,3
+Less than HS,Episode IV,0.0,33.3,66.7,0.0,0.0,0.0,3
+Less than HS,Episode V,100.0,0.0,0.0,0.0,0.0,0.0,3
+Less than HS,Episode VI,0.0,33.3,0.0,66.7,0.0,0.0,3
+High school,Episode I,12.7,12.7,15.5,23.9,11.3,23.9,71
+High school,Episode II,8.5,18.3,12.7,21.1,29.6,9.9,71
+High school,Episode III,5.6,7.0,18.3,25.4,25.4,18.3,71
+High school,Episode IV,22.5,8.5,29.6,18.3,7.0,14.1,71
+High school,Episode V,25.4,31.0,9.9,5.6,21.1,7.0,71
+High school,Episode VI,25.4,22.5,14.1,5.6,5.6,26.8,71
+Some college / Associate,Episode I,18.1,10.6,17.3,22.8,14.2,16.9,254
+Some college / Associate,Episode II,4.7,18.1,13.4,23.2,28.7,11.8,254
+Some college / Associate,Episode III,6.7,6.3,22.0,20.5,24.0,20.5,254
+Some college / Associate,Episode IV,17.3,18.5,11.8,20.1,13.4,18.9,254
+Some college / Associate,Episode V,33.9,22.0,12.2,5.1,17.3,9.4,254
+Some college / Associate,Episode VI,19.3,24.4,23.2,8.3,2.4,22.4,254
+Bachelor’s,Episode I,13.0,7.3,14.1,35.1,10.7,19.8,262
+Bachelor’s,Episode II,3.4,9.5,11.5,19.5,42.4,13.7,262
+Bachelor’s,Episode III,2.3,5.4,15.7,22.6,22.6,31.4,261
+Bachelor’s,Episode IV,29.0,15.3,16.0,12.6,9.2,17.9,262
+Bachelor’s,Episode V,37.8,29.0,14.9,4.2,11.1,3.1,262
+Bachelor’s,Episode VI,14.5,33.6,27.9,6.1,4.2,13.7,262
+Graduate,Episode I,14.7,7.1,15.6,28.9,11.6,22.2,225
+Graduate,Episode II,1.3,11.9,11.9,24.3,38.5,11.9,226
+Graduate,Episode III,4.0,3.1,15.5,22.1,27.0,28.3,226
+Graduate,Episode IV,28.8,17.7,11.5,12.4,6.2,23.5,226
+Graduate,Episode V,34.1,33.6,12.8,6.6,11.1,1.8,226
+Graduate,Episode VI,17.3,26.5,32.7,5.8,5.8,11.9,226
