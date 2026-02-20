@@ -56,7 +56,7 @@ def run_distribution_phase(
 
     print(f"\n=== DISTRIBUTION PHASE: {variable_name.upper()} ===")
 
-    save_dir = PHASE1_TABLES_DIR / output_prefix
+    save_dir = PHASE1_FIGURES_DIR / output_prefix
     save_dir.mkdir(parents=True, exist_ok=True)
 
     tables_dir = PHASE1_TABLES_DIR / output_prefix
