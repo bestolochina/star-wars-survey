@@ -14,7 +14,7 @@ def compute_ordinal_percentage_distribution(
     df: pd.DataFrame,
     *,
     demographic_column: str,
-    episode_column: str,
+    variable_column: str,
     rank_column: str,
 ) -> pd.DataFrame:
     """
@@ -26,13 +26,13 @@ def compute_ordinal_percentage_distribution(
     """
 
     grouped = (
-        df.groupby([demographic_column, episode_column, rank_column], observed=True)
+        df.groupby([demographic_column, variable_column, rank_column], observed=True)
         .size()
         .reset_index(name="count")
     )
 
     grouped["percentage"] = (
-        grouped.groupby([demographic_column, episode_column], observed=True)["count"]
+        grouped.groupby([demographic_column, variable_column], observed=True)["count"]
         .transform(lambda x: x / x.sum())
     )
 
@@ -101,7 +101,7 @@ def build_ordinal_distribution_table(
     df: pd.DataFrame,
     *,
     demographic_column: str,
-    episode_column: str,
+    variable_column: str,
     rank_column: str,
     slice_config: Dict[str, Dict[str, str]],
     as_percentage: bool = True,
@@ -140,12 +140,12 @@ def build_ordinal_distribution_table(
 
         # N per episode
         n_counts = (
-            slice_df.groupby(episode_column, observed=True)[rank_column]
+            slice_df.groupby(variable_column, observed=True)[rank_column]
             .count()
         )
 
         freq = pd.crosstab(
-            slice_df[episode_column],
+            slice_df[variable_column],
             slice_df[rank_column],
             normalize="index",
         )
@@ -163,7 +163,7 @@ def build_ordinal_distribution_table(
 
     combined = pd.concat(
         tables,
-        names=[demographic_column, episode_column],
+        names=[demographic_column, variable_column],
     )
 
     return combined
@@ -171,7 +171,7 @@ def build_ordinal_distribution_table(
 def build_all_ordinal_distribution_tables(
     df: pd.DataFrame,
     *,
-    episode_column: str,
+    variable_column: str,
     rank_column: str,
     slice_config: dict[str, dict[str, str]],
 ) -> dict[str, pd.DataFrame]:
@@ -182,7 +182,7 @@ def build_all_ordinal_distribution_tables(
         tables[demographic_column] = build_ordinal_distribution_table(
             df,
             demographic_column=demographic_column,
-            episode_column=episode_column,
+            variable_column=variable_column,
             rank_column=rank_column,
             slice_config=slice_config,
         )
@@ -198,7 +198,7 @@ def validate_ordinal_percentage_sums(
     df: pd.DataFrame,
     *,
     demographic_columns: List[str],
-    episode_column: str,
+    variable_column: str,
     rank_column: str,
     tolerance: float = 1e-6,
 ) -> pd.DataFrame:
@@ -216,12 +216,12 @@ def validate_ordinal_percentage_sums(
         dist = compute_ordinal_percentage_distribution(
             df,
             demographic_column=demo,
-            episode_column=episode_column,
+            variable_column=variable_column,
             rank_column=rank_column,
         )
 
         check = (
-            dist.groupby([demo, episode_column], observed=True)["percentage"]
+            dist.groupby([demo, variable_column], observed=True)["percentage"]
             .sum()
             .reset_index(name="sum_percentage")
         )

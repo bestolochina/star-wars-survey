@@ -14,8 +14,7 @@ from analysis.visualization.rank_histograms import (
     plot_rank_histograms_single_slice_horizontal_grid,
 )
 from src.paths import PHASE1_FIGURES_DIR, PHASE1_TABLES_DIR
-from src.config import DEMOGRAPHICS_COLUMNS
-
+from src.config import DEMOGRAPHICS_COLUMNS, EPISODE_RANK_COLUMNS, CHARACTER_RATING_COLUMNS
 
 
 # ==========================================================
@@ -39,7 +38,7 @@ def run_distribution_phase(
     df : pd.DataFrame
         Clean survey dataframe.
 
-    variable_columns : List[str]
+    variable_columns : dict[str, str]
         Columns representing ranking/rating variables.
 
     variable_name : str
@@ -77,7 +76,7 @@ def run_distribution_phase(
     validation = validate_ordinal_percentage_sums(
         df_long,
         demographic_columns=demographics,
-        episode_column=variable_name,
+        variable_column=variable_name,
         rank_column=value_name,
     )
 
@@ -92,7 +91,7 @@ def run_distribution_phase(
     # 3️⃣ Build distribution tables
     distribution_tables = build_all_ordinal_distribution_tables(
         df_long,
-        episode_column=variable_name,
+        variable_column=variable_name,
         rank_column=value_name,
         slice_config=DEMOGRAPHICS_COLUMNS,
     )
@@ -133,3 +132,29 @@ def run_distribution_phase(
 
     print(f"\nPlots saved to: {save_dir}")
     print(f"\nDistribution phase for {variable_name} complete.\n")
+
+# ==========================================================
+# MASTER PHASE 1 RUNNER
+# ==========================================================
+
+def run_phase_1(df: pd.DataFrame) -> None:
+
+    # 🎬 Episode Ranking Distribution
+    run_distribution_phase(
+        df,
+        variable_columns=EPISODE_RANK_COLUMNS,
+        variable_name="episode",
+        value_name="rank",
+        better="low",          # lower rank = better
+        output_prefix="episode",
+    )
+
+    # ⭐ Character Rating Distribution
+    run_distribution_phase(
+        df,
+        variable_columns=CHARACTER_RATING_COLUMNS,
+        variable_name="character",
+        value_name="rating",
+        better="high",         # higher rating = better
+        output_prefix="character",
+    )
