@@ -1343,3 +1343,398 @@ This ensures:
 
 ---
 
+# 2.3.13 Character Rating Distributions by Gender
+
+**Figure 2.3.13.a** presents character rating distributions separately for male and female respondents.
+
+![character_distribution_gender.png](figures/phase1/character/character_distribution_gender.png)
+
+**Source figure:**
+`reports/figures/phase1/character/character_distribution_gender.png`
+
+[character_distribution_gender.csv](tables/phase1/character/character_distribution_gender.csv)
+
+**Source table:**
+`reports/tables/phase1/character/character_distribution_gender.csv`
+
+Ratings are on a 1–5 scale. Histograms display within-character percentages by gender, with mean (dashed), median (solid), and IQR shading.
+
+---
+
+## 1. Overall Structural Stability
+
+Across genders:
+
+* Heroic anchors (Luke Skywalker, Han Solo, Obi-Wan Kenobi, Yoda) show strong clustering at ratings 4–5.
+* Jar-Jar Binks shows substantial mass at rating 1 across both genders.
+* Darth Vader exhibits high concentration at rating 5 for both groups.
+
+Thus, as with episodes, **between-character variance exceeds between-gender variance**.
+
+---
+
+## 2. Darth Vader — Strong Gender Divergence
+
+**Phase 2 divergence source:**
+`reports/tables/phase2/character/character_divergence_gender.csv`
+
+[character_divergence_gender.csv](tables/phase2/character/character_divergence_gender.csv)
+
+| Character   | Range  | SD     |
+| ----------- | ------ | ------ |
+| Darth Vader | 0.5519 | 0.3903 |
+
+This is the largest gender divergence among characters.
+
+Pattern characteristics:
+
+* Male respondents show heavier mass at rating 5.
+* Female respondents show greater dispersion across ratings 3–5.
+
+Interpretation:
+
+Gender influences intensity of endorsement rather than outright rejection. Vader remains highly rated in both groups but shows stronger ceiling concentration among males.
+
+---
+
+## 3. Jar-Jar Binks — High Polarization
+
+Range = 0.4762.
+
+* Males show heavier mass at rating 1.
+* Females distribute more evenly across ratings 1–3.
+
+Jar-Jar functions as a tone-sensitive character, producing gender-based tolerance differences rather than polarity reversal.
+
+---
+
+## 4. Gender-Neutral Anchors
+
+Lowest divergence:
+
+| Character      | Range  |
+| -------------- | ------ |
+| Han Solo       | 0.0024 |
+| Obi-Wan Kenobi | 0.0088 |
+| Luke Skywalker | 0.0487 |
+| Princess Leia  | 0.0619 |
+
+These characters exhibit near-identical distributions across gender.
+
+---
+
+## 5. Interpretation
+
+Gender segmentation in character ratings:
+
+* Is targeted rather than broad.
+* Concentrates around villain intensity and exaggerated comedic tone.
+* Does not meaningfully affect central heroic archetypes.
+
+---
+
+# 2.3.14 Character Rating Distributions by Age Group
+
+**Figure 2.3.14.a**
+`reports/figures/phase1/character/character_distribution_age_group.png`
+
+![character_distribution_age_group.png](figures/phase1/character/character_distribution_age_group.png)
+
+**Source divergence table:**
+`reports/tables/phase2/character/character_divergence_age_group.csv`
+
+[character_divergence_age_group.csv](tables/phase2/character/character_divergence_age_group.csv)
+
+---
+
+## 1. Segmentation Strength
+
+From `character_segmentation_strength.csv`:
+
+| Demographic | avg_range | max_range |
+| ----------- | --------- | --------- |
+| Age Group   | 0.3084    | 0.7429    |
+
+Age produces the highest maximum divergence across all character analyses.
+
+---
+
+## 2. Jar-Jar Binks — Extreme Generational Split
+
+| Character     | Range  | SD     |
+| ------------- | ------ | ------ |
+| Jar-Jar Binks | 0.7429 | 0.3232 |
+
+This is the single largest character-level divergence observed.
+
+Pattern:
+
+* Younger cohorts show higher ratings.
+* Middle-aged cohorts show strong rejection.
+* Older cohorts show more dispersion.
+
+Jar-Jar represents cohort-based nostalgia asymmetry.
+
+---
+
+## 3. Anakin Skywalker — Prequel-Centric Divergence
+
+Range = 0.5982.
+
+Younger respondents rate Anakin more favorably than middle-aged groups.
+
+This reflects exposure timing and narrative centrality during formative years.
+
+---
+
+## 4. Stability Cases
+
+Lowest divergence by age:
+
+| Character         | Range  |
+| ----------------- | ------ |
+| Emperor Palpatine | 0.0871 |
+| Yoda              | 0.0904 |
+| R2-D2             | 0.1259 |
+
+These figures function as cross-generational anchors.
+
+---
+
+## 5. Interpretation
+
+Age-based segmentation reflects:
+
+* Cohort imprinting
+* Nostalgia encoding
+* Era-specific character centrality
+
+Unlike gender, age affects both tone-sensitive and heroic characters.
+
+---
+
+# 2.3.15 Character Rating Distributions by Household Income
+
+**Figure 2.3.15.a**
+`reports/figures/phase1/character/character_distribution_household_income.png`
+
+![character_distribution_household_income.png](figures/phase1/character/character_distribution_household_income.png)
+
+**Segmentation summary:**
+`reports/tables/phase2/character/character_segmentation_strength.csv`
+
+[character_segmentation_strength.csv](tables/phase2/character/character_segmentation_strength.csv)
+
+| Demographic      | avg_range | max_range |
+| ---------------- | --------- | --------- |
+| Household Income | 0.2978    | 0.5071    |
+
+Income produces moderate divergence.
+
+---
+
+## Pattern Characteristics
+
+* Divergence is diffuse rather than concentrated in one character.
+* No monotonic income gradient appears.
+* Variability likely interacts with age composition within brackets.
+
+Income does not produce structural reordering of character popularity.
+
+---
+
+# 2.3.16 Character Rating Distributions by Education Level
+
+**Figure 2.3.16.a**
+`reports/figures/phase1/character/character_distribution_education_level.png`
+
+![character_distribution_education_level.png](figures/phase1/character/character_distribution_education_level.png)
+
+| Demographic     | avg_range | max_range |
+| --------------- | --------- | --------- |
+| Education Level | 0.2089    | 0.4197    |
+
+Education is the weakest segmentation axis for character ratings.
+
+Observed effects:
+
+* Slightly higher rejection of Jar-Jar in higher education groups.
+* Mild compression of ratings toward upper end for canonical heroes.
+
+Overall, education modifies intensity rather than direction.
+
+---
+
+# 2.3.17 Character Rating Distributions by Census Region
+
+**Figure 2.3.17.a**
+`reports/figures/phase1/character/character_distribution_census_region.png`
+
+![character_distribution_census_region.png](figures/phase1/character/character_distribution_census_region.png)
+
+**Divergence table:**
+`reports/tables/phase2/character/character_divergence_census_region.csv`
+
+[character_divergence_census_region.csv](tables/phase2/character/character_divergence_census_region.csv)
+
+---
+
+## 1. Segmentation Strength
+
+| Demographic   | avg_range | max_range |
+| ------------- | --------- | --------- |
+| Census Region | 0.3437    | 0.6667    |
+
+Region exhibits the strongest average divergence.
+
+---
+
+## 2. Most Polarizing Characters by Region
+
+| Character         | Range  |
+| ----------------- | ------ |
+| Emperor Palpatine | 0.6667 |
+| Padme Amidala     | 0.5898 |
+| Jar-Jar Binks     | 0.4745 |
+| Darth Vader       | 0.4100 |
+
+Regional divergence clusters around:
+
+* Political figures (Palpatine, Padme)
+* Prequel-era characters
+* Comic relief
+
+Classic OT heroes remain regionally stable.
+
+---
+
+## 3. Interpretation
+
+Regional variation likely reflects:
+
+* Cultural-political interpretation
+* Tone reception differences
+* Narrative alignment differences
+
+Unlike age (nostalgia) or gender (archetype resonance), region affects interpretive framing.
+
+---
+
+# 2.3.18 Comparative Segmentation Strength — Characters
+
+**Source:**
+`reports/tables/phase2/character/character_segmentation_strength.csv`
+
+| Demographic      | Avg Range | Avg SD | Max Range |
+| ---------------- | --------- | ------ | --------- |
+| Census Region    | 0.3437    | 0.1109 | 0.6667    |
+| Age Group        | 0.3084    | 0.1422 | 0.7429    |
+| Household Income | 0.2978    | 0.1186 | 0.5071    |
+| Gender           | 0.2112    | 0.1493 | 0.5520    |
+| Education Level  | 0.2089    | 0.0986 | 0.4197    |
+
+Segmentation hierarchy:
+
+> Region > Age > Income > Gender ≈ Education
+
+This differs from episode segmentation, where Age dominated more clearly.
+
+---
+
+# 2.3.19 Cross-Demographic Character Drivers
+
+Characters appearing repeatedly among top divergence lists:
+
+* Jar-Jar Binks (Age, Region, Gender)
+* Darth Vader (Gender, Age, Region)
+* Emperor Palpatine (Region, Gender)
+* Anakin Skywalker (Age)
+
+Jar-Jar is the most structurally polarizing character overall.
+
+---
+
+# 2.3.20 Structural Interpretation
+
+Character divergence clusters by archetype:
+
+Villains:
+
+* Gender- and region-sensitive.
+
+Comic Relief:
+
+* Highly age- and gender-sensitive.
+
+Prequel Protagonists:
+
+* Strong age segmentation.
+
+Original Trilogy Heroes:
+
+* Demographically stable.
+
+This indicates segmentation operates at the narrative archetype level.
+
+---
+
+# 2.3.21 Characters vs Episodes — Structural Contrast
+
+Episodes:
+
+> Age > Region > Income > Education > Gender
+
+Characters:
+
+> Region > Age > Income > Gender ≈ Education
+
+Episodes are more strongly generationally segmented.
+Characters show stronger geographic interpretation effects.
+
+This implies distinct psychological evaluation mechanisms:
+
+* Episode ranking = macro narrative evaluation.
+* Character rating = archetype attachment and cultural framing.
+
+---
+
+# 2.3.22 Reproducibility & Reporting Artifacts (Characters)
+
+All character results derive from:
+
+### Phase 1 Tables
+
+```
+reports/tables/phase1/character/character_distribution_*.csv
+```
+
+### Phase 2 Tables
+
+```
+reports/tables/phase2/character/
+    character_segmentation_strength.csv
+    character_divergence_*.csv
+```
+
+### Phase 1 Figures
+
+```
+reports/figures/phase1/character/
+    character_distribution_*.png
+```
+
+Generated via:
+
+```
+analysis/eda_demographic_slices.py
+```
+
+Ensuring:
+
+* Deterministic builds
+* CSV–figure alignment
+* Full reproducibility
+* Consistent demographic slicing
+
+---
+

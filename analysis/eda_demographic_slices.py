@@ -17,16 +17,7 @@ from analysis.phase2_pipeline import run_phase_2
 def main() -> None:
     df: pd.DataFrame = load_clean_star_wars()
 
-    # ======================================================
-    # PHASE 1 — DISTRIBUTIONAL STRUCTURE
-    # ======================================================
-
     run_phase_1(df)
-
-    # ======================================================
-    # PHASE 2 — SEGMENTATION
-    # (still episode-only for now)
-    # ======================================================
 
     run_phase_2(df)
 
