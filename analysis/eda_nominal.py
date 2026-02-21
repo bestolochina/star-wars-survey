@@ -111,6 +111,7 @@ def run_nominal_eda() -> None:
     df: pd.DataFrame = load_clean_star_wars()
 
     nominal_columns: dict[str, str] = {
+        "age_group": "Age group distribution",
         "gender": "Gender distribution",
         "education_level": "Education level distribution",
         "household_income": "Household income distribution",
