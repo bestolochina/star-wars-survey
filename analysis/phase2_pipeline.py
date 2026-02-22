@@ -24,20 +24,17 @@ from analysis.visualization.segmentation_plots import (
     plot_variable_drivers,
 )
 from analysis.metrics.anova_effects import (
-    compute_character_anova_table,
+    compute_variable_anova_table,
     build_eta_squared_table,
     build_axis_summary,
-)
-from analysis.metrics.variance_decomposition import (
-    compute_variance_decomposition,
-)
-from analysis.metrics.bootstrap_effects import (
-    bootstrap_eta_squared,
-    summarize_bootstrap,
 )
 from analysis.visualization.anova_plots import (
     plot_eta_squared_summary,
 )
+from analysis.metrics.variance_decomposition import (
+    compute_variance_decomposition,
+)
+from analysis.metrics.bootstrap_effects import run_bootstrap_validation
 
 
 # ==========================================================
@@ -180,24 +177,34 @@ def run_segmentation_phase(
     print(f"\nSegmentation phase for {variable_name} complete.\n")
 
 
+# ==========================================================
+# ANOVA EFFECT ANALYSIS
+# ==========================================================
+
 def run_anova_phase(
     *,
-    character_long: pd.DataFrame,
+    long_df: pd.DataFrame,
+    variable_name: str,
+    value_name: str,
     output_prefix: str,
 ) -> None:
+
+    print(f"\n=== ANOVA EFFECT ANALYSIS: {variable_name.upper()} ===")
 
     tables_dir = PHASE2_TABLES_DIR / output_prefix
     tables_dir.mkdir(parents=True, exist_ok=True)
 
-    fig_dir = PHASE2_FIGURES_DIR / output_prefix
-    fig_dir.mkdir(parents=True, exist_ok=True)
+    figures_dir = PHASE2_FIGURES_DIR / output_prefix
+    figures_dir.mkdir(parents=True, exist_ok=True)
 
-    print("\n=== ANOVA EFFECT SIZE ANALYSIS ===")
-
-    anova_results = compute_character_anova_table(
-        character_long
+    # 1️⃣ Compute ANOVA
+    anova_results = compute_variable_anova_table(
+        long_df,
+        variable_column=variable_name,
+        value_column=value_name,
     )
 
+    # 2️⃣ Tables
     eta_table = build_eta_squared_table(anova_results)
     axis_summary = build_axis_summary(anova_results)
 
@@ -208,63 +215,21 @@ def run_anova_phase(
     print(axis_summary.to_string())
 
     eta_table.to_csv(
-        tables_dir / "character_eta_squared.csv"
-    )
-
-    axis_summary.to_csv(
-        tables_dir / "axis_summary.csv"
-    )
-
-    print("\n--- Generating ANOVA Plots ---")
-
-    fig_dir = PHASE2_FIGURES_DIR / output_prefix
-    fig_dir.mkdir(parents=True, exist_ok=True)
-
-    plot_eta_squared_summary(
-        anova_results,
-        save_path=fig_dir / "eta_squared_summary.png",
-    )
-
-    print("ANOVA plots saved.")
-
-    print("\n=== VARIANCE DECOMPOSITION ===")
-
-    variance_table = compute_variance_decomposition(
-        character_long,
-        character_col="character",
-        rating_col="rating",
-    )
-
-    print(variance_table.to_string())
-
-    variance_table.to_csv(
-        tables_dir / "variance_decomposition.csv",
+        tables_dir / "eta_squared.csv",
         index=False,
     )
 
-    # print("\n=== BOOTSTRAP ROBUSTNESS CHECK ===")
-    #
-    # top_characters = (
-    #     variance_table
-    #     .sort_values("pct_age", ascending=False)
-    #     .head(3)["character"]
-    #     .tolist()
-    # )
-    #
-    # boot = bootstrap_eta_squared(
-    #     character_long,
-    #     characters=top_characters,
-    #     n_boot=1000,
-    # )
-    #
-    # boot_summary = summarize_bootstrap(boot)
-    #
-    # print(boot_summary.to_string())
-    #
-    # boot_summary.to_csv(
-    #     tables_dir / "bootstrap_eta_squared_summary.csv",
-    #     index=False,
-    # )
+    axis_summary.to_csv(
+        tables_dir / "axis_summary.csv",
+    )
+
+    # 3️⃣ Plot
+    plot_eta_squared_summary(
+        anova_results,
+        save_path=figures_dir / "eta_squared_summary.png",
+    )
+
+    print(f"\nANOVA results saved to: {tables_dir}")
 
 
 # ==========================================================
@@ -291,7 +256,49 @@ def run_phase_2(df: pd.DataFrame) -> None:
         output_prefix="character",
     )
 
+    # Episode ANOVA
     run_anova_phase(
-        character_long=phase2_data.character_long,
+        long_df=phase2_data.episode_long,
+        variable_name="episode",
+        value_name="rank",
+        output_prefix="anova_episode",
+    )
+
+    # Character ANOVA
+    run_anova_phase(
+        long_df=phase2_data.character_long,
+        variable_name="character",
+        value_name="rating",
         output_prefix="anova_character",
     )
+
+    run_bootstrap_validation(
+        df=phase2_data.episode_long,
+        entity_col="episode",
+        value_col="rank",
+        axes=["age_group", "gender"],
+        top_entities=[
+            "Episode I",
+            "Episode IV",
+            "Episode III",
+        ],
+        save_path=PHASE2_TABLES_DIR
+                  / "anova_episode"
+                  / "bootstrap_eta_squared.csv",
+    )
+
+    run_bootstrap_validation(
+        df=phase2_data.character_long,
+        entity_col="character",
+        value_col="rating",
+        axes=["age_group", "gender"],
+        top_entities=[
+            "Anakin Skywalker",
+            "Luke Skywalker",
+            "Jar-Jar Binks",
+        ],
+        save_path=PHASE2_TABLES_DIR
+                  / "anova_character"
+                  / "bootstrap_eta_squared.csv"
+    )
+

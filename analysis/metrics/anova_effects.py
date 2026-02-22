@@ -5,117 +5,120 @@ from __future__ import annotations
 import pandas as pd
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
-from typing import Dict, List
+
+
+# ==========================================================
+# CONFIG
+# ==========================================================
+
+AXES = [
+    "age_group",
+    "gender",
+    "census_region",
+]
 
 
 # ==========================================================
 # CORE ANOVA COMPUTATION
 # ==========================================================
 
-def compute_oneway_anova_effect(
-    df: pd.DataFrame,
+def compute_variable_anova_table(
+    long_df: pd.DataFrame,
     *,
-    response: str,
-    axis: str,
-) -> dict[str, float]:
+    variable_column: str,
+    value_column: str,
+) -> pd.DataFrame:
     """
-    Run one-way ANOVA and compute effect sizes.
+    Runs one-way ANOVA for each variable across demographic axes.
+
+    Model:
+        value ~ C(axis)
 
     Returns
     -------
-    dict with:
-        F
-        p_value
-        eta_sq
-        partial_r2
+    DataFrame with columns:
+        variable | axis | F | p_value | eta_sq | partial_r2
     """
 
-    formula = f"{response} ~ C({axis})"
+    results: list[dict] = []
 
-    model = smf.ols(formula, data=df).fit()
-    anova = sm.stats.anova_lm(model, typ=2)
+    variables = long_df[variable_column].dropna().unique()
 
-    ss_between = anova.loc[f"C({axis})", "sum_sq"]
-    ss_resid = anova.loc["Residual", "sum_sq"]
-    ss_total = ss_between + ss_resid
+    for variable in variables:
 
-    eta_sq = ss_between / ss_total
-    partial_r2 = ss_between / (ss_between + ss_resid)
+        df_var = long_df.loc[
+            long_df[variable_column] == variable
+        ].copy()
 
-    return {
-        "F": anova.loc[f"C({axis})", "F"],
-        "p_value": anova.loc[f"C({axis})", "PR(>F)"],
-        "eta_sq": eta_sq,
-        "partial_r2": partial_r2,
-    }
+        for axis in AXES:
 
-
-# ==========================================================
-# CHARACTER LOOP
-# ==========================================================
-
-def compute_character_anova_table(
-    character_long: pd.DataFrame,
-    *,
-    response_column: str = "rating",
-    character_column: str = "character",
-    axes: List[str] | None = None,
-) -> pd.DataFrame:
-    """
-    Run one-way ANOVA for each character across axes.
-    """
-
-    if axes is None:
-        axes = ["age_group", "gender", "census_region"]
-
-    results: List[dict] = []
-
-    for character, df_char in character_long.groupby(character_column):
-
-        for axis in axes:
-
-            df_valid = df_char[[response_column, axis]].dropna()
-
-            if df_valid[axis].nunique() < 2:
-                continue
-
-            stats = compute_oneway_anova_effect(
-                df_valid,
-                response=response_column,
-                axis=axis,
+            df_axis = df_var.dropna(
+                subset=[axis, value_column]
             )
 
-            results.append({
-                "character": character,
-                "axis": axis,
-                **stats,
-            })
+            if df_axis.empty:
+                continue
+
+            model = smf.ols(
+                f"{value_column} ~ C({axis})",
+                data=df_axis,
+            ).fit()
+
+            anova = sm.stats.anova_lm(model, typ=2)
+
+            ss_between = anova.loc[f"C({axis})", "sum_sq"]
+            ss_total = anova["sum_sq"].sum()
+
+            eta_sq = ss_between / ss_total
+
+            results.append(
+                {
+                    "variable": variable,
+                    "axis": axis,
+                    "F": anova.loc[f"C({axis})", "F"],
+                    "p_value": anova.loc[f"C({axis})", "PR(>F)"],
+                    "eta_sq": eta_sq,
+                    "partial_r2": eta_sq,
+                }
+            )
 
     return pd.DataFrame(results)
 
+
 # ==========================================================
-# WIDE ETA-SQUARED TABLE
+# ETA² TABLE
 # ==========================================================
 
 def build_eta_squared_table(
-    anova_results: pd.DataFrame,
+    anova_df: pd.DataFrame,
 ) -> pd.DataFrame:
     """
-    character | eta_age | eta_gender | eta_region
+    Wide table:
+        variable | eta_age | eta_gender | eta_region
     """
 
-    table = (
-        anova_results
-        .pivot(index="character", columns="axis", values="eta_sq")
-        .rename(columns={
-            "age_group": "eta_age",
-            "gender": "eta_gender",
-            "census_region": "eta_region",
-        })
-        .sort_index()
+    pivot = (
+        anova_df.pivot(
+            index="variable",
+            columns="axis",
+            values="eta_sq",
+        )
+        .rename(
+            columns={
+                "age_group": "eta_age",
+                "gender": "eta_gender",
+                "census_region": "eta_region",
+            }
+        )
+        .reset_index()
     )
 
-    return table
+    return pivot.sort_values("eta_age", ascending=False)
+
+
+# ==========================================================
+# AXIS SUMMARY
+# ==========================================================
 
 def build_axis_summary(
     anova_df: pd.DataFrame,
@@ -123,26 +126,18 @@ def build_axis_summary(
     alpha: float = 0.05,
 ) -> pd.DataFrame:
     """
-    Summarise ANOVA effect sizes across demographic axes.
+    Summary statistics per demographic axis.
     """
 
-    eta_mean = (
-        anova_df
-        .groupby("axis")["eta_sq"]
-        .mean()
-        .rename("mean_eta_sq")
+    grouped = anova_df.groupby("axis", observed=True)
+
+    summary = pd.DataFrame(
+        {
+            "mean_eta_sq": grouped["eta_sq"].mean(),
+            "max_eta_sq": grouped["eta_sq"].max(),
+            "pct_significant": grouped["p_value"]
+            .apply(lambda s: (s < alpha).mean()),
+        }
     )
 
-    significant_rate = (
-        (anova_df["p_value"] < alpha)
-        .groupby(anova_df["axis"])
-        .mean()
-        .rename("significant_rate")
-    )
-
-    summary = pd.concat([eta_mean, significant_rate], axis=1)
-
-    return summary.reset_index().sort_values(
-        "mean_eta_sq",
-        ascending=False,
-    )
+    return summary.sort_values("mean_eta_sq", ascending=False)

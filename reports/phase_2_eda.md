@@ -1738,276 +1738,146 @@ Ensuring:
 
 ---
 
-# 2.4 ANOVA-Based Segmentation Analysis
+## 2.4 Demographic Segmentation & Effect Validation
 
-Section 2.3 evaluated demographic segmentation descriptively using divergence metrics.
-Section 2.4 formalizes segmentation strength using one-way ANOVA models and effect size estimation.
+### 2.4.1 Objective
 
-For each character, we estimate η² (eta squared) for:
+This section evaluates whether demographic variables meaningfully segment:
 
-* Age group
-* Gender
-* Census region
+* Episode rankings
+* Character ratings
 
-η² measures the proportion of total variance in ratings explained by a demographic axis.
+We apply a three-layer validation framework:
 
----
-
-# 2.4.1 Axis-Level Segmentation Hierarchy
-
-**Source:**
-`reports/tables/phase2/anova_character/axis_summary.csv`
-
-| Axis          | Mean η² | Significant Rate |
-| ------------- | ------- | ---------------- |
-| age_group     | 0.0181  | 0.5714           |
-| gender        | 0.0138  | 0.5714           |
-| census_region | 0.0096  | 0.0000           |
+1. Descriptive divergence (range / SD)
+2. ANOVA effect sizes (η²)
+3. Bootstrap robustness validation
 
 ---
 
-## 2.4.1.1 Effect Size Magnitude
+### 2.4.2 Episode Segmentation
 
-Average variance explained:
+#### Descriptive Divergence
 
-* **Age group:** 1.81%
-* **Gender:** 1.38%
-* **Region:** 0.96%
+| Axis             | Avg Range | Max Range |
+| ---------------- | --------- | --------- |
+| Age Group        | 0.749     | 1.337     |
+| Census Region    | 0.641     | 0.809     |
+| Household Income | 0.478     | 0.685     |
+| Education Level  | 0.419     | 0.564     |
+| Gender           | 0.292     | 0.609     |
 
-All values fall in the **very small effect size range**.
+Age group produces the strongest divergence.
 
-Even the strongest axis (age) explains less than 2% of rating variance on average.
+Largest observed gap:
 
-This confirms:
-
-> Demographic segmentation is statistically detectable but substantively weak.
-
----
-
-## 2.4.1.2 Breadth of Statistical Influence
-
-Significant ANOVA results occur for:
-
-* Age group → 57.1% of characters
-* Gender → 57.1% of characters
-* Region → 0% of characters
-
-Region produces no reliable segmentation.
-
-The empirical hierarchy is therefore:
-
-> **Age > Gender >> Region**
-
-However, the gap between age and gender is modest.
+* Episode I (Age range = 1.337)
 
 ---
 
-# 2.4.2 Character-Level Effect Sizes
+#### ANOVA Effect Sizes (η²)
 
-**Source:**
-`character_eta_squared.csv`
+| Episode     | η² (Age) | η² (Gender) | η² (Region) |
+| ----------- | -------- | ----------- | ----------- |
+| Episode I   | 0.095    | 0.034       | 0.016       |
+| Episode IV  | 0.034    | 0.022       | 0.012       |
+| Episode III | 0.024    | 0.003       | 0.007       |
+| Episode II  | 0.021    | 0.010       | 0.015       |
+| Episode VI  | 0.019    | 0.001       | 0.015       |
+| Episode V   | 0.018    | 0.001       | 0.010       |
 
-### Strongest Age Effects
+Axis summary:
 
-* Anakin Skywalker — 0.0456
-* Luke Skywalker — 0.0375
-* Jar-Jar Binks — 0.0362
-* Boba Fett — 0.0312
-* C-3P0 — 0.0301
+| Axis   | Mean η² | Max η² | % Significant |
+| ------ | ------- | ------ | ------------- |
+| Age    | 0.035   | 0.095  | 100%          |
+| Gender | 0.012   | 0.034  | 50%           |
+| Region | 0.012   | 0.016  | 0%            |
 
-Even the largest age effect (Anakin, 4.56%) remains small in absolute magnitude.
-
----
-
-### Strongest Gender Effects
-
-* C-3P0 — 0.0397
-* R2-D2 — 0.0333
-* Darth Vader — 0.0322
-* Jar-Jar Binks — 0.0274
-
-Gender effects are concentrated among specific characters rather than broadly distributed.
+Conclusion: Age is the dominant segmentation axis for episode rankings.
 
 ---
 
-### Regional Effects
+#### Bootstrap Robustness (Episodes)
 
-Regional η² values remain between ~0.003 and ~0.016.
+| Episode     | Axis | η Mean | CI Low | CI High |
+| ----------- | ---- | ------ | ------ | ------- |
+| Episode I   | Age  | 0.097  | 0.061  | 0.138   |
+| Episode IV  | Age  | 0.037  | 0.017  | 0.066   |
+| Episode III | Age  | 0.027  | 0.009  | 0.051   |
 
-None reach statistical significance.
+All age effects remain positive under resampling.
 
-Region appears structurally negligible as a segmentation axis.
+Episode I shows a large, stable generational effect.
+Episode IV shows moderate, stable age segmentation.
+Episode III shows a smaller but likely real effect.
 
----
+Gender effects are weaker and less consistent.
 
-# 2.4.3 Variance Decomposition
-
-**Source:**
-`variance_decomposition.csv`
-
-Across all characters, within-group variance overwhelmingly dominates.
-
-Typical within-group proportions:
-
-* 95–99%
-
-Examples:
-
-* Han Solo — 98.53% within
-* Obi Wan Kenobi — 99.20% within
-* Yoda — 99.28% within
-* Anakin Skywalker — 95.38% within
-
-Even highly segmented characters remain primarily driven by individual-level variation.
-
-This demonstrates:
-
-> Ratings are far more heterogeneous within demographic groups than between them.
-
-Demographic identity explains only a marginal fraction of evaluation variance.
+Final Episode Conclusion:
+Episode preferences are strongly structured by age. The generational divide is robust and not sampling noise.
 
 ---
 
-# 2.4.4 Distribution of Effect Sizes Across Axes
+### 2.4.3 Character Segmentation
 
-**Source:**
-`reports/figures/phase2/anova_character/eta_squared_summary.png`
+#### Descriptive Divergence
 
-![eta_squared_summary.png](figures/phase2/anova_character/eta_squared_summary.png)
+| Axis             | Avg Range | Max Range |
+| ---------------- | --------- | --------- |
+| Census Region    | 0.344     | 0.667     |
+| Age Group        | 0.308     | 0.743     |
+| Household Income | 0.298     | 0.507     |
+| Gender           | 0.211     | 0.552     |
+| Education Level  | 0.209     | 0.420     |
 
-The boxplot visualization summarizes the distribution of η² values across characters for each demographic axis.
-
-## Observed Patterns
-
-### Age Group
-
-* Highest median η²
-* Moderate dispersion
-* Upper-tail observations (Anakin, Luke, Jar-Jar)
-
-Age is consistently the strongest axis both numerically and visually.
+Character divergence is smaller than episode divergence.
 
 ---
 
-### Gender
+#### ANOVA Effect Sizes (η²)
 
-* Slightly lower median
-* Tighter clustering near zero
-* A few moderate outliers (C-3P0, R2-D2, Darth Vader)
+Strongest age effects:
 
-Gender segmentation is character-specific rather than system-wide.
+| Character        | η² (Age) |
+| ---------------- | -------- |
+| Anakin Skywalker | 0.046    |
+| Luke Skywalker   | 0.038    |
+| Jar-Jar Binks    | 0.036    |
 
----
+Axis summary:
 
-### Census Region
+| Axis   | Mean η² | Max η² | % Significant |
+| ------ | ------- | ------ | ------------- |
+| Age    | 0.018   | 0.046  | 57%           |
+| Gender | 0.014   | 0.040  | 57%           |
+| Region | 0.010   | 0.017  | 0%            |
 
-* Lowest median
-* Tight concentration near zero
-* No meaningful outliers
-
-Region contributes minimal explanatory power.
-
----
-
-## Interpretation of the Boxplot
-
-The distribution confirms:
-
-* Most η² values cluster very close to zero.
-* Segmentation strength is driven by a small subset of characters.
-* There is no broad demographic polarization pattern.
-
-The visual evidence reinforces the variance decomposition result:
-
-> The structure of character evaluation is predominantly individual, not demographic.
+Conclusion: Character segmentation exists but is weaker and more fragmented than episode segmentation.
 
 ---
 
-# 2.4.5 Bootstrap Validation
+#### Bootstrap Robustness (Characters)
 
-**Source:**
-`bootstrap_eta_squared_summary.csv`
+| Character        | Axis | η Mean | CI Low | CI High |
+| ---------------- | ---- | ------ | ------ | ------- |
+| Anakin Skywalker | Age  | 0.049  | 0.023  | 0.081   |
+| Luke Skywalker   | Age  | 0.039  | 0.017  | 0.068   |
+| Jar-Jar Binks    | Age  | 0.040  | 0.015  | 0.070   |
 
-Bootstrap confidence intervals confirm stability of larger effects.
+Age effects remain stable under bootstrap.
+Gender effects are moderate and less consistent.
 
-### Anakin Skywalker (Age)
-
-* Mean: 0.0490
-* 95% CI: [0.0222, 0.0818]
-
-### Luke Skywalker (Age)
-
-* Mean: 0.0416
-* 95% CI: [0.0175, 0.0719]
-
-### Jar-Jar Binks (Gender)
-
-* Mean: 0.0287
-* 95% CI: [0.0080, 0.0578]
-
-Intervals for stronger effects do not include zero, indicating statistical robustness.
-
-However, magnitude remains small.
-
-Bootstrap analysis therefore strengthens confidence in reliability while confirming limited substantive size.
+Final Character Conclusion:
+Character ratings show real but moderate demographic segmentation, primarily along age.
 
 ---
 
-# 2.4.6 Integrated Interpretation
+### 2.4.4 Structural Findings
 
-Combining:
+1. Episodes segment more strongly than characters.
+2. Age is the dominant segmentation axis across domains.
+3. Regional effects are negligible.
+4. No major effect collapses under bootstrap.
 
-* Axis-level mean η²
-* Significant rates
-* Character-level effects
-* Variance decomposition
-* Distribution visualization
-* Bootstrap validation
-
-The findings converge:
-
-1. Age is the strongest segmentation axis.
-2. Gender is slightly weaker but comparable.
-3. Region is negligible.
-4. All demographic effects are small.
-5. 95–99% of variance is within demographic groups.
-
----
-
-## Structural Conclusion
-
-The Star Wars character evaluation landscape is not demographically polarized.
-
-Instead:
-
-* Ratings are primarily driven by individual preference.
-* Demographic structure is shallow.
-* No axis approaches moderate or large effect size thresholds.
-
----
-
-# 2.4.7 Implications for THE PLAN
-
-Phase 2 was designed to formally certify whether demographic segmentation dominates the evaluation space.
-
-Results indicate:
-
-* No axis explains substantial variance.
-* No strong demographic stratification pattern emerges.
-* Demographic structure is insufficient to define latent structure.
-
-Therefore:
-
-> Phase 3 modeling (clustering / latent structure) is unlikely to merely reproduce demographic partitions.
-
-Any discovered clusters are more likely to reflect:
-
-* Character archetype preferences
-* Narrative alignment patterns
-* Taste-based dimensions
-
-rather than demographic segmentation.
-
----
-
-This completes the ANOVA certification layer of Phase 2 and satisfies THE PLAN’s requirement for statistically grounded segmentation validation before advancing to structural modeling.
+This section confirms that generational structure is the primary driver of preference variation in the dataset.

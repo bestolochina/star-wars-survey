@@ -1,5 +1,7 @@
 # analysis/visualization/anova_plots.py
 
+from __future__ import annotations
+
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -8,17 +10,23 @@ def plot_eta_squared_summary(
     anova_df: pd.DataFrame,
     save_path,
 ) -> None:
+    """
+    Boxplot of η² distributions across demographic axes.
+    """
 
     fig, ax = plt.subplots(figsize=(7, 5))
 
     axes = ["age_group", "gender", "census_region"]
 
     data = [
-        anova_df.loc[anova_df["axis"] == a, "eta_sq"]
-        for a in axes
+        anova_df.loc[anova_df["axis"] == axis, "eta_sq"]
+        for axis in axes
     ]
 
-    ax.boxplot(data, labels=["Age", "Gender", "Region"])
+    ax.boxplot(
+        data,
+        labels=["Age", "Gender", "Region"],
+    )
 
     # jittered points
     for i, vals in enumerate(data, start=1):
