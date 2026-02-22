@@ -1738,303 +1738,276 @@ Ensuring:
 
 ---
 
-## 2.4 Transition from Descriptive Slices to Structural Segmentation Modeling
+# 2.4 ANOVA-Based Segmentation Analysis
 
-The previous section (ending at **2.3.21**) completed the descriptive stage of demographic slicing. Specifically, we analyzed:
+Section 2.3 evaluated demographic segmentation descriptively using divergence metrics.
+Section 2.4 formalizes segmentation strength using one-way ANOVA models and effect size estimation.
 
-* **Episode ranking distribution vs demographic slices**
-* **Character rating distribution vs demographic slices**
-
-These analyses provided:
-
-* Group-wise distributions
-* Mean comparisons
-* Divergence diagnostics (range, SD of group means)
-* Initial identification of high-heterogeneity characters
-
-At this stage, we have established **observable differences** across:
+For each character, we estimate η² (eta squared) for:
 
 * Age group
 * Gender
 * Census region
 
-However, descriptive slices alone do not quantify:
-
-1. The *statistical strength* of segmentation,
-2. The *proportion of variance explained* by demographics,
-3. Whether demographic axes interact,
-4. Whether observed divergence is structurally robust or sampling artifact.
-
-Thus, Phase 2 must now move from **descriptive heterogeneity** to **formal structural segmentation analysis**.
-
-This section outlines:
-
-* What we initially planned,
-* What has already been completed,
-* What remains,
-* Why certain modeling paths were excluded or revised,
-* The finalized execution roadmap for completing Phase 2 rigorously.
+η² measures the proportion of total variance in ratings explained by a demographic axis.
 
 ---
 
-# 2.4.1 What Was Initially Envisioned for Phase 2
+# 2.4.1 Axis-Level Segmentation Hierarchy
 
-The original conceptual scope of Phase 2 (Demographic Structure) included:
+**Source:**
+`reports/tables/phase2/anova_character/axis_summary.csv`
 
-1. First-order demographic slices
-2. Segmentation strength comparison across axes
-3. Variance decomposition (between vs within group variance)
-4. Cross-axis interaction modeling (e.g., Age × Gender, Age × Region)
-5. Robustness and stability checks
-
-At the time of planning, interaction feasibility and sample adequacy were unknown. Therefore, the roadmap was intentionally expansive.
-
----
-
-# 2.4.2 What Has Already Been Completed
-
-Up to Section 2.3.21, the following elements are complete:
-
-### (A) Descriptive Distributional Analysis
-
-* Episode ranking vs demographics
-* Character rating distributions vs demographics
-
-### (B) Divergence Diagnostics
-
-For each character and each demographic axis:
-
-* Range of group means
-* Standard deviation of group means
-
-These diagnostics revealed:
-
-* Strong age-based divergence for certain characters (e.g., Jar-Jar Binks, Anakin Skywalker)
-* Substantial gender divergence for Darth Vader
-* Moderate but character-specific regional divergence
-
-This established **segmentation presence**, but not segmentation magnitude in inferential terms.
+| Axis          | Mean η² | Significant Rate |
+| ------------- | ------- | ---------------- |
+| age_group     | 0.0181  | 0.5714           |
+| gender        | 0.0138  | 0.5714           |
+| census_region | 0.0096  | 0.0000           |
 
 ---
 
-# 2.4.3 Empirical Certification of Interaction Feasibility
+## 2.4.1.1 Effect Size Magnitude
 
-Before expanding into interaction modeling, we evaluated dataset structure:
+Average variance explained:
 
-* Total N = 1,186
-* Valid Age ≈ 1,046
-* Valid Gender ≈ 1,046
-* Age groups: 4 balanced categories
-* Gender: near parity
+* **Age group:** 1.81%
+* **Gender:** 1.38%
+* **Region:** 0.96%
 
-Estimated minimum Age × Gender cell size > 95 observations.
+All values fall in the **very small effect size range**.
 
-Conclusion:
+Even the strongest axis (age) explains less than 2% of rating variance on average.
 
-✔ Age × Gender interaction modeling is statistically safe and well-powered.
+This confirms:
 
-However:
-
-* Census region has 9 categories.
-* Smallest region count = 38.
-
-Age × Region full factorial modeling would create cells < 10 observations.
-
-Conclusion:
-
-✖ Age × 9-Region interaction modeling is statistically unsafe.
-
-Therefore, regional interaction analysis must either:
-
-* Collapse regions into macro-regions, or
-* Be restricted to additive main effects.
-
-Income modeling was also excluded from interaction modeling due to 27.7% missingness.
-
-This empirical audit directly shaped the final roadmap.
+> Demographic segmentation is statistically detectable but substantively weak.
 
 ---
 
-# 2.4.4 Why Descriptive Slices Are Not Sufficient
+## 2.4.1.2 Breadth of Statistical Influence
 
-Descriptive divergence measures (range, SD) indicate:
+Significant ANOVA results occur for:
 
-> That groups differ.
+* Age group → 57.1% of characters
+* Gender → 57.1% of characters
+* Region → 0% of characters
 
-They do not indicate:
+Region produces no reliable segmentation.
 
-* How much variance is explained,
-* Whether differences are statistically reliable,
-* Whether one axis dominates others,
-* Whether demographic effects interact,
-* Whether polarization is primarily between groups or within groups.
+The empirical hierarchy is therefore:
 
-Without this formal quantification, any transition to latent structure modeling (Phase 3) would risk:
+> **Age > Gender >> Region**
 
-* Confounding demographic segmentation with archetypal clustering,
-* Overestimating psychological structure,
-* Underestimating structural demographic splits.
-
-Thus, Phase 2 must be completed before advancing.
+However, the gap between age and gender is modest.
 
 ---
 
-# 2.4.5 Final Updated Phase 2 Execution Roadmap
+# 2.4.2 Character-Level Effect Sizes
 
-Based on empirical dataset evaluation and completed work, Phase 2 will proceed as follows:
+**Source:**
+`character_eta_squared.csv`
 
----
+### Strongest Age Effects
 
-## 2.4.5.1 Formal One-Way Segmentation Modeling
+* Anakin Skywalker — 0.0456
+* Luke Skywalker — 0.0375
+* Jar-Jar Binks — 0.0362
+* Boba Fett — 0.0312
+* C-3P0 — 0.0301
 
-For each character:
-
-* One-way ANOVA by Age
-* One-way ANOVA by Gender
-* One-way ANOVA by Region
-
-Report:
-
-* F-statistic
-* p-value
-* η² (effect size)
-* Partial R²
-
-Purpose:
-
-To quantify segmentation strength and move from descriptive divergence to inferential effect size estimation.
+Even the largest age effect (Anakin, 4.56%) remains small in absolute magnitude.
 
 ---
 
-## 2.4.5.2 Segmentation Hierarchy Construction
+### Strongest Gender Effects
 
-Across characters:
+* C-3P0 — 0.0397
+* R2-D2 — 0.0333
+* Darth Vader — 0.0322
+* Jar-Jar Binks — 0.0274
 
-* Compute mean η² per axis
-* Compute maximum η² per axis
-* Count proportion of characters significantly segmented
-
-Purpose:
-
-To identify the dominant demographic axis.
+Gender effects are concentrated among specific characters rather than broadly distributed.
 
 ---
 
-## 2.4.5.3 Variance Decomposition
+### Regional Effects
 
-For each character:
+Regional η² values remain between ~0.003 and ~0.016.
 
-Total variance will be decomposed into:
+None reach statistical significance.
 
-* Between-age variance
-* Between-gender variance
-* Between-region variance
-* Within-group variance
-
-Purpose:
-
-To determine whether polarization is primarily:
-
-* Inter-group (demographic)
-  or
-* Intra-group (individual-level disagreement)
-
-This is a critical prerequisite for Phase 3.
+Region appears structurally negligible as a segmentation axis.
 
 ---
 
-## 2.4.5.4 Age × Gender Interaction Modeling
+# 2.4.3 Variance Decomposition
 
-Given adequate cell sizes, we will model:
+**Source:**
+`variance_decomposition.csv`
 
-Rating ~ Age + Gender + Age × Gender
+Across all characters, within-group variance overwhelmingly dominates.
 
-Applied to top-divergence characters.
+Typical within-group proportions:
 
-Purpose:
+* 95–99%
 
-To determine whether age-based divergence differs by gender.
+Examples:
 
-This step was retained because:
+* Han Solo — 98.53% within
+* Obi Wan Kenobi — 99.20% within
+* Yoda — 99.28% within
+* Anakin Skywalker — 95.38% within
 
-* Statistical power is strong,
-* Age divergence signals are large,
-* Gender effects are structurally meaningful.
+Even highly segmented characters remain primarily driven by individual-level variation.
+
+This demonstrates:
+
+> Ratings are far more heterogeneous within demographic groups than between them.
+
+Demographic identity explains only a marginal fraction of evaluation variance.
 
 ---
 
-## 2.4.5.5 Regional Modeling (Revised Scope)
+# 2.4.4 Distribution of Effect Sizes Across Axes
 
-We will not perform Age × 9-Region interactions.
+**Source:**
+`reports/figures/phase2/anova_character/eta_squared_summary.png`
+
+![eta_squared_summary.png](figures/phase2/anova_character/eta_squared_summary.png)
+
+The boxplot visualization summarizes the distribution of η² values across characters for each demographic axis.
+
+## Observed Patterns
+
+### Age Group
+
+* Highest median η²
+* Moderate dispersion
+* Upper-tail observations (Anakin, Luke, Jar-Jar)
+
+Age is consistently the strongest axis both numerically and visually.
+
+---
+
+### Gender
+
+* Slightly lower median
+* Tighter clustering near zero
+* A few moderate outliers (C-3P0, R2-D2, Darth Vader)
+
+Gender segmentation is character-specific rather than system-wide.
+
+---
+
+### Census Region
+
+* Lowest median
+* Tight concentration near zero
+* No meaningful outliers
+
+Region contributes minimal explanatory power.
+
+---
+
+## Interpretation of the Boxplot
+
+The distribution confirms:
+
+* Most η² values cluster very close to zero.
+* Segmentation strength is driven by a small subset of characters.
+* There is no broad demographic polarization pattern.
+
+The visual evidence reinforces the variance decomposition result:
+
+> The structure of character evaluation is predominantly individual, not demographic.
+
+---
+
+# 2.4.5 Bootstrap Validation
+
+**Source:**
+`bootstrap_eta_squared_summary.csv`
+
+Bootstrap confidence intervals confirm stability of larger effects.
+
+### Anakin Skywalker (Age)
+
+* Mean: 0.0490
+* 95% CI: [0.0222, 0.0818]
+
+### Luke Skywalker (Age)
+
+* Mean: 0.0416
+* 95% CI: [0.0175, 0.0719]
+
+### Jar-Jar Binks (Gender)
+
+* Mean: 0.0287
+* 95% CI: [0.0080, 0.0578]
+
+Intervals for stronger effects do not include zero, indicating statistical robustness.
+
+However, magnitude remains small.
+
+Bootstrap analysis therefore strengthens confidence in reliability while confirming limited substantive size.
+
+---
+
+# 2.4.6 Integrated Interpretation
+
+Combining:
+
+* Axis-level mean η²
+* Significant rates
+* Character-level effects
+* Variance decomposition
+* Distribution visualization
+* Bootstrap validation
+
+The findings converge:
+
+1. Age is the strongest segmentation axis.
+2. Gender is slightly weaker but comparable.
+3. Region is negligible.
+4. All demographic effects are small.
+5. 95–99% of variance is within demographic groups.
+
+---
+
+## Structural Conclusion
+
+The Star Wars character evaluation landscape is not demographically polarized.
 
 Instead:
 
-* Region will be included as a main effect, or
-* Collapsed into macro-regions if interaction modeling is justified.
-
-Reason for exclusion:
-
-Cell sparsity would produce unstable interaction estimates and inflated error variance.
+* Ratings are primarily driven by individual preference.
+* Demographic structure is shallow.
+* No axis approaches moderate or large effect size thresholds.
 
 ---
 
-## 2.4.5.6 Robustness & Stability Checks
+# 2.4.7 Implications for THE PLAN
 
-* Bootstrap effect sizes
-* Sensitivity to smallest demographic group
-* Segmentation ranking stability
+Phase 2 was designed to formally certify whether demographic segmentation dominates the evaluation space.
 
-Purpose:
+Results indicate:
 
-Ensure findings are not sampling artifacts.
+* No axis explains substantial variance.
+* No strong demographic stratification pattern emerges.
+* Demographic structure is insufficient to define latent structure.
 
----
+Therefore:
 
-# 2.4.6 What Has Been Explicitly Excluded (and Why)
+> Phase 3 modeling (clustering / latent structure) is unlikely to merely reproduce demographic partitions.
 
-The following were considered but excluded:
+Any discovered clusters are more likely to reflect:
 
-### Full factorial Age × 9-Region modeling
+* Character archetype preferences
+* Narrative alignment patterns
+* Taste-based dimensions
 
-→ Rejected due to insufficient cell sizes.
-
-### Income interaction modeling
-
-→ Rejected due to high missingness (27.7%).
-
-### Three-way interactions (Age × Gender × Region)
-
-→ Deferred due to interpretability concerns and diminishing theoretical return at this stage.
-
-These exclusions are methodological safeguards, not omissions.
+rather than demographic segmentation.
 
 ---
 
-# 2.4.7 End Condition for Phase 2
-
-Phase 2 will be considered complete when:
-
-* Segmentation strength is formally quantified (η²),
-* Demographic axes are ranked by explanatory power,
-* Between vs within variance is decomposed,
-* Age × Gender interactions are evaluated,
-* Stability checks confirm robustness.
-
-Only then can Phase 3 proceed without risking demographic confounding.
-
----
-
-# 2.4.8 Conceptual Positioning
-
-Phase 2 answers:
-
-> Who disagrees?
-
-Phase 3 will answer:
-
-> Why do they disagree?
-
-Completing Phase 2 rigorously ensures that latent archetype discovery is not merely rediscovering age or gender structure.
-
-This marks the transition from **descriptive demographic heterogeneity** to **formal structural segmentation modeling** within the analysis of the Star Wars survey dataset.
-
+This completes the ANOVA certification layer of Phase 2 and satisfies THE PLAN’s requirement for statistically grounded segmentation validation before advancing to structural modeling.

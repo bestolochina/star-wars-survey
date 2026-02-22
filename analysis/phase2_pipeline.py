@@ -23,6 +23,21 @@ from analysis.visualization.segmentation_plots import (
     plot_variable_divergence_heatmap,
     plot_variable_drivers,
 )
+from analysis.metrics.anova_effects import (
+    compute_character_anova_table,
+    build_eta_squared_table,
+    build_axis_summary,
+)
+from analysis.metrics.variance_decomposition import (
+    compute_variance_decomposition,
+)
+from analysis.metrics.bootstrap_effects import (
+    bootstrap_eta_squared,
+    summarize_bootstrap,
+)
+from analysis.visualization.anova_plots import (
+    plot_eta_squared_summary,
+)
 
 
 # ==========================================================
@@ -165,6 +180,93 @@ def run_segmentation_phase(
     print(f"\nSegmentation phase for {variable_name} complete.\n")
 
 
+def run_anova_phase(
+    *,
+    character_long: pd.DataFrame,
+    output_prefix: str,
+) -> None:
+
+    tables_dir = PHASE2_TABLES_DIR / output_prefix
+    tables_dir.mkdir(parents=True, exist_ok=True)
+
+    fig_dir = PHASE2_FIGURES_DIR / output_prefix
+    fig_dir.mkdir(parents=True, exist_ok=True)
+
+    print("\n=== ANOVA EFFECT SIZE ANALYSIS ===")
+
+    anova_results = compute_character_anova_table(
+        character_long
+    )
+
+    eta_table = build_eta_squared_table(anova_results)
+    axis_summary = build_axis_summary(anova_results)
+
+    print("\n--- Eta Squared Table ---")
+    print(eta_table.to_string())
+
+    print("\n--- Axis Summary ---")
+    print(axis_summary.to_string())
+
+    eta_table.to_csv(
+        tables_dir / "character_eta_squared.csv"
+    )
+
+    axis_summary.to_csv(
+        tables_dir / "axis_summary.csv"
+    )
+
+    print("\n--- Generating ANOVA Plots ---")
+
+    fig_dir = PHASE2_FIGURES_DIR / output_prefix
+    fig_dir.mkdir(parents=True, exist_ok=True)
+
+    plot_eta_squared_summary(
+        anova_results,
+        save_path=fig_dir / "eta_squared_summary.png",
+    )
+
+    print("ANOVA plots saved.")
+
+    print("\n=== VARIANCE DECOMPOSITION ===")
+
+    variance_table = compute_variance_decomposition(
+        character_long,
+        character_col="character",
+        rating_col="rating",
+    )
+
+    print(variance_table.to_string())
+
+    variance_table.to_csv(
+        tables_dir / "variance_decomposition.csv",
+        index=False,
+    )
+
+    # print("\n=== BOOTSTRAP ROBUSTNESS CHECK ===")
+    #
+    # top_characters = (
+    #     variance_table
+    #     .sort_values("pct_age", ascending=False)
+    #     .head(3)["character"]
+    #     .tolist()
+    # )
+    #
+    # boot = bootstrap_eta_squared(
+    #     character_long,
+    #     characters=top_characters,
+    #     n_boot=1000,
+    # )
+    #
+    # boot_summary = summarize_bootstrap(boot)
+    #
+    # print(boot_summary.to_string())
+    #
+    # boot_summary.to_csv(
+    #     tables_dir / "bootstrap_eta_squared_summary.csv",
+    #     index=False,
+    # )
+
+
 # ==========================================================
 # MASTER PHASE 2 RUNNER
 # ==========================================================
@@ -187,4 +289,9 @@ def run_phase_2(df: pd.DataFrame) -> None:
         variable_name="character",
         value_name="rating",
         output_prefix="character",
+    )
+
+    run_anova_phase(
+        character_long=phase2_data.character_long,
+        output_prefix="anova_character",
     )
