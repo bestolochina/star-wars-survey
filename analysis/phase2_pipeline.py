@@ -6,10 +6,7 @@ import pandas as pd
 from dataclasses import dataclass
 
 from src.paths import PHASE2_FIGURES_DIR, PHASE2_TABLES_DIR
-from src.config import (
-    EPISODE_RANK_COLUMNS,
-    CHARACTER_RATING_COLUMNS,
-)
+from src.config import EPISODE_RANK_COLUMNS, CHARACTER_RATING_COLUMNS
 
 from analysis.transforms.reshaping import melt_variable
 from analysis.metrics.segmentation_metrics import (
@@ -28,12 +25,8 @@ from analysis.metrics.anova_effects import (
     build_eta_squared_table,
     build_axis_summary,
 )
-from analysis.visualization.anova_plots import (
-    plot_eta_squared_summary,
-)
-from analysis.metrics.variance_decomposition import (
-    compute_variance_decomposition,
-)
+from analysis.visualization.anova_plots import plot_eta_squared_summary
+from analysis.metrics.variance_decomposition import build_variance_decomposition_table
 from analysis.metrics.bootstrap_effects import run_bootstrap_validation
 
 
@@ -208,6 +201,20 @@ def run_anova_phase(
     eta_table = build_eta_squared_table(anova_results)
     axis_summary = build_axis_summary(anova_results)
 
+    # 3️⃣ Variance decomposition
+    variance_table = build_variance_decomposition_table(
+        anova_results,
+        entity_col="variable",
+    )
+
+    print("\n--- Variance Decomposition ---")
+    print(variance_table.to_string())
+
+    variance_table.to_csv(
+        tables_dir / "variance_decomposition.csv",
+        index=False,
+    )
+
     print("\n--- Eta Squared Table ---")
     print(eta_table.to_string())
 
@@ -223,7 +230,7 @@ def run_anova_phase(
         tables_dir / "axis_summary.csv",
     )
 
-    # 3️⃣ Plot
+    # 4️⃣ Plot
     plot_eta_squared_summary(
         anova_results,
         save_path=figures_dir / "eta_squared_summary.png",

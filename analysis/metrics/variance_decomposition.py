@@ -1,114 +1,58 @@
 # analysis/metrics/variance_decomposition.py
 
 from __future__ import annotations
-
 import pandas as pd
-import statsmodels.api as sm
-import statsmodels.formula.api as smf
 
 
-# ---------------------------------------------------------
-# Core SS extractor
-# ---------------------------------------------------------
-
-def _anova_ss(
-    df: pd.DataFrame,
+def build_variance_decomposition_table(
+    anova_df: pd.DataFrame,
     *,
-    response: str,
-    factor: str,
-) -> tuple[float, float]:
-    """
-    Return (SS_between, SS_total) from one-way ANOVA.
-    """
-
-    model = smf.ols(
-        f'Q("{response}") ~ C({factor})',
-        data=df,
-    ).fit()
-
-    anova = sm.stats.anova_lm(model, typ=2)
-
-    ss_between = float(anova.loc[f"C({factor})", "sum_sq"])
-    ss_residual = float(anova.loc["Residual", "sum_sq"])
-
-    ss_total = ss_between + ss_residual
-
-    return ss_between, ss_total
-
-
-# ---------------------------------------------------------
-# Character-level variance decomposition
-# ---------------------------------------------------------
-
-def compute_variance_decomposition(
-    long_df: pd.DataFrame,
-    *,
-    character_col: str,
-    rating_col: str,
-    age_col: str = "age_group",
-    gender_col: str = "gender",
-    region_col: str = "census_region",
+    entity_col: str,
 ) -> pd.DataFrame:
     """
-    Compute variance explained by demographic axes
-    for each character.
+    Build variance decomposition from ANOVA η² results.
+
+    η² already represents proportion of total variance explained.
     """
 
-    results: list[dict[str, float | str]] = []
-
-    characters = sorted(long_df[character_col].unique())
-
-    for character in characters:
-
-        df_char = long_df[
-            long_df[character_col] == character
-        ].dropna(
-            subset=[rating_col, age_col, gender_col, region_col]
+    if entity_col not in anova_df.columns:
+        raise ValueError(
+            f"{entity_col=} not found. Available columns: "
+            f"{anova_df.columns.tolist()}"
         )
 
-        if len(df_char) < 10:
-            continue
-
-        ss_age, ss_total = _anova_ss(
-            df_char,
-            response=rating_col,
-            factor=age_col,
+    table = (
+        anova_df
+        .pivot(
+            index=entity_col,
+            columns="axis",
+            values="eta_sq",
         )
+        .fillna(0.0)
+    )
 
-        ss_gender, _ = _anova_ss(
-            df_char,
-            response=rating_col,
-            factor=gender_col,
-        )
+    rename_map = {
+        "age_group": "pct_age",
+        "gender": "pct_gender",
+        "census_region": "pct_region",
+    }
 
-        ss_region, _ = _anova_ss(
-            df_char,
-            response=rating_col,
-            factor=region_col,
-        )
+    table = table.rename(columns=rename_map)
 
-        pct_age = ss_age / ss_total
-        pct_gender = ss_gender / ss_total
-        pct_region = ss_region / ss_total
+    # ensure columns exist
+    for col in rename_map.values():
+        if col not in table.columns:
+            table[col] = 0.0
 
-        # conservative unexplained estimate
-        pct_within = 1.0 - max(
-            pct_age,
-            pct_gender,
-            pct_region,
-        )
+    table["pct_within"] = (
+        1.0
+        - table["pct_age"]
+        - table["pct_gender"]
+        - table["pct_region"]
+    ).clip(lower=0.0)
 
-        results.append(
-            {
-                "character": character,
-                "pct_age": pct_age,
-                "pct_gender": pct_gender,
-                "pct_region": pct_region,
-                "pct_within": pct_within,
-            }
-        )
-
-    return pd.DataFrame(results).sort_values(
-        "pct_age",
-        ascending=False,
+    return (
+        table
+        .reset_index()
+        .sort_values("pct_age", ascending=False)
     )
