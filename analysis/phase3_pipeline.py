@@ -16,6 +16,12 @@ from analysis.metrics.correlation_structure import (
 from analysis.visualization.structure_plots import (
     plot_correlation_heatmap,
 )
+from analysis.metrics.hierarchical_clustering import (
+    hierarchical_character_clustering,
+)
+from analysis.visualization.clustering_plots import (
+    plot_character_dendrogram,
+)
 
 
 # ==========================================================
@@ -23,31 +29,11 @@ from analysis.visualization.structure_plots import (
 # ==========================================================
 
 def run_phase3_correlation(
-    df: pd.DataFrame,
+    matrix: pd.DataFrame,
     *,
-    respondent_id: str,
+    tables_dir,
+    figures_dir,
 ) -> pd.DataFrame:
-
-    print("\n=== PHASE 3 — CHARACTER STRUCTURE ===")
-
-    tables_dir = PHASE3_TABLES_DIR
-    figures_dir = PHASE3_FIGURES_DIR
-
-    tables_dir.mkdir(parents=True, exist_ok=True)
-    figures_dir.mkdir(parents=True, exist_ok=True)
-
-    # ------------------------------------------------------
-    # Build matrix
-    # ------------------------------------------------------
-
-    matrix = build_character_matrix(
-        df,
-        respondent_id=respondent_id,
-        character_columns=CHARACTER_RATING_COLUMNS,
-        standardize=True,
-    )
-
-    print(f"Matrix shape: {matrix.shape}")
 
     # ------------------------------------------------------
     # Correlation
@@ -69,3 +55,71 @@ def run_phase3_correlation(
     print("Correlation structure saved.")
 
     return corr
+
+
+def run_character_hierarchical_clustering(
+    matrix,
+    *,
+    tables_dir,
+    figures_dir,
+) -> None:
+
+    print("\n=== 3.1.2 Hierarchical Clustering ===")
+
+    Z, cluster_df, distance_df = hierarchical_character_clustering(
+        matrix,
+        linkage_method="average",
+        n_clusters=4,
+    )
+
+    # save assignments
+    cluster_df.to_csv(
+        tables_dir / "character_cluster_assignments.csv",
+        index=False,
+    )
+
+    # plot dendrogram
+    plot_character_dendrogram(
+        Z,
+        labels=matrix.columns.tolist(),
+        save_path=figures_dir / "character_dendrogram.png",
+    )
+
+    print("Hierarchical clustering complete.")
+
+
+def run_phase3(df: pd.DataFrame) -> None:
+
+    print("=== PHASE 3: STRUCTURAL MODELING ===")
+
+    print("\n=== PHASE 3 — CHARACTER STRUCTURE ===")
+
+    tables_dir = PHASE3_TABLES_DIR
+    figures_dir = PHASE3_FIGURES_DIR
+
+    tables_dir.mkdir(parents=True, exist_ok=True)
+    figures_dir.mkdir(parents=True, exist_ok=True)
+
+    # ------------------------------------------------------
+    # Build matrix
+    # ------------------------------------------------------
+
+    matrix = build_character_matrix(
+        df,
+        respondent_id="respondent_id",  # change if needed
+        character_columns=CHARACTER_RATING_COLUMNS,
+        standardize=True,
+    )
+
+    print(f"Matrix shape: {matrix.shape}")
+
+    corr = run_phase3_correlation(matrix, tables_dir=tables_dir, figures_dir=figures_dir)
+
+    print("\nPhase 3 step 3.1.1 complete.\n")
+
+
+    run_character_hierarchical_clustering(
+        matrix,
+        tables_dir=tables_dir,
+        figures_dir=figures_dir,
+    )

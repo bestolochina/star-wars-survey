@@ -3,3 +3,4 @@ pyarrow>=14.0
 matplotlib>=3.8
 seaborn>=0.13
 numpy
+scipy
