@@ -1,4 +1,5 @@
 # src/paths.py
+
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -12,7 +13,11 @@ ANALYSIS_DIR = PROJECT_ROOT / "analysis"
 REPORTS_DIR = PROJECT_ROOT / "reports"
 FIGURES_DIR = REPORTS_DIR / "figures"
 TABLES_DIR = REPORTS_DIR / "tables"
+
 PHASE1_FIGURES_DIR = FIGURES_DIR / "phase1"
 PHASE2_FIGURES_DIR = FIGURES_DIR / "phase2"
+PHASE3_FIGURES_DIR = FIGURES_DIR / "phase3"
+
 PHASE1_TABLES_DIR = TABLES_DIR / "phase1"
 PHASE2_TABLES_DIR = TABLES_DIR / "phase2"
+PHASE3_TABLES_DIR = TABLES_DIR / "phase3"
