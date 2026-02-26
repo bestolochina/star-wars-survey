@@ -22,6 +22,14 @@ from analysis.metrics.hierarchical_clustering import (
 from analysis.visualization.clustering_plots import (
     plot_character_dendrogram,
 )
+from analysis.metrics.pca_structure import (
+    compute_character_pca,
+)
+from analysis.visualization.pca_plots import (
+    plot_scree,
+    plot_cumulative_variance,
+    plot_character_pca_clusters,
+)
 
 
 # ==========================================================
@@ -56,20 +64,23 @@ def run_phase3_correlation(
 
     return corr
 
+# ==========================================================
+# PHASE 3 — STEP 3.1.2
+# ==========================================================
 
 def run_character_hierarchical_clustering(
     matrix,
     *,
     tables_dir,
     figures_dir,
-) -> None:
+) -> pd.DataFrame:
 
     print("\n=== 3.1.2 Hierarchical Clustering ===")
 
     Z, cluster_df, distance_df = hierarchical_character_clustering(
         matrix,
         linkage_method="average",
-        n_clusters=4,
+        n_clusters=3,
     )
 
     # save assignments
@@ -86,6 +97,59 @@ def run_character_hierarchical_clustering(
     )
 
     print("Hierarchical clustering complete.")
+
+    return cluster_df
+
+# ==========================================================
+# PHASE 3 — STEP 3.1.3
+# ==========================================================
+
+def run_character_pca(
+    matrix,
+    cluster_df,
+    *,
+    tables_dir,
+    figures_dir,
+) -> None:
+
+    print("\n=== 3.1.3 PCA Dimensionality Analysis ===")
+
+    n_missing = matrix.isna().sum().sum()
+    print(f"PCA missing values filled: {n_missing}")
+
+    pca, explained_df, loadings_df = compute_character_pca(matrix)
+
+    # save tables
+    explained_df.to_csv(
+        tables_dir / "pca_explained_variance.csv",
+        index=False,
+    )
+
+    loadings_df.to_csv(
+        tables_dir / "pca_loadings.csv"
+    )
+
+    # plots
+    plot_scree(
+        explained_df,
+        figures_dir / "pca_scree_plot.png",
+    )
+
+    plot_cumulative_variance(
+        explained_df,
+        figures_dir / "pca_cumulative_variance.png",
+    )
+
+    print("PCA analysis complete.")
+
+    plot_character_pca_clusters(
+        loadings_df,
+        cluster_df,
+        save_path_2d=figures_dir / "pca_character_clusters_pc12.png",
+        save_path_13=figures_dir / "pca_character_clusters_pc13.png",
+    )
+
+    print("PCA cluster visualization saved.")
 
 
 def run_phase3(df: pd.DataFrame) -> None:
@@ -117,9 +181,15 @@ def run_phase3(df: pd.DataFrame) -> None:
 
     print("\nPhase 3 step 3.1.1 complete.\n")
 
-
-    run_character_hierarchical_clustering(
+    cluster_df = run_character_hierarchical_clustering(
         matrix,
+        tables_dir=tables_dir,
+        figures_dir=figures_dir,
+    )
+
+    run_character_pca(
+        matrix,
+        cluster_df,
         tables_dir=tables_dir,
         figures_dir=figures_dir,
     )
