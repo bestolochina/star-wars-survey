@@ -7,24 +7,14 @@ import pandas as pd
 from src.paths import PHASE3_TABLES_DIR, PHASE3_FIGURES_DIR
 from src.config import CHARACTER_RATING_COLUMNS
 
-from analysis.transforms.matrix_builder import (
-    build_character_matrix,
-)
-from analysis.metrics.correlation_structure import (
-    compute_character_correlation,
-)
-from analysis.visualization.structure_plots import (
-    plot_correlation_heatmap,
-)
-from analysis.metrics.hierarchical_clustering import (
-    hierarchical_character_clustering,
-)
-from analysis.visualization.clustering_plots import (
-    plot_character_dendrogram,
-)
-from analysis.metrics.pca_structure import (
-    compute_character_pca,
-)
+from analysis.transforms.matrix_builder import build_character_matrix
+from analysis.metrics.correlation_structure import compute_character_correlation
+from analysis.metrics.hierarchical_clustering import hierarchical_character_clustering
+from analysis.metrics.pca_structure import compute_character_pca
+from analysis.metrics.cluster_profiles import compute_cluster_profiles
+
+from analysis.visualization.structure_plots import plot_correlation_heatmap
+from analysis.visualization.clustering_plots import plot_character_dendrogram
 from analysis.visualization.pca_plots import (
     plot_scree,
     plot_cumulative_variance,
@@ -33,163 +23,187 @@ from analysis.visualization.pca_plots import (
 
 
 # ==========================================================
-# PHASE 3 — STEP 3.1.1
+# Utilities
 # ==========================================================
 
-def run_phase3_correlation(
-    matrix: pd.DataFrame,
-    *,
-    tables_dir,
-    figures_dir,
-) -> pd.DataFrame:
+def _ensure_dirs():
+    PHASE3_TABLES_DIR.mkdir(parents=True, exist_ok=True)
+    PHASE3_FIGURES_DIR.mkdir(parents=True, exist_ok=True)
 
-    # ------------------------------------------------------
-    # Correlation
-    # ------------------------------------------------------
+
+# ==========================================================
+# 3.1.1 Correlation Structure
+# ==========================================================
+
+def step_311_correlation(matrix: pd.DataFrame) -> pd.DataFrame:
+    print("\n=== 3.1.1 Correlation Structure ===")
 
     corr = compute_character_correlation(matrix)
 
-    # save table
-    corr.to_csv(
-        tables_dir / "correlation_matrix.csv"
-    )
+    corr.to_csv(PHASE3_TABLES_DIR / "correlation_matrix.csv")
 
-    # plot
     plot_correlation_heatmap(
         corr,
-        save_path=figures_dir / "correlation_heatmap.png",
+        save_path=PHASE3_FIGURES_DIR / "correlation_heatmap.png",
     )
-
-    print("Correlation structure saved.")
 
     return corr
 
+
 # ==========================================================
-# PHASE 3 — STEP 3.1.2
+# 3.1.2 Hierarchical Clustering
 # ==========================================================
 
-def run_character_hierarchical_clustering(
-    matrix,
-    *,
-    tables_dir,
-    figures_dir,
-) -> pd.DataFrame:
-
+def step_312_clustering(matrix: pd.DataFrame) -> pd.DataFrame:
     print("\n=== 3.1.2 Hierarchical Clustering ===")
 
-    Z, cluster_df, distance_df = hierarchical_character_clustering(
+    Z, cluster_df, _ = hierarchical_character_clustering(
         matrix,
         linkage_method="average",
         n_clusters=3,
     )
 
-    # save assignments
     cluster_df.to_csv(
-        tables_dir / "character_cluster_assignments.csv",
+        PHASE3_TABLES_DIR / "character_cluster_assignments.csv",
         index=False,
     )
 
-    # plot dendrogram
     plot_character_dendrogram(
         Z,
         labels=matrix.columns.tolist(),
-        save_path=figures_dir / "character_dendrogram.png",
+        save_path=PHASE3_FIGURES_DIR / "character_dendrogram.png",
     )
-
-    print("Hierarchical clustering complete.")
 
     return cluster_df
 
+
 # ==========================================================
-# PHASE 3 — STEP 3.1.3
+# 3.1.3 PCA Structure
 # ==========================================================
 
-def run_character_pca(
-    matrix,
-    cluster_df,
-    *,
-    tables_dir,
-    figures_dir,
-) -> None:
+def step_313_pca(matrix: pd.DataFrame):
 
     print("\n=== 3.1.3 PCA Dimensionality Analysis ===")
 
-    n_missing = matrix.isna().sum().sum()
-    print(f"PCA missing values filled: {n_missing}")
-
     pca, explained_df, loadings_df = compute_character_pca(matrix)
 
-    # save tables
     explained_df.to_csv(
-        tables_dir / "pca_explained_variance.csv",
+        PHASE3_TABLES_DIR / "pca_explained_variance.csv",
         index=False,
     )
 
     loadings_df.to_csv(
-        tables_dir / "pca_loadings.csv"
+        PHASE3_TABLES_DIR / "pca_loadings.csv"
     )
 
-    # plots
     plot_scree(
         explained_df,
-        figures_dir / "pca_scree_plot.png",
+        PHASE3_FIGURES_DIR / "pca_scree_plot.png",
     )
 
     plot_cumulative_variance(
         explained_df,
-        figures_dir / "pca_cumulative_variance.png",
+        PHASE3_FIGURES_DIR / "pca_cumulative_variance.png",
     )
 
-    print("PCA analysis complete.")
+    return pca, explained_df, loadings_df
 
-    plot_character_pca_clusters(
-        loadings_df,
-        cluster_df,
-        save_path_2d=figures_dir / "pca_character_clusters_pc12.png",
-        save_path_13=figures_dir / "pca_character_clusters_pc13.png",
+
+# ==========================================================
+# 3.1.4 Cluster Profiles
+# ==========================================================
+
+def step_314_cluster_profiles(
+    matrix: pd.DataFrame,
+    cluster_df: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 3.1.4 Cluster Mean Profiles ===")
+
+    cluster_profile_df = compute_cluster_profiles(
+        matrix,
+        cluster_df)
+
+    cluster_profile_df.to_csv(
+        PHASE3_TABLES_DIR / "cluster_mean_profiles.csv"
     )
 
-    print("PCA cluster visualization saved.")
+    print(cluster_profile_df.to_string())
 
+    return cluster_profile_df
+
+
+# ==========================================================
+# Pipeline Entry
+# ==========================================================
 
 def run_phase3(df: pd.DataFrame) -> None:
 
     print("=== PHASE 3: STRUCTURAL MODELING ===")
 
-    print("\n=== PHASE 3 — CHARACTER STRUCTURE ===")
-
-    tables_dir = PHASE3_TABLES_DIR
-    figures_dir = PHASE3_FIGURES_DIR
-
-    tables_dir.mkdir(parents=True, exist_ok=True)
-    figures_dir.mkdir(parents=True, exist_ok=True)
+    _ensure_dirs()
 
     # ------------------------------------------------------
     # Build matrix
     # ------------------------------------------------------
 
-    matrix = build_character_matrix(
+    # standardized → structure
+    matrix_std = build_character_matrix(
         df,
-        respondent_id="respondent_id",  # change if needed
+        respondent_id="respondent_id",
         character_columns=CHARACTER_RATING_COLUMNS,
         standardize=True,
     )
 
-    print(f"Matrix shape: {matrix.shape}")
-
-    corr = run_phase3_correlation(matrix, tables_dir=tables_dir, figures_dir=figures_dir)
-
-    print("\nPhase 3 step 3.1.1 complete.\n")
-
-    cluster_df = run_character_hierarchical_clustering(
-        matrix,
-        tables_dir=tables_dir,
-        figures_dir=figures_dir,
+    # raw → interpretation
+    matrix_raw = build_character_matrix(
+        df,
+        respondent_id="respondent_id",
+        character_columns=CHARACTER_RATING_COLUMNS,
+        standardize=False,
     )
 
-    run_character_pca(
-        matrix,
+    print(f"Matrix shape: {matrix_std.shape}")
+
+    # ------------------------------------------------------
+    # 3.1.1 Correlation
+    # ------------------------------------------------------
+
+    step_311_correlation(matrix_std)
+
+    # ------------------------------------------------------
+    # 3.1.2 Clustering
+    # ------------------------------------------------------
+
+    cluster_df = step_312_clustering(matrix_std)
+
+    # ------------------------------------------------------
+    # 3.1.3 PCA
+    # ------------------------------------------------------
+
+    _, _, loadings_df = step_313_pca(matrix_std)
+
+    plot_character_pca_clusters(
+        loadings_df,
         cluster_df,
-        tables_dir=tables_dir,
-        figures_dir=figures_dir,
+        save_path_2d=PHASE3_FIGURES_DIR / "pca_character_clusters_pc12.png",
+        save_path_13=PHASE3_FIGURES_DIR / "pca_character_clusters_pc13.png",
     )
+
+    # ------------------------------------------------------
+    # 3.1.4 Cluster Profiles
+    # ------------------------------------------------------
+
+    print("\n=== 3.1.4 Cluster Character Profiles ===")
+
+    profile_df = compute_cluster_profiles(
+        matrix_raw,
+        cluster_df,
+    )
+
+    profile_df.to_csv(
+        PHASE3_TABLES_DIR / "cluster_character_profiles.csv",
+        index=False,
+    )
+
+    # print(profile_df.head(15).to_string())
