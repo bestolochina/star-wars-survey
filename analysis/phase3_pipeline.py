@@ -20,6 +20,11 @@ from analysis.visualization.pca_plots import (
     plot_cumulative_variance,
     plot_character_pca_clusters,
 )
+from analysis.metrics.cluster_validation import (
+    compute_silhouette,
+    bootstrap_cluster_stability,
+)
+from analysis.metrics.imputation import knn_impute_matrix
 
 
 # ==========================================================
@@ -125,12 +130,57 @@ def step_314_cluster_profiles(
         cluster_df)
 
     cluster_profile_df.to_csv(
-        PHASE3_TABLES_DIR / "cluster_mean_profiles.csv"
+        PHASE3_TABLES_DIR / "cluster_character_profiles.csv",
+        index=False,
     )
 
-    print(cluster_profile_df.to_string())
+    print(cluster_profile_df.to_string(index=False))
 
     return cluster_profile_df
+
+def step_315_cluster_validation(
+    matrix: pd.DataFrame,
+    cluster_df: pd.DataFrame,
+) -> None:
+
+    print("\n=== 3.1.5 Cluster Validation ===")
+
+    # -------------------------
+    # KNN Imputation
+    # -------------------------
+    print("Running KNN imputation...")
+
+    matrix_for_validation = knn_impute_matrix(
+        matrix,
+        n_neighbors=5,
+        weights="distance",
+    )
+
+    # -------------------------
+    # Silhouette
+    # -------------------------
+    sil = compute_silhouette(matrix_for_validation, cluster_df)
+
+    print(f"Silhouette score: {sil:.3f}")
+
+    # -------------------------
+    # Bootstrap stability
+    # -------------------------
+    stability_df = bootstrap_cluster_stability(
+        matrix_for_validation,
+        cluster_df,
+        hierarchical_character_clustering,
+        n_bootstrap=100,
+    )
+
+    stability_df.to_csv(
+        PHASE3_TABLES_DIR / "cluster_bootstrap_stability.csv",
+        index=False,
+    )
+
+    print(
+        f"Mean ARI: {stability_df['ARI'].mean():.3f}"
+    )
 
 
 # ==========================================================
@@ -165,6 +215,9 @@ def run_phase3(df: pd.DataFrame) -> None:
 
     print(f"Matrix shape: {matrix_std.shape}")
 
+    n_missing = matrix_std.isna().sum().sum()
+    print(f"PCA missing values filled: {n_missing}")
+
     # ------------------------------------------------------
     # 3.1.1 Correlation
     # ------------------------------------------------------
@@ -196,14 +249,15 @@ def run_phase3(df: pd.DataFrame) -> None:
 
     print("\n=== 3.1.4 Cluster Character Profiles ===")
 
-    profile_df = compute_cluster_profiles(
+    profile_df = step_314_cluster_profiles(
         matrix_raw,
         cluster_df,
     )
 
-    profile_df.to_csv(
-        PHASE3_TABLES_DIR / "cluster_character_profiles.csv",
-        index=False,
-    )
+    # ------------------------------------------------------
+    # 3.1.5 Cluster validation
+    #         • Silhouette score
+    #         • Bootstrap stability
+    # ------------------------------------------------------
 
-    # print(profile_df.head(15).to_string())
+    step_315_cluster_validation(matrix_std, cluster_df)

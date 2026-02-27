@@ -1,58 +1,51 @@
 # analysis/metrics/cluster_profiles.py
 
 from __future__ import annotations
-
 import pandas as pd
 
 
 def compute_cluster_profiles(
-    raw_matrix: pd.DataFrame,
+    matrix_raw: pd.DataFrame,
     cluster_df: pd.DataFrame,
 ) -> pd.DataFrame:
     """
-    Compute interpretable character profiles for each cluster.
+    Compute mean character ratings within each character cluster.
 
-    Uses RAW (non-standardized) ratings.
-
-    Returns
-    -------
-    profile_df : DataFrame
-        columns = ["cluster", "character", "mean_rating"]
+    Returns LONG format:
+        character | cluster | mean_rating
     """
 
-    # ---------------------------------------
-    # Wide → Long
-    # ---------------------------------------
+    # -----------------------------------
+    # Character → cluster mapping
+    # -----------------------------------
+    char_to_cluster = dict(
+        zip(cluster_df["character"], cluster_df["cluster"])
+    )
 
+    # -----------------------------------
+    # Wide → Long
+    # -----------------------------------
     long_df = (
-        raw_matrix
-        .reset_index(drop=True)
+        matrix_raw
         .melt(
             var_name="character",
-            value_name="rating",
+            value_name="rating"
         )
         .dropna(subset=["rating"])
     )
 
-    # ---------------------------------------
-    # Attach cluster labels
-    # ---------------------------------------
+    # attach cluster labels
+    long_df["cluster"] = long_df["character"].map(char_to_cluster)
 
-    long_df = long_df.merge(
-        cluster_df,
-        on="character",
-        how="left",
-    )
-
-    # ---------------------------------------
-    # Mean rating per character within cluster
-    # ---------------------------------------
-
+    # -----------------------------------
+    # Mean rating per character per cluster
+    # -----------------------------------
     profile_df = (
         long_df
-        .groupby(["cluster", "character"], as_index=False)
-        .agg(mean_rating=("rating", "mean"))
-        .sort_values(["cluster", "mean_rating"], ascending=[True, False])
+        .groupby(["character", "cluster"], as_index=False)["rating"]
+        .mean()
+        .rename(columns={"rating": "mean_rating"})
+        .sort_values(["cluster", "character"])
     )
 
     return profile_df
