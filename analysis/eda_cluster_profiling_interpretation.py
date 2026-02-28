@@ -19,10 +19,7 @@ def main() -> None:
         / "respondent_cluster_assignments.csv"
     )
 
-    run_phase4_1(
-        df,
-        respondent_cluster_path=respondent_cluster_path,
-    )
+    run_phase4_1(df)
 
 
 if __name__ == "__main__":

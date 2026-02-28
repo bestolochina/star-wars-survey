@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pandas as pd
 
-from src.paths import PHASE4_TABLES_DIR, PHASE4_FIGURES_DIR
+from src.paths import PHASE4_TABLES_DIR, PHASE4_FIGURES_DIR, PHASE3_TABLES_DIR
 from src.config import CHARACTER_RATING_COLUMNS
 
 from analysis.transforms.matrix_builder import build_character_matrix
@@ -160,12 +160,16 @@ def step_416_heatmap(profile_df: pd.DataFrame) -> None:
 
 def run_phase4_1(
     df: pd.DataFrame,
-    respondent_cluster_path,
 ) -> None:
 
     print("=== PHASE 4.1: AUDIENCE CLUSTER PROFILES ===")
 
     _ensure_dirs()
+
+    respondent_cluster_path = (
+        PHASE3_TABLES_DIR
+        / "respondent_cluster_assignments.csv"
+    )
 
     # -----------------------------------------
     # Matrix
