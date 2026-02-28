@@ -24,7 +24,8 @@ from analysis.metrics.cluster_validation import (
     compute_silhouette,
     bootstrap_cluster_stability,
 )
-from analysis.metrics.imputation import knn_impute_matrix
+from analysis.transforms.imputation import knn_impute_matrix
+from analysis.metrics.respondent_clustering import hierarchical_respondent_clustering
 
 
 # ==========================================================
@@ -80,6 +81,37 @@ def step_312_clustering(matrix: pd.DataFrame, n_clusters: int) -> pd.DataFrame:
     )
 
     return cluster_df
+
+# ==========================================================
+# 3.2 Respondent Clustering
+# ==========================================================
+
+def step_320_respondent_clustering(
+    matrix: pd.DataFrame,
+    n_clusters: int,
+) -> pd.DataFrame:
+
+    print("\n=== 3.2 Respondent Clustering ===")
+
+    Z, respondent_cluster_df, _ = (
+        hierarchical_respondent_clustering(
+            matrix,
+            n_clusters=n_clusters,
+        )
+    )
+
+    respondent_cluster_df.to_csv(
+        PHASE3_TABLES_DIR / "respondent_cluster_assignments.csv",
+        index=False,
+    )
+
+    print(
+        respondent_cluster_df["cluster"]
+        .value_counts()
+        .sort_index()
+    )
+
+    return respondent_cluster_df
 
 
 # ==========================================================
@@ -229,6 +261,15 @@ def run_phase3(df: pd.DataFrame) -> None:
     # ------------------------------------------------------
 
     cluster_df = step_312_clustering(matrix_std, n_clusters=3)
+
+    # ------------------------------------------------------
+    # 3.2 Respondent clustering (audience segmentation)
+    # ------------------------------------------------------
+
+    respondent_cluster_df = step_320_respondent_clustering(
+        matrix_std,
+        n_clusters=3,
+    )
 
     # ------------------------------------------------------
     # 3.1.3 PCA

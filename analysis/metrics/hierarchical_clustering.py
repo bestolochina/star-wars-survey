@@ -17,19 +17,41 @@ def correlation_distance_matrix(
     matrix: pd.DataFrame,
 ) -> pd.DataFrame:
     """
-    Compute 1 - Pearson correlation distance between characters.
+    Compute 1 - Pearson correlation distance.
+
+    Handles missing-overlap cases safely and guarantees
+    symmetry required by scipy.squareform.
     """
 
+    # -----------------------------------
+    # Correlation
+    # -----------------------------------
     corr = matrix.corr(method="pearson")
 
+    # -----------------------------------
+    # Handle undefined correlations
+    # (no shared ratings)
+    # -----------------------------------
+    corr = corr.fillna(0.0)
+
+    # -----------------------------------
+    # Convert to distance
+    # -----------------------------------
     distance = 1.0 - corr
 
-    # numerical safety
+    # -----------------------------------
+    # Force symmetry (floating safety)
+    # -----------------------------------
+    distance = (distance + distance.T) / 2
+
+    # -----------------------------------
+    # Clean numerical artifacts
+    # -----------------------------------
+    distance = distance.clip(lower=0.0)
+
     np.fill_diagonal(distance.values, 0.0)
 
     return distance
-
-
 # ==========================================================
 # HIERARCHICAL CLUSTERING
 # ==========================================================
@@ -50,6 +72,13 @@ def hierarchical_character_clustering(
     """
 
     distance_df = correlation_distance_matrix(matrix)
+
+    if not np.allclose(
+            distance_df.values,
+            distance_df.values.T,
+            equal_nan=True,
+    ):
+        raise ValueError("Distance matrix not symmetric.")
 
     # scipy expects condensed distance vector
     condensed = squareform(distance_df.values)
