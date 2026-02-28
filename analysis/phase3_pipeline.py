@@ -59,13 +59,13 @@ def step_311_correlation(matrix: pd.DataFrame) -> pd.DataFrame:
 # 3.1.2 Hierarchical Clustering
 # ==========================================================
 
-def step_312_clustering(matrix: pd.DataFrame) -> pd.DataFrame:
+def step_312_clustering(matrix: pd.DataFrame, n_clusters: int) -> pd.DataFrame:
     print("\n=== 3.1.2 Hierarchical Clustering ===")
 
     Z, cluster_df, _ = hierarchical_character_clustering(
         matrix,
         linkage_method="average",
-        n_clusters=3,
+        n_clusters=n_clusters,
     )
 
     cluster_df.to_csv(
@@ -228,7 +228,7 @@ def run_phase3(df: pd.DataFrame) -> None:
     # 3.1.2 Clustering
     # ------------------------------------------------------
 
-    cluster_df = step_312_clustering(matrix_std)
+    cluster_df = step_312_clustering(matrix_std, n_clusters=3)
 
     # ------------------------------------------------------
     # 3.1.3 PCA
