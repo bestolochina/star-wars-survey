@@ -7,6 +7,38 @@ This phase transforms clustering results into interpretable audience archetypes.
 
 ---
 
+# Reporting Rule (Project-Wide)
+
+For all analytical phases in this project, we adopt the following rule:
+
+> During development, we include **everything**:
+>
+> * All generated plots
+> * All summary tables
+> * All computed indices
+> * All exported CSV files
+> * All intermediate validation metrics
+
+Rationale:
+
+* Ensures full transparency
+* Preserves reproducibility
+* Prevents loss of potentially important intermediate results
+* Allows later selective pruning during polishing
+
+Only at the final polishing stage will we:
+
+* Remove redundant visuals
+* Collapse large tables into summaries
+* Move heavy outputs to appendix
+* Streamline narrative emphasis
+
+Until then, completeness takes priority over minimalism.
+
+---
+
+---
+
 # 4.1 Audience Cluster Profiles
 
 ## 4.1.1 Build Raw Rating Matrix
@@ -124,7 +156,7 @@ Extremeness quantifies how distinct a segment’s taste structure is.
 
 **File:**
 reports/figures/phase4/cluster_profile_heatmap.png
-
+![cluster_profile_heatmap.png](figures/phase4/cluster_profile_heatmap.png)
 Design:
 
 * Rows: characters
@@ -184,6 +216,73 @@ For each cluster, list:
 * Top 3 most under-rated characters
 
 This creates a concise narrative summary of each audience segment.
+
+---
+
+---
+
+# 4.1.8 Deviation Heatmap
+
+**File:**
+reports/figures/phase4/deviation_heatmap.png
+![deviation_heatmap.png](figures/phase4/deviation_heatmap.png)
+Definition:
+Deviation = (cluster mean − overall mean)
+
+This visualization isolates polarization from general popularity and reveals:
+
+* Cluster 2 strong positive deviation for Darth Vader (+0.97)
+* Cluster 3 extreme negative deviation for Darth Vader (−1.61)
+* Cluster 1 strong positive deviation for Jar-Jar Binks (+0.65)
+* Cluster 2 strong rejection of Jar-Jar Binks (−0.96)
+
+The deviation heatmap is analytically more diagnostic than the raw profile heatmap.
+
+---
+
+# 4.1.9 Cluster Radar Plots
+
+**File:**
+reports/figures/phase4/cluster_radar_plots.png
+![cluster_radar_plots.png](figures/phase4/cluster_radar_plots.png)
+These plots visualize deviation signatures for each cluster across all 14 characters.
+
+Purpose:
+
+* Reveal structural preference shape
+* Make archetypes visually intuitive
+* Support presentation and communication use-cases
+
+Radar plots do not introduce new statistics but enhance interpretability.
+
+---
+
+# 4.1.10 Top Deviations Table
+
+**File:**
+reports/tables/phase4/top_deviations_table.csv
+
+Below are the strongest positive and negative deviations per cluster.
+
+| Cluster | Character         | Deviation |
+| ------- | ----------------- | --------- |
+| 1       | Jar-Jar Binks     | +0.65     |
+| 1       | Emperor Palpatine | +0.65     |
+| 1       | Darth Vader       | +0.63     |
+| 1       | Obi Wan Kenobi    | -0.38     |
+| 1       | Han Solo          | -0.36     |
+| 2       | Darth Vader       | +0.97     |
+| 2       | Boba Fett         | +0.40     |
+| 2       | Han Solo          | +0.26     |
+| 2       | Jar-Jar Binks     | -0.96     |
+| 2       | Padme Amidala     | -0.57     |
+| 3       | Padme Amidala     | +0.45     |
+| 3       | C-3P0             | +0.32     |
+| 3       | Darth Vader       | -1.61     |
+| 3       | Emperor Palpatine | -0.88     |
+| 3       | Boba Fett         | -0.72     |
+
+This table provides a concise narrative summary of each audience segment’s strongest differentiators.
 
 ---
 

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -56,3 +57,101 @@ def plot_cluster_profile_heatmap(
     plt.close()
 
     print(f"Saved heatmap → {save_path}")
+
+
+# ----------------------------------------------------------
+# Deviation Heatmap
+# ----------------------------------------------------------
+
+def plot_deviation_heatmap(
+    deviations: pd.DataFrame,
+    save_path,
+) -> None:
+    """
+    Heatmap of cluster deviations from overall mean.
+
+    Expected columns:
+        character
+        cluster
+        deviation
+    """
+
+    pivot = deviations.pivot(
+        index="character",
+        columns="cluster",
+        values="deviation",
+    )
+
+    # ensure numeric dtype (prevents seaborn crash)
+    pivot = pivot.astype(float)
+
+    plt.figure(figsize=(8, 10))
+
+    ax = sns.heatmap(
+        pivot,
+        center=0,
+        cmap="coolwarm",
+        annot=True,
+        fmt=".2f",
+        linewidths=0.5,
+        cbar_kws={"label": "Deviation from Overall Mean"},
+    )
+
+    ax.set_title("Cluster Preference Deviations")
+
+    plt.tight_layout()
+    plt.savefig(save_path, dpi=300)
+    plt.close()
+
+    print(f"Saved deviation heatmap → {save_path}")
+
+
+# ----------------------------------------------------------
+# Cluster Radar Plots
+# ----------------------------------------------------------
+
+def plot_cluster_radar_plots(
+    deviations: pd.DataFrame,
+    save_path,
+) -> None:
+    """
+    Radar chart comparing clusters using deviations.
+    """
+
+    pivot = deviations.pivot(
+        index="character",
+        columns="cluster",
+        values="deviation",
+    ).astype(float)
+
+    characters = pivot.index.tolist()
+    clusters = pivot.columns.tolist()
+
+    num_vars = len(characters)
+
+    angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False)
+    angles = np.concatenate([angles, [angles[0]]])
+
+    fig, ax = plt.subplots(
+        figsize=(8, 8),
+        subplot_kw=dict(polar=True),
+    )
+
+    for cluster in clusters:
+        values = pivot[cluster].values
+        values = np.concatenate([values, [values[0]]])
+
+        ax.plot(angles, values, label=f"Cluster {cluster}")
+        ax.fill(angles, values, alpha=0.1)
+
+    ax.set_xticks(angles[:-1])
+    ax.set_xticklabels(characters, fontsize=8)
+
+    ax.set_title("Cluster Preference Signatures (Deviation Radar)")
+    ax.legend(loc="upper right", bbox_to_anchor=(1.3, 1.1))
+
+    plt.tight_layout()
+    plt.savefig(save_path, dpi=300)
+    plt.close()
+
+    print(f"Saved radar plots → {save_path}")

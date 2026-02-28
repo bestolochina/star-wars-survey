@@ -17,6 +17,8 @@ from analysis.metrics.cluster_profiles import (
 
 from analysis.visualization.cluster_profile_plots import (
     plot_cluster_profile_heatmap,
+    plot_deviation_heatmap,
+    plot_cluster_radar_plots,
 )
 
 
@@ -41,7 +43,7 @@ def step_411_build_matrix(df: pd.DataFrame) -> pd.DataFrame:
         df,
         respondent_id="respondent_id",
         character_columns=CHARACTER_RATING_COLUMNS,
-        standardize=False,   # interpretation requires raw scale
+        standardize=False,
     )
 
     print(f"Matrix shape: {matrix_raw.shape}")
@@ -155,6 +157,97 @@ def step_416_heatmap(profile_df: pd.DataFrame) -> None:
 
 
 # ==========================================================
+# 4.1.7 Compute Deviations (CORE OBJECT)
+# ==========================================================
+
+def step_417_compute_deviations(
+    profile_df: pd.DataFrame,
+    overall_df: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 4.1.7 Compute Cluster Deviations ===")
+
+    deviations = profile_df.merge(
+        overall_df,
+        on="character",
+        how="left",
+    )
+
+    deviations["deviation"] = (
+            deviations["mean_rating"]
+            - deviations["mean_rating_overall"]
+    )
+
+    deviations.to_csv(
+        PHASE4_TABLES_DIR / "cluster_deviations.csv",
+        index=False,
+    )
+
+    print(deviations.columns.tolist())
+
+    return deviations
+
+
+# ==========================================================
+# 4.1.8 Deviation Heatmap
+# ==========================================================
+
+def step_418_deviation_heatmap(
+    deviations: pd.DataFrame,
+) -> None:
+
+    print("\n=== 4.1.8 Deviation Heatmap ===")
+
+    plot_deviation_heatmap(
+        deviations,
+        save_path=PHASE4_FIGURES_DIR / "deviation_heatmap.png",
+    )
+
+
+# ==========================================================
+# 4.1.9 Radar Plots
+# ==========================================================
+
+def step_419_cluster_radar_plots(
+    deviations: pd.DataFrame,
+) -> None:
+
+    print("\n=== 4.1.9 Cluster Radar Plots ===")
+
+    plot_cluster_radar_plots(
+        deviations,
+        save_path=PHASE4_FIGURES_DIR / "cluster_radar_plots.png",
+    )
+
+
+# ==========================================================
+# 4.1.10 Top Deviations Table
+# ==========================================================
+
+def step_420_top_deviations_table(
+    deviations: pd.DataFrame,
+    top_n: int = 5,
+) -> None:
+
+    print("\n=== 4.1.10 Top Deviations Table ===")
+
+    top_dev = (
+        deviations.assign(abs_dev=lambda d: d["deviation"].abs())
+        .sort_values(["cluster", "abs_dev"], ascending=[True, False])
+        .groupby("cluster")
+        .head(top_n)
+        .drop(columns="abs_dev")
+    )
+
+    top_dev.to_csv(
+        PHASE4_TABLES_DIR / "top_deviations_table.csv",
+        index=False,
+    )
+
+    print(top_dev.to_string(index=False))
+
+
+# ==========================================================
 # Pipeline Entry
 # ==========================================================
 
@@ -202,6 +295,21 @@ def run_phase4_1(
     step_415_extremeness(profile_df, overall_df)
 
     # -----------------------------------------
-    # Visualization
+    # Profile heatmap
     # -----------------------------------------
     step_416_heatmap(profile_df)
+
+    # -----------------------------------------
+    # Deviations (NEW CORE OBJECT)
+    # -----------------------------------------
+    deviations = step_417_compute_deviations(
+        profile_df,
+        overall_df,
+    )
+
+    # -----------------------------------------
+    # New visualizations + tables
+    # -----------------------------------------
+    step_418_deviation_heatmap(deviations)
+    step_419_cluster_radar_plots(deviations)
+    step_420_top_deviations_table(deviations)
