@@ -1,4 +1,6 @@
-from src.paths import RAW_DATA_DIR, CLEAN_DATA_DIR
+# src/io_utils.py
+
+from src.paths import RAW_DATA_DIR, CLEAN_DATA_DIR, PHASE3_TABLES_DIR, PHASE4_TABLES_DIR
 import pandas as pd
 
 # ---------- project paths ----------
@@ -75,3 +77,41 @@ def save_clean_star_wars(df: pd.DataFrame) -> None:
 
 def load_clean_star_wars() -> pd.DataFrame:
     return pd.read_parquet(CLEAN_FILE)
+
+
+def load_respondent_clusters() -> pd.DataFrame:
+    """
+    Load respondent → audience cluster assignments
+    produced in Phase 3 clustering.
+    """
+
+    path = PHASE3_TABLES_DIR / "respondent_cluster_assignments.csv"
+
+    df = pd.read_csv(path)
+
+    expected_cols = {"respondent_id", "cluster"}
+    if not expected_cols.issubset(df.columns):
+        raise ValueError(
+            "respondent_cluster_assignments.csv missing required columns"
+        )
+
+    return df
+
+
+def load_character_clusters() -> pd.DataFrame:
+    """
+    Load character → character cluster mapping
+    produced in Phase 4.1.
+    """
+
+    path = PHASE3_TABLES_DIR / "character_cluster_assignments.csv"
+
+    df = pd.read_csv(path)
+
+    expected_cols = {"character", "cluster"}
+    if not expected_cols.issubset(df.columns):
+        raise ValueError(
+            "character_cluster_assignments.csv missing required columns"
+        )
+
+    return df
