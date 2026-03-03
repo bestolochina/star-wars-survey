@@ -22,14 +22,13 @@ from analysis.metrics.block_structure import (
     compute_block_zscores,
     bootstrap_block_deviation_significance,
 )
-
 from analysis.visualization.block_structure_plots import (
     plot_audience_character_cluster_heatmap,
     plot_block_deviation_heatmap,
     plot_block_zscore_heatmap,
     plot_block_radar_profiles,
 )
-
+from analysis.metrics.structural_indices import compute_block_extremeness
 
 # ==========================================================
 # Utilities
@@ -284,6 +283,9 @@ def step_4210_block_radar_profiles(
         output_path=output_path,
     )
 
+# ==========================================================
+# 4.2.11 Structural Archetype Extraction
+# ==========================================================
 
 def step_4211_structural_archetypes(
     deviations: pd.DataFrame,
@@ -310,6 +312,31 @@ def step_4211_structural_archetypes(
     print(f"Saved → {output_path}")
 
     return structural_archetypes_df
+
+
+# ==========================================================
+# 4.2.12 Block Extremeness Index
+# ==========================================================
+
+def step_4212_block_extremeness(
+    deviations: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 4.2.12 Block Extremeness Index ===")
+
+    extremeness = compute_block_extremeness(deviations)
+
+    output_path = (
+        PHASE4_TABLES_DIR / "block_extremeness_scores.csv"
+    )
+
+    extremeness.to_csv(output_path, index=False)
+
+    print(extremeness.to_string(index=False))
+    print(f"Saved → {output_path}")
+
+    return extremeness
+
 
 # ==========================================================
 # Pipeline Entry
@@ -358,4 +385,8 @@ def run_phase4_2(
         block_deviations,
         zscores,
         significance,
+    )
+
+    extremeness = step_4212_block_extremeness(
+        block_deviations
     )

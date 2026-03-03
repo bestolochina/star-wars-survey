@@ -5,10 +5,6 @@ from __future__ import annotations
 import pandas as pd
 
 
-# ==========================================================
-# 4.2.11 Structural Archetype Extraction
-# ==========================================================
-
 def derive_structural_archetypes(
     deviation_df: pd.DataFrame,
     zscore_df: pd.DataFrame,
