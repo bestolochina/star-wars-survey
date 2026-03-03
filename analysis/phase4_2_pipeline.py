@@ -14,6 +14,7 @@ from src.io_utils import (
 )
 from src.config import CHARACTER_RATING_COLUMNS
 from analysis.transforms.matrix_builder import build_character_matrix
+from analysis.interpretation.structural_archetypes import derive_structural_archetypes
 
 from analysis.metrics.block_structure import (
     compute_audience_character_cluster_means,
@@ -194,16 +195,16 @@ def step_427_block_zscores(
 
     print("\n=== 4.2.7 Block Z-Scores ===")
 
-    zscores = compute_block_zscores(block_deviations)
+    z_scores = compute_block_zscores(block_deviations)
 
-    zscores.to_csv(
+    z_scores.to_csv(
         PHASE4_TABLES_DIR / "block_zscores.csv",
         index=False,
     )
 
-    print(zscores.to_string(index=False))
+    print(z_scores.to_string(index=False))
 
-    return zscores
+    return z_scores
 
 
 # ==========================================================
@@ -283,6 +284,33 @@ def step_4210_block_radar_profiles(
         output_path=output_path,
     )
 
+
+def step_4211_structural_archetypes(
+    deviations: pd.DataFrame,
+    zscores: pd.DataFrame,
+    significance: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 4.2.11 Structural Archetype Extraction ===")
+
+    structural_archetypes_df = derive_structural_archetypes(
+        deviations,
+        zscores,
+        significance,
+    )
+
+    output_path = (
+        PHASE4_TABLES_DIR
+        / "structural_archetypes.csv"
+    )
+
+    structural_archetypes_df.to_csv(output_path, index=False)
+
+    print(structural_archetypes_df.to_string(index=False))
+    print(f"Saved → {output_path}")
+
+    return structural_archetypes_df
+
 # ==========================================================
 # Pipeline Entry
 # ==========================================================
@@ -325,3 +353,9 @@ def run_phase4_2(
     )
 
     step_4210_block_radar_profiles(block_deviations)
+
+    step_4211_structural_archetypes(
+        block_deviations,
+        zscores,
+        significance,
+    )
