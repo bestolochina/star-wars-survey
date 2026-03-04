@@ -29,6 +29,13 @@ from analysis.visualization.block_structure_plots import (
     plot_block_radar_profiles,
 )
 from analysis.metrics.structural_indices import compute_block_extremeness
+from analysis.metrics.narrative_selectivity import compute_narrative_selectivity
+from analysis.interpretation.structural_identity_typology import derive_structural_identity_typology
+from analysis.interpretation.narrative_identity_reports import generate_narrative_identity_reports
+from analysis.visualization.structural_identity_map import plot_structural_identity_map
+from analysis.metrics.structural_tension import compute_structural_tension
+from analysis.visualization.structural_tension_plot import plot_structural_tension
+
 
 # ==========================================================
 # Utilities
@@ -339,6 +346,150 @@ def step_4212_block_extremeness(
 
 
 # ==========================================================
+# 4.2.13 Narrative Selectivity Index
+# ==========================================================
+
+def step_4213_narrative_selectivity(
+    deviations: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 4.2.13 Narrative Selectivity Index ===")
+
+    selectivity = compute_narrative_selectivity(
+        deviations
+    )
+
+    output_path = (
+        PHASE4_TABLES_DIR
+        / "narrative_selectivity_index.csv"
+    )
+
+    selectivity.to_csv(output_path, index=False)
+
+    print(selectivity.to_string(index=False))
+    print(f"Saved → {output_path}")
+
+    return selectivity
+
+
+# ==========================================================
+# 4.2.14 Structural Identity Typology
+# ==========================================================
+
+def step_4214_structural_identity_typology(
+    extremeness: pd.DataFrame,
+    selectivity: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 4.2.14 Structural Identity Typology ===")
+
+    identity_df = derive_structural_identity_typology(
+        extremeness,
+        selectivity,
+    )
+
+    output_path = (
+        PHASE4_TABLES_DIR
+        / "structural_identity_typology.csv"
+    )
+
+    identity_df.to_csv(output_path, index=False)
+
+    print(identity_df.to_string(index=False))
+    print(f"Saved → {output_path}")
+
+    return identity_df
+
+
+# ==========================================================
+# 4.2.15 Narrative Identity Reports
+# ==========================================================
+
+def step_4215_narrative_identity_reports(
+    archetypes: pd.DataFrame,
+    identity_typology: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 4.2.15 Narrative Identity Reports ===")
+
+    reports = generate_narrative_identity_reports(
+        archetypes,
+        identity_typology,
+    )
+
+    output_path = (
+        PHASE4_TABLES_DIR
+        / "narrative_identity_reports.csv"
+    )
+
+    reports.to_csv(output_path, index=False)
+
+    print(reports.to_string(index=False))
+    print(f"Saved → {output_path}")
+
+    return reports
+
+
+# ==========================================================
+# 4.2.16 Structural Identity Map
+# ==========================================================
+
+def step_4216_structural_identity_map(
+    identity_typology: pd.DataFrame,
+) -> None:
+
+    print("\n=== 4.2.16 Structural Identity Map ===")
+
+    output_path = (
+        PHASE4_FIGURES_DIR
+        / "structural_identity_map.png"
+    )
+
+    plot_structural_identity_map(
+        identity_df=identity_typology,
+        output_path=output_path,
+    )
+
+    print(f"Saved → {output_path}")
+
+
+# ==========================================================
+# 4.2.17 Structural Narrative Tension
+# ==========================================================
+
+def step_4217_structural_tension(
+    deviations: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 4.2.17 Structural Narrative Tension ===")
+
+    tension_df = compute_structural_tension(deviations)
+
+    output_table = (
+        PHASE4_TABLES_DIR
+        / "structural_tension.csv"
+    )
+
+    tension_df.to_csv(output_table, index=False)
+
+    print(tension_df.to_string(index=False))
+    print(f"Saved → {output_table}")
+
+    # plot
+    output_fig = (
+        PHASE4_FIGURES_DIR
+        / "structural_tension.png"
+    )
+
+    plot_structural_tension(
+        tension_df,
+        output_fig,
+    )
+
+    return tension_df
+
+
+# ==========================================================
 # Pipeline Entry
 # ==========================================================
 
@@ -381,12 +532,26 @@ def run_phase4_2(
 
     step_4210_block_radar_profiles(block_deviations)
 
-    step_4211_structural_archetypes(
+    archetypes = step_4211_structural_archetypes(
         block_deviations,
         zscores,
         significance,
     )
 
-    extremeness = step_4212_block_extremeness(
-        block_deviations
+    extremeness = step_4212_block_extremeness(block_deviations)
+
+    selectivity = step_4213_narrative_selectivity(block_deviations    )
+
+    identity = step_4214_structural_identity_typology(
+        extremeness,
+        selectivity,
     )
+
+    reports = step_4215_narrative_identity_reports(
+        archetypes,
+        identity,
+    )
+
+    step_4216_structural_identity_map(identity)
+
+    step_4217_structural_tension(block_deviations)

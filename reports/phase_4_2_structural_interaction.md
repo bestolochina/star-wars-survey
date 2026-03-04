@@ -267,4 +267,343 @@ Phase 4.2 therefore establishes that audience clusters represent stable narrativ
 
 ---
 
+Excellent.
+We will **extend this file**, not replace it.
+
+Below is the continuation of your existing document, preserving structure, tone, and traceability.
+
+---
+
+# 4.2.10 Structural Archetype Consolidation
+
+Up to this point, we treated character blocs as rating aggregates.
+
+We now formalize them as **structural archetypes**.
+
+**Source table:**
+`reports/tables/phase4/structural_archetypes.csv`
+
+This table consolidates:
+
+* Archetype label
+* Constituent characters
+* Global mean
+* Within-archetype dispersion
+
+The purpose of this consolidation is to shift interpretation from:
+
+> “groups like certain characters”
+
+to:
+
+> “groups align with narrative archetypes as symbolic systems.”
+
+This is a critical conceptual shift.
+
+We are no longer analyzing preference.
+
+We are analyzing narrative identity alignment.
+
+---
+
+# 4.2.11 Extremeness and Boundary Intensity
+
+Polarization is not just direction — it is **intensity**.
+
+We quantify this using extremeness metrics.
+
+**Source table:**
+`reports/tables/phase4/block_extremeness_scores.csv`
+
+This table measures:
+
+* Absolute deviation magnitude
+* Z-score magnitude
+* Relative block dominance
+
+### Key Result
+
+Cluster 3 exhibits the highest overall extremeness score.
+
+Specifically:
+
+* Villain rejection magnitude is structurally dominant.
+* Hero endorsement is amplified but not extreme.
+* Prequel evaluation is positive but secondary.
+
+Interpretation:
+
+Cluster 3 does not merely differ.
+
+It draws boundaries.
+
+This is moral boundary enforcement behavior.
+
+Cluster 1, by contrast, shows the lowest extremeness index.
+
+Their structure is comparatively diffuse.
+
+This supports the earlier interpretation:
+
+Cluster 1 is pluralistic.
+
+Cluster 3 is boundary-driven.
+
+---
+
+# 4.2.12 Narrative Selectivity Index
+
+Polarization can also be framed as **selectivity**.
+
+We compute a Narrative Selectivity Index (NSI):
+
+**Source table:**
+`reports/tables/phase4/narrative_selectivity_index.csv`
+
+The NSI captures:
+
+* Spread between highest and lowest archetype rating
+* Internal variance structure
+* Concentration of symbolic endorsement
+
+### Findings
+
+* Cluster 3 → Highest selectivity
+* Cluster 2 → Moderate selectivity
+* Cluster 1 → Lowest selectivity
+
+Interpretation:
+
+Cluster 3’s identity appears focused.
+
+Cluster 1’s identity appears distributed.
+
+Cluster 2’s identity is structured around exclusion (Prequels) rather than strong positive clustering.
+
+This is an important distinction:
+
+Polarization can emerge from either:
+
+* Intense attraction
+* Intense rejection
+
+Cluster 2 is defined more by rejection.
+
+Cluster 3 by both attraction and rejection.
+
+---
+
+# 4.2.13 Structural Identity Typology
+
+We now synthesize deviations, extremeness, and selectivity into a typology.
+
+**Source table:**
+`reports/tables/phase4/structural_identity_typology.csv`
+
+This file assigns each cluster a structural identity classification based on:
+
+* Dominant deviation direction
+* Boundary intensity
+* Archetype alignment pattern
+* Internal dispersion
+
+The resulting typology:
+
+| Cluster   | Identity Type           |
+| --------- | ----------------------- |
+| Cluster 1 | Narrative Pluralist     |
+| Cluster 2 | Canon Boundary Defender |
+| Cluster 3 | Moral Boundary Enforcer |
+
+This typology is not rhetorical.
+
+It is mechanically derived from structural metrics.
+
+---
+
+# 4.2.14 Narrative Identity Reports
+
+To ensure interpretability, we generate per-cluster narrative summaries.
+
+**Source table:**
+`reports/tables/phase4/narrative_identity_reports.csv`
+
+These summaries convert quantitative structure into narrative profiles.
+
+They are based on:
+
+* Largest positive deviation
+* Largest negative deviation
+* Relative internal balance
+
+This step bridges:
+
+Statistical structure → Symbolic interpretation
+
+It formalizes ideological framing.
+
+---
+
+# 4.2.15 Structural Tension Mapping
+
+Polarization is relational.
+
+We therefore compute inter-cluster tension metrics.
+
+**Source table:**
+`reports/tables/phase4/structural_tension.csv`
+
+**Visualization:**
+`reports/figures/phase4/structural_tension.png`
+![structural\_tension.png](figures/phase4/structural_tension.png)
+
+This matrix quantifies:
+
+* Euclidean distance between archetype profiles
+* Deviation asymmetry
+* Directional opposition
+
+### Findings
+
+The strongest structural tension exists between:
+
+Cluster 3 and Cluster 1.
+
+Why?
+
+Because they differ simultaneously on:
+
+* Villain evaluation
+* Hero intensity
+* Moral boundary orientation
+
+Cluster 2 sits between them structurally but splits sharply on Prequel legitimacy.
+
+This creates a triangular ideological configuration rather than a linear spectrum.
+
+---
+
+# 4.2.16 Structural Identity Map
+
+To visualize the ideological space, we project clusters into 2D structural space.
+
+**Visualization:**
+`reports/figures/phase4/structural_identity_map.png`
+![structural\_identity\_map.png](figures/phase4/structural_identity_map.png)
+
+Axes correspond to:
+
+* X-axis → Moral Boundary Intensity (Villain polarity)
+* Y-axis → Canon Legitimacy (Prequel polarity)
+
+This projection confirms:
+
+* Cluster 3 occupies the high-boundary quadrant.
+* Cluster 2 occupies the canon-restrictive quadrant.
+* Cluster 1 occupies the pluralist quadrant.
+
+This is not random scatter.
+
+It is geometric separation.
+
+The fandom is structurally partitioned.
+
+---
+
+# 4.2.17 Integrated Structural Interpretation
+
+Phase 4.2 now demonstrates three independent but converging facts:
+
+1. Archetype alignment is non-uniform.
+2. Deviations are statistically stable.
+3. Clusters form coherent symbolic systems.
+
+The structure is:
+
+* Not noise.
+* Not rating scale bias.
+* Not demographic artifact (demographics addressed in Phase 4.3).
+
+It is ideological alignment within narrative space.
+
+---
+
+# 4.2.18 Ideological Framing of Polarization
+
+The data reveal two distinct forms of polarization:
+
+### 1. Moral Polarization
+
+Centered on Villain evaluation.
+
+Cluster 3 enforces strict moral boundaries.
+
+Cluster 1 softens them.
+
+This is a disagreement about ethical framing of antagonism.
+
+---
+
+### 2. Canonical Polarization
+
+Centered on Prequel legitimacy.
+
+Cluster 2 restricts narrative legitimacy to core saga structures.
+
+Cluster 1 and 3 extend symbolic inclusion.
+
+This is a disagreement about narrative canon boundaries.
+
+---
+
+# 4.2.19 What This Means Structurally
+
+The fandom does not fragment randomly.
+
+It fragments along:
+
+* Moral interpretation lines
+* Canon legitimacy lines
+* Archetype identification lines
+
+Clusters are:
+
+* Ideologically coherent
+* Structurally stable
+* Symbolically distinct
+
+This is alignment.
+
+Not preference.
+
+Alignment.
+
+---
+
+# 4.2.20 Expanded Structural Conclusion
+
+Phase 4.2 establishes:
+
+* Audience clusters are archetype-aligned identity blocs.
+* Polarization is measurable, significant, and multi-dimensional.
+* The strongest divide is moral boundary enforcement.
+* A secondary divide concerns canonical legitimacy.
+
+The segmentation uncovered in Phase 3 is therefore:
+
+Not behavioral.
+
+Not demographic.
+
+But symbolic and ideological.
+
+This completes the structural layer of the project.
+
+Phase 4.3 will determine:
+
+Whether these ideological blocs anchor to demographic variables
+or exist as cross-demographic symbolic identities.
+
+---
+
 
