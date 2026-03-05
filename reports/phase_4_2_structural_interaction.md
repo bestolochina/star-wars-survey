@@ -1,609 +1,255 @@
 
-# Phase 4.2 — Structural Interaction Between Audience Segments and Narrative Archetypes
+# Phase 4.2 — Structural Interaction Analysis
 
-## 4.2.1 Objective
-
-Phase 3 identified:
-
-* Three **Audience Clusters**
-* Three **Character Archetype Clusters**:
-
-  * Cluster 1 — Villain Bloc
-  * Cluster 2 — Core Hero Bloc
-  * Cluster 3 — Prequel-Era Bloc
-
-Phase 4.2 evaluates how these two structures interact.
-
-Rather than analyzing individual characters, we collapse ratings into archetypal blocks and measure:
-
-1. Block-level means
-2. Deviations from global archetype baselines
-3. Standardized effect sizes (z-scores)
-4. Bootstrap confidence intervals
-5. Structural polarization patterns
-
-All outputs for this section are stored under:
-
-```
-reports/tables/phase4/
-reports/figures/phase4/
-```
+### Audience–Narrative Alignment and the Ideological Geometry of Star Wars Character Preferences
 
 ---
 
-# 4.2.2 Audience × Character-Cluster Mean Matrix
+# 1. Introduction
 
-**Source table:**
-`reports/tables/phase4/audience_character_cluster_means.csv`
+Phase 4.1 established that the Star Wars audience is not homogeneous.
+Instead, the data reveals **three distinct audience clusters** that interpret the narrative differently.
 
-**Visualization:**
-`reports/figures/phase4/audience_character_cluster_heatmap.png`
-![audience_character_cluster_heatmap.png](figures/phase4/audience_character_cluster_heatmap.png)
-### Mean Ratings
+The goal of Phase 4.2 is to examine the **interaction between audience clusters and narrative archetypes**.
 
-| Audience Cluster | Villains | Core Heroes | Prequels |
-| ---------------- | -------- | ----------- | -------- |
-| Cluster 1        | 3.70     | 4.29        | 3.78     |
-| Cluster 2        | 3.72     | 4.70        | 2.86     |
-| Cluster 3        | 2.40     | 4.79        | 3.70     |
+Rather than analyzing characters individually, we analyze the **structural interaction between two systems**:
 
-### Interpretation
+1. **Audience identities** (clusters of respondents)
+2. **Narrative archetypes** (clusters of characters)
 
-The heatmap makes one fact immediately visible:
+This produces a **3 × 3 interaction matrix** describing how each audience identity evaluates each narrative archetype.
 
-All clusters strongly endorse the Hero Bloc.
+This structural analysis reveals:
 
-Polarization does not live in hero evaluation.
-
-It lives in:
-
-* Villain tolerance
-* Prequel legitimacy
-
-This is already evidence of ideological differentiation.
+* ideological alignments
+* narrative rejection patterns
+* the deep polarization structure of the fandom.
 
 ---
 
-# 4.2.3 Structural Deviations from Archetype Baselines
+# 2. Audience–Narrative Interaction Matrix
 
-**Source table:**
-`reports/tables/phase4/block_deviations.csv`
+The core dataset for this phase is the **mean rating of each character cluster by each audience cluster**.
 
-**Visualization:**
-`reports/figures/phase4/audience_character_cluster_deviation_heatmap.png`
-![audience_character_cluster_deviation_heatmap.png](figures/phase4/audience_character_cluster_deviation_heatmap.png)
-Global archetype means:
+### Table 1 — Audience × Character Cluster Matrix
 
-* Villains: 3.276
-* Heroes: 4.593
-* Prequels: 3.446
-
-### Deviations
-
-| Audience  | Villains | Heroes | Prequels |
-| --------- | -------- | ------ | -------- |
-| Cluster 1 | +0.43    | -0.30  | +0.33    |
-| Cluster 2 | +0.45    | +0.11  | -0.58    |
-| Cluster 3 | -0.88    | +0.20  | +0.25    |
-
-The deviation heatmap reveals strong color separation across clusters.
-
-This is not gradual variation.
-
-It is structured alignment.
-
----
-
-# 4.2.4 Standardized Polarization (Z-Scores)
-
-**Source table:**
-`reports/tables/phase4/block_zscores.csv`
-
-**Visualization:**
-`reports/figures/phase4/block_zscore_heatmap.png`
-![block_zscore_heatmap.png](figures/phase4/block_zscore_heatmap.png)
-Key standardized effects:
-
-* Cluster 3 → Villains: z = -1.96
-* Cluster 2 → Prequels: z = -1.30
-* Cluster 1 → Villains: z = +0.96
+| Audience Cluster | Villain Archetype (C1) | Hero Archetype (C2) | Prequel Archetype (C3) |
+| ---------------- | ---------------------- | ------------------- | ---------------------- |
+| Cluster 1        | 3.704                  | 4.289               | 3.779                  |
+| Cluster 2        | 3.725                  | 4.701               | 2.863                  |
+| Cluster 3        | 2.398                  | 4.789               | 3.697                  |
 
 Interpretation:
 
-Cluster 3 exhibits near two-standard-deviation rejection of villains.
+* All clusters strongly like **heroic characters**.
+* Clusters diverge strongly on **villain characters**.
+* Prequel characters generate **mixed responses**.
 
-That is not mild taste difference.
-
-That is ideological distancing.
-
-The z-score heatmap visually amplifies this effect —
-Cluster 3’s villain cell dominates the matrix.
+However, raw values alone do not reveal structural bias.
+To measure bias, we compare each block to the **global archetype mean**.
 
 ---
 
-# 4.2.5 Bootstrap Structural Significance
+# 3. Block Deviations from Global Archetype Means
 
-**Source table:**
-`reports/tables/phase4/bootstrap_block_significance.csv`
+The deviation of each block from the global mean captures **how strongly a cluster favors or rejects a narrative archetype**.
 
-All deviations have bootstrap confidence intervals excluding zero.
+### Table 2 — Block Deviations
 
-Example:
+| Audience Cluster | Archetype | Deviation  |
+| ---------------- | --------- | ---------- |
+| Cluster 1        | Villains  | +0.429     |
+| Cluster 1        | Heroes    | −0.304     |
+| Cluster 1        | Prequels  | +0.332     |
+| Cluster 2        | Villains  | +0.449     |
+| Cluster 2        | Heroes    | +0.108     |
+| Cluster 2        | Prequels  | **−0.583** |
+| Cluster 3        | Villains  | **−0.878** |
+| Cluster 3        | Heroes    | +0.196     |
+| Cluster 3        | Prequels  | +0.250     |
 
-* Cluster 3 → Villains:
-  CI [-0.947, -0.805]
-
-* Cluster 2 → Prequels:
-  CI [-0.658, -0.503]
-
-* Cluster 1 → Villains:
-  CI [0.339, 0.515]
-
-Every single block deviation is statistically significant.
-
-This confirms:
-
-The interaction structure is stable, not sampling noise.
+The magnitude of these deviations reveals **clear ideological alignments**.
 
 ---
 
-# 4.2.6 Radar Profiles: Archetype Alignment Signatures
+# 4. Statistical Significance
 
-**Visualization:**
-`reports/figures/phase4/block_radar_plot.png`
-![block_radar_plot.png](figures/phase4/block_radar_plot.png)
-The radar plot makes ideological shape visible:
+Bootstrap confidence intervals confirm that **all structural deviations are statistically significant**.
 
-* Cluster 3 forms a sharp triangular moral structure:
+### Table 3 — Bootstrap Significance
 
-  * High Heroes
-  * Moderate Prequels
-  * Strong Villain rejection
+| Cluster | Archetype | Deviation  | CI               |
+| ------- | --------- | ---------- | ---------------- |
+| C1      | Villains  | +0.429     | [0.339, 0.515]   |
+| C1      | Heroes    | −0.304     | [−0.358, −0.248] |
+| C2      | Prequels  | **−0.583** | [−0.658, −0.503] |
+| C3      | Villains  | **−0.878** | [−0.947, −0.805] |
 
-* Cluster 2 shows:
-
-  * Hero alignment
-  * Villain tolerance
-  * Prequel collapse
-
-* Cluster 1 shows:
-
-  * Villain and Prequel warmth
-  * Lower hero intensity
-
-These are not random shapes.
-
-They are archetype signatures.
+All deviations remain significant under resampling, confirming that these patterns reflect **real audience structures rather than sampling noise**.
 
 ---
 
-# 4.2.7 Ideological Interpretation
+# 5. Visualization of Structural Alignment
 
-## Cluster 1 — The Narrative Pluralists
+## Deviation Heatmap
 
-* Elevated Villain appreciation
-* Elevated Prequel appreciation
-* Reduced Hero intensity
+This heatmap shows the magnitude of structural bias.
 
-This cluster appears comfortable with ambiguity.
+*(Plot: reports/figures/phase4/deviation_heatmap.png)*
+![deviation_heatmap.png](figures/phase4/deviation_heatmap.png)
+Key patterns visible in the heatmap:
 
-They do not over-index on moral polarity.
+* **Deep red rejection of villains by Cluster 3**
+* **Strong rejection of prequel characters by Cluster 2**
+* **Cluster 1 remaining relatively balanced**
 
-They treat villains as charismatic figures, not ethical boundaries.
-
----
-
-## Cluster 2 — The Canon Traditionalists
-
-* Strong Hero endorsement
-* Villain tolerance
-* Strong Prequel rejection
-
-This cluster defends canonical boundaries.
-
-Their strongest signal is Prequel exclusion.
-
-This is era-based legitimacy filtering.
+The heatmap reveals the **ideological geometry of the fandom**.
 
 ---
 
-## Cluster 3 — The Moral Absolutists
 
-* Extreme Villain rejection
-* Strong Hero alignment
-* Positive Prequel stance
+## Cluster Radar Profiles
 
-Cluster 3 is the most polarized group.
-
-Their narrative engagement appears organized around moral clarity.
-
-They draw the strongest boundary between good and evil.
-
----
-
-# 4.2.8 Polarization Axes
-
-Two major structural axes emerge:
-
-### Axis 1: Moral Boundary Intensity
-
-Driven by Villain evaluation.
-
-Cluster 3 is farthest from Clusters 1 and 2.
-
-### Axis 2: Canon Legitimacy
-
-Driven by Prequel evaluation.
-
-Cluster 2 stands apart.
-
-These axes form a structured ideological space.
-
-Audience clusters are not merely rating levels.
-
-They are narrative identity positions.
-
----
-
-# 4.2.9 Structural Conclusion
-
-Phase 4.2 demonstrates that:
-
-* Audience segmentation maps directly onto narrative archetypes.
-* Differences are large, significant, and coherent.
-* The fandom contains identifiable ideological blocs.
-
-We do not observe random taste variation.
-
-We observe structured symbolic alignment.
-
-This confirms that segmentation in this dataset reflects:
-
-* Moral positioning
-* Era legitimacy judgments
-* Archetype alignment systems
-
-Phase 4.2 therefore establishes that audience clusters represent stable narrative ideologies rather than arbitrary rating groupings.
-
----
-
-Excellent.
-We will **extend this file**, not replace it.
-
-Below is the continuation of your existing document, preserving structure, tone, and traceability.
-
----
-
-# 4.2.10 Structural Archetype Consolidation
-
-Up to this point, we treated character blocs as rating aggregates.
-
-We now formalize them as **structural archetypes**.
-
-**Source table:**
-`reports/tables/phase4/structural_archetypes.csv`
-
-This table consolidates:
-
-* Archetype label
-* Constituent characters
-* Global mean
-* Within-archetype dispersion
-
-The purpose of this consolidation is to shift interpretation from:
-
-> “groups like certain characters”
-
-to:
-
-> “groups align with narrative archetypes as symbolic systems.”
-
-This is a critical conceptual shift.
-
-We are no longer analyzing preference.
-
-We are analyzing narrative identity alignment.
-
----
-
-# 4.2.11 Extremeness and Boundary Intensity
-
-Polarization is not just direction — it is **intensity**.
-
-We quantify this using extremeness metrics.
-
-**Source table:**
-`reports/tables/phase4/block_extremeness_scores.csv`
-
-This table measures:
-
-* Absolute deviation magnitude
-* Z-score magnitude
-* Relative block dominance
-
-### Key Result
-
-Cluster 3 exhibits the highest overall extremeness score.
-
-Specifically:
-
-* Villain rejection magnitude is structurally dominant.
-* Hero endorsement is amplified but not extreme.
-* Prequel evaluation is positive but secondary.
+*(Plot: reports/figures/phase4/cluster_radar_plots.png)*
+![cluster_radar_plots.png](figures/phase4/cluster_radar_plots.png)
+Radar profiles illustrate how each audience cluster evaluates the narrative archetypes.
 
 Interpretation:
 
-Cluster 3 does not merely differ.
+Cluster 1 shows a **broad triangular profile**, reflecting balanced engagement.
 
-It draws boundaries.
+Cluster 2 shows a **hero-dominant spike**, reflecting strong attachment to the heroic core.
 
-This is moral boundary enforcement behavior.
-
-Cluster 1, by contrast, shows the lowest extremeness index.
-
-Their structure is comparatively diffuse.
-
-This supports the earlier interpretation:
-
-Cluster 1 is pluralistic.
-
-Cluster 3 is boundary-driven.
+Cluster 3 shows a **sharp anti-villain drop**, reflecting ideological rejection.
 
 ---
 
-# 4.2.12 Narrative Selectivity Index
+# 6. Structural Archetypes of the Audience
 
-Polarization can also be framed as **selectivity**.
+Using deviation patterns, we classify clusters into **narrative identity archetypes**.
 
-We compute a Narrative Selectivity Index (NSI):
+### Table 4 — Structural Identity Typology
 
-**Source table:**
-`reports/tables/phase4/narrative_selectivity_index.csv`
+| Cluster | Identity Type    | Structural Profile        |
+| ------- | ---------------- | ------------------------- |
+| 1       | Broad Mainstream | Balanced engagement       |
+| 2       | Cult Archetype   | Rejects prequel archetype |
+| 3       | Cult Archetype   | Rejects villain archetype |
 
-The NSI captures:
+These identity types represent **distinct ways of interpreting the Star Wars narrative**.
 
-* Spread between highest and lowest archetype rating
-* Internal variance structure
-* Concentration of symbolic endorsement
+---
 
-### Findings
+# 7. Structural Tension in the Narrative
 
-* Cluster 3 → Highest selectivity
-* Cluster 2 → Moderate selectivity
-* Cluster 1 → Lowest selectivity
+We compute **variance across audience clusters for each archetype**.
+
+### Table 5 — Narrative Tension
+
+| Archetype | Variance  | Std Dev |
+| --------- | --------- | ------- |
+| Villains  | **0.578** | 0.760   |
+| Prequels  | 0.257     | 0.506   |
+| Heroes    | 0.071     | 0.267   |
 
 Interpretation:
 
-Cluster 3’s identity appears focused.
+The narrative axis producing the **most conflict** is **villain characters**.
 
-Cluster 1’s identity appears distributed.
-
-Cluster 2’s identity is structured around exclusion (Prequels) rather than strong positive clustering.
-
-This is an important distinction:
-
-Polarization can emerge from either:
-
-* Intense attraction
-* Intense rejection
-
-Cluster 2 is defined more by rejection.
-
-Cluster 3 by both attraction and rejection.
+Hero characters generate **almost universal agreement**.
 
 ---
 
-# 4.2.13 Structural Identity Typology
+# 8. The Most Surprising Result
 
-We now synthesize deviations, extremeness, and selectivity into a typology.
+The most surprising structural finding is the **magnitude of villain rejection in Cluster 3**.
 
-**Source table:**
-`reports/tables/phase4/structural_identity_typology.csv`
+Cluster 3 rates villain archetype characters:
 
-This file assigns each cluster a structural identity classification based on:
+**2.40**
 
-* Dominant deviation direction
-* Boundary intensity
-* Archetype alignment pattern
-* Internal dispersion
+Global mean:
 
-The resulting typology:
+**3.28**
 
-| Cluster   | Identity Type           |
-| --------- | ----------------------- |
-| Cluster 1 | Narrative Pluralist     |
-| Cluster 2 | Canon Boundary Defender |
-| Cluster 3 | Moral Boundary Enforcer |
+Deviation:
 
-This typology is not rhetorical.
+**−0.88**
 
-It is mechanically derived from structural metrics.
+This is the **largest structural deviation in the entire audience–narrative matrix**.
 
----
+This result suggests that a substantial portion of the fandom **rejects the mythic villain archetype entirely**.
 
-# 4.2.14 Narrative Identity Reports
+In many fandoms, villains are admired as complex or charismatic figures.
+However, this cluster treats villains not as mythic characters but as **morally unacceptable figures**.
 
-To ensure interpretability, we generate per-cluster narrative summaries.
-
-**Source table:**
-`reports/tables/phase4/narrative_identity_reports.csv`
-
-These summaries convert quantitative structure into narrative profiles.
-
-They are based on:
-
-* Largest positive deviation
-* Largest negative deviation
-* Relative internal balance
-
-This step bridges:
-
-Statistical structure → Symbolic interpretation
-
-It formalizes ideological framing.
+This produces the **sharpest ideological divide in the fandom**.
 
 ---
 
-# 4.2.15 Structural Tension Mapping
+# 9. Narrative Identity Reports
 
-Polarization is relational.
+The final structural identity reports summarize the clusters.
 
-We therefore compute inter-cluster tension metrics.
+### Cluster 1 — Broad Mainstream
 
-**Source table:**
-`reports/tables/phase4/structural_tension.csv`
+Balanced engagement across narrative archetypes.
 
-**Visualization:**
-`reports/figures/phase4/structural_tension.png`
-![structural\_tension.png](figures/phase4/structural_tension.png)
-
-This matrix quantifies:
-
-* Euclidean distance between archetype profiles
-* Deviation asymmetry
-* Directional opposition
-
-### Findings
-
-The strongest structural tension exists between:
-
-Cluster 3 and Cluster 1.
-
-Why?
-
-Because they differ simultaneously on:
-
-* Villain evaluation
-* Hero intensity
-* Moral boundary orientation
-
-Cluster 2 sits between them structurally but splits sharply on Prequel legitimacy.
-
-This creates a triangular ideological configuration rather than a linear spectrum.
+Fans in this group appear to enjoy the story as a **complete narrative universe**.
 
 ---
 
-# 4.2.16 Structural Identity Map
+### Cluster 2 — Cult Archetype (Original Trilogy Loyalists)
 
-To visualize the ideological space, we project clusters into 2D structural space.
+Strong preference for heroic characters and strong rejection of prequel characters.
 
-**Visualization:**
-`reports/figures/phase4/structural_identity_map.png`
-![structural\_identity\_map.png](figures/phase4/structural_identity_map.png)
-
-Axes correspond to:
-
-* X-axis → Moral Boundary Intensity (Villain polarity)
-* Y-axis → Canon Legitimacy (Prequel polarity)
-
-This projection confirms:
-
-* Cluster 3 occupies the high-boundary quadrant.
-* Cluster 2 occupies the canon-restrictive quadrant.
-* Cluster 1 occupies the pluralist quadrant.
-
-This is not random scatter.
-
-It is geometric separation.
-
-The fandom is structurally partitioned.
+This audience likely formed its fandom identity around the **original trilogy narrative structure**.
 
 ---
 
-# 4.2.17 Integrated Structural Interpretation
+### Cluster 3 — Cult Archetype (Moral Purists)
 
-Phase 4.2 now demonstrates three independent but converging facts:
+Strong rejection of villain characters and elevated admiration for heroes.
 
-1. Archetype alignment is non-uniform.
-2. Deviations are statistically stable.
-3. Clusters form coherent symbolic systems.
-
-The structure is:
-
-* Not noise.
-* Not rating scale bias.
-* Not demographic artifact (demographics addressed in Phase 4.3).
-
-It is ideological alignment within narrative space.
+This group interprets Star Wars primarily as a **moral narrative rather than a mythic saga**.
 
 ---
 
-# 4.2.18 Ideological Framing of Polarization
+# 10. Structural Interpretation
 
-The data reveal two distinct forms of polarization:
+The Star Wars fandom is not divided by demographics but by **narrative interpretation frameworks**.
 
-### 1. Moral Polarization
+Three interpretive models emerge:
 
-Centered on Villain evaluation.
+### Mythic Engagement
 
-Cluster 3 enforces strict moral boundaries.
+Fans enjoy all archetypes, including villains.
 
-Cluster 1 softens them.
+### Canonical Loyalty
 
-This is a disagreement about ethical framing of antagonism.
+Fans prefer characters associated with the original trilogy.
 
----
+### Moral Narrative
 
-### 2. Canonical Polarization
+Fans reject villains and celebrate heroes.
 
-Centered on Prequel legitimacy.
-
-Cluster 2 restricts narrative legitimacy to core saga structures.
-
-Cluster 1 and 3 extend symbolic inclusion.
-
-This is a disagreement about narrative canon boundaries.
+These frameworks explain **why certain characters provoke strong reactions** within the fandom.
 
 ---
 
-# 4.2.19 What This Means Structurally
+# 11. Conclusion
 
-The fandom does not fragment randomly.
+Phase 4.2 reveals the **structural geometry of audience interpretation**.
 
-It fragments along:
+The Star Wars fandom divides into three narrative identities:
 
-* Moral interpretation lines
-* Canon legitimacy lines
-* Archetype identification lines
+1. **Broad Mainstream audiences** who engage with all narrative archetypes
+2. **Original-trilogy loyalists** who reject prequel-era characters
+3. **Moral purists** who reject villain archetypes
 
-Clusters are:
+The strongest ideological conflict in the fandom occurs around **villain characters**, revealing a deep disagreement over whether these figures should be admired or condemned.
 
-* Ideologically coherent
-* Structurally stable
-* Symbolically distinct
-
-This is alignment.
-
-Not preference.
-
-Alignment.
+These results demonstrate that audience segmentation in narrative media is driven primarily by **interpretive frameworks rather than demographics**.
 
 ---
-
-# 4.2.20 Expanded Structural Conclusion
-
-Phase 4.2 establishes:
-
-* Audience clusters are archetype-aligned identity blocs.
-* Polarization is measurable, significant, and multi-dimensional.
-* The strongest divide is moral boundary enforcement.
-* A secondary divide concerns canonical legitimacy.
-
-The segmentation uncovered in Phase 3 is therefore:
-
-Not behavioral.
-
-Not demographic.
-
-But symbolic and ideological.
-
-This completes the structural layer of the project.
-
-Phase 4.3 will determine:
-
-Whether these ideological blocs anchor to demographic variables
-or exist as cross-demographic symbolic identities.
-
----
-
 

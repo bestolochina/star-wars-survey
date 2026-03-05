@@ -82,3 +82,15 @@ DEMOGRAPHICS_COLUMNS: dict[str, dict[str, str]] = {
 }
 
 MIN_GROUP_SIZE = 30
+
+CHARACTER_CLUSTER_LABELS = {
+    1: "Power & Ambiguity Bloc",
+    2: "Heroic Core",
+    3: "Prequel Identity Bloc"
+}
+
+AUDIENCE_CLUSTER_LABELS = {
+    1: "Narrative Pluralists",
+    2: "Canon Boundary Defenders",
+    3: "Moral Boundary Enforcers"
+}
