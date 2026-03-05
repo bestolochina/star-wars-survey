@@ -1,0 +1,43 @@
+character,cluster,cluster_label,mean_rating
+Anakin Skywalker,1,Narrative Pluralists,4.014760147601476
+Anakin Skywalker,2,Canon Boundary Defenders,3.5382059800664454
+Anakin Skywalker,3,Moral Boundary Enforcers,3.809045226130653
+Boba Fett,1,Narrative Pluralists,3.5569105691056913
+Boba Fett,2,Canon Boundary Defenders,3.647482014388489
+Boba Fett,3,Moral Boundary Enforcers,2.5256410256410255
+C-3P0,1,Narrative Pluralists,4.106529209621993
+C-3P0,2,Canon Boundary Defenders,4.4375
+C-3P0,3,Moral Boundary Enforcers,4.755760368663594
+Darth Vader,1,Narrative Pluralists,3.9518900343642613
+Darth Vader,2,Canon Boundary Defenders,4.294117647058823
+Darth Vader,3,Moral Boundary Enforcers,1.7123287671232876
+Emperor Palpatine,1,Narrative Pluralists,3.60352422907489
+Emperor Palpatine,2,Canon Boundary Defenders,3.187725631768953
+Emperor Palpatine,3,Moral Boundary Enforcers,2.0779220779220777
+Han Solo,1,Narrative Pluralists,4.318339100346021
+Han Solo,2,Canon Boundary Defenders,4.932038834951456
+Han Solo,3,Moral Boundary Enforcers,4.773148148148148
+Jar-Jar Binks,1,Narrative Pluralists,3.5
+Jar-Jar Binks,2,Canon Boundary Defenders,1.8936170212765957
+Jar-Jar Binks,3,Moral Boundary Enforcers,3.152941176470588
+Lando Calrissian,1,Narrative Pluralists,3.6493506493506493
+Lando Calrissian,2,Canon Boundary Defenders,3.711191335740072
+Lando Calrissian,3,Moral Boundary Enforcers,3.4939024390243905
+Luke Skywalker,1,Narrative Pluralists,4.294915254237288
+Luke Skywalker,2,Canon Boundary Defenders,4.741100323624596
+Luke Skywalker,3,Moral Boundary Enforcers,4.737556561085973
+Obi Wan Kenobi,1,Narrative Pluralists,4.267361111111111
+Obi Wan Kenobi,2,Canon Boundary Defenders,4.839869281045751
+Obi Wan Kenobi,3,Moral Boundary Enforcers,4.827102803738318
+Padme Amidala,1,Narrative Pluralists,3.8161434977578477
+Padme Amidala,2,Canon Boundary Defenders,3.1213235294117645
+Padme Amidala,3,Moral Boundary Enforcers,4.148387096774194
+Princess Leia Organa,1,Narrative Pluralists,4.23469387755102
+Princess Leia Organa,2,Canon Boundary Defenders,4.733766233766234
+Princess Leia Organa,3,Moral Boundary Enforcers,4.733031674208145
+R2-D2,1,Narrative Pluralists,4.341296928327645
+R2-D2,2,Canon Boundary Defenders,4.599348534201955
+R2-D2,3,Moral Boundary Enforcers,4.831818181818182
+Yoda,1,Narrative Pluralists,4.460207612456747
+Yoda,2,Canon Boundary Defenders,4.621359223300971
+Yoda,3,Moral Boundary Enforcers,4.86697247706422

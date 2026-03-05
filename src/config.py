@@ -94,3 +94,8 @@ AUDIENCE_CLUSTER_LABELS = {
     2: "Canon Boundary Defenders",
     3: "Moral Boundary Enforcers"
 }
+
+ALL_CLUSTER_LABELS = {
+    "character": CHARACTER_CLUSTER_LABELS,
+    "audience": AUDIENCE_CLUSTER_LABELS
+}
