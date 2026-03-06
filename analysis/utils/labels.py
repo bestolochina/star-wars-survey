@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import pandas as pd
-
 from src.config import ALL_CLUSTER_LABELS
 
 
@@ -38,6 +37,8 @@ def add_audience_labels(
     df: pd.DataFrame,
 ) -> pd.DataFrame:
 
+    df = df.copy()
+
     if "cluster" not in df.columns:
         return df
 
@@ -61,6 +62,8 @@ def add_character_labels(
     df: pd.DataFrame,
 ) -> pd.DataFrame:
 
+    df = df.copy()
+
     if "character_cluster" not in df.columns:
         return df
 
@@ -81,6 +84,64 @@ def add_character_labels(
 
 
 # ============================================================
+# Dominant Character Cluster Labels
+# ============================================================
+
+def add_dominant_cluster_labels(
+    df: pd.DataFrame,
+) -> pd.DataFrame:
+
+    df = df.copy()
+
+    if "dominant_character_cluster" not in df.columns:
+        return df
+
+    if "dominant_character_cluster_label" not in df.columns:
+
+        df["dominant_character_cluster_label"] = (
+            df["dominant_character_cluster"]
+            .map(ALL_CLUSTER_LABELS["character"])
+        )
+
+    df = _move_column_after(
+        df,
+        "dominant_character_cluster_label",
+        "dominant_character_cluster",
+    )
+
+    return df
+
+
+# ============================================================
+# Attached Character Cluster Labels
+# ============================================================
+
+def add_attached_cluster_labels(
+    df: pd.DataFrame,
+) -> pd.DataFrame:
+
+    df = df.copy()
+
+    if "attached_cluster" not in df.columns:
+        return df
+
+    if "attached_cluster_label" not in df.columns:
+
+        df["attached_cluster_label"] = (
+            df["attached_cluster"]
+            .map(ALL_CLUSTER_LABELS["character"])
+        )
+
+    df = _move_column_after(
+        df,
+        "attached_cluster_label",
+        "attached_cluster",
+    )
+
+    return df
+
+
+# ============================================================
 # Master Label Attacher
 # ============================================================
 
@@ -94,5 +155,7 @@ def attach_all_labels(
 
     df = add_audience_labels(df)
     df = add_character_labels(df)
+    df = add_attached_cluster_labels(df)
+    df = add_dominant_cluster_labels(df)
 
     return df
