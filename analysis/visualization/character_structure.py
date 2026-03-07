@@ -248,3 +248,33 @@ def plot_character_audience_ideology_field(
         plt.savefig(save_path, bbox_inches="tight")
 
     plt.close()
+
+
+def plot_character_ideology_map(
+        coords: pd.DataFrame,
+        save_path: str,
+) -> None:
+
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    ax.scatter(
+        coords["ideology_axis_1"],
+        coords["ideology_axis_2"],
+        alpha=0.8,
+    )
+
+    for _, row in coords.iterrows():
+        ax.text(
+            row["ideology_axis_1"],
+            row["ideology_axis_2"],
+            row["character"],
+            fontsize=8,
+        )
+
+    ax.set_xlabel("Ideological Axis 1")
+    ax.set_ylabel("Ideological Axis 2")
+    ax.set_title("Character Ideology Map")
+
+    plt.tight_layout()
+    plt.savefig(save_path, dpi=300)
+    plt.close()

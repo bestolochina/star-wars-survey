@@ -34,6 +34,7 @@ from analysis.visualization.character_structure import (
     plot_character_polarization_triangle,
     plot_character_ideology_gradient_map,
     plot_character_audience_ideology_field,
+    plot_character_ideology_map,
 )
 
 
@@ -519,6 +520,29 @@ def step_4316_character_structure_metrics(
 
 
 # ==========================================================
+# 4.3.17 Character Ideology Map
+# ==========================================================
+
+def step_4317_character_ideology_map(
+        character_ideology_coordinates: pd.DataFrame,
+) -> None:
+    print("\n=== 4.3.17 Character Ideology Map ===")
+
+    save_path = (
+            PHASE4_FIGURES_DIR
+            / "polarization"
+            / "character_ideology_map.png"
+    )
+
+    plot_character_ideology_map(
+        character_ideology_coordinates,
+        save_path=str(save_path),
+    )
+
+    print(f"Saved → {save_path}")
+
+
+# ==========================================================
 # Pipeline Entry
 # ==========================================================
 
@@ -576,11 +600,15 @@ def run_phase4_3(
 
     step_4314_character_audience_ideology_field(alignment)
 
-    step_4315_character_ideology_coordinates(alignment)
+    character_ideology_coordinates = step_4315_character_ideology_coordinates(alignment)
 
-    metrics = step_4316_character_structure_metrics(
+    character_structure_metrics = step_4316_character_structure_metrics(
         polarization,
         bridge,
         variance,
         attachment,
         )
+
+    step_4317_character_ideology_map(
+        character_ideology_coordinates,
+    )
