@@ -5,7 +5,7 @@ from __future__ import annotations
 import pandas as pd
 
 from analysis.utils.labels import attach_all_labels
-from src.paths import PHASE4_TABLES_DIR, CLUSTERS_DIR
+from src.paths import PHASE4_TABLES_DIR, PHASE4_FIGURES_DIR
 from src.io_utils import load_respondent_clusters
 from src.config import CHARACTER_RATING_COLUMNS
 
@@ -48,10 +48,11 @@ def _ensure_dirs() -> None:
         exist_ok=True,
     )
 
-    CLUSTERS_DIR.mkdir(
+    (PHASE4_FIGURES_DIR / "polarization").mkdir(
         parents=True,
         exist_ok=True,
     )
+
 
 # ==========================================================
 # 4.3.0 Build Character Matrix
@@ -370,7 +371,7 @@ def step_4311_character_map(
     print("\n=== 4.3.11 Character Polarization Map ===")
 
     save_path = (
-        PHASE4_TABLES_DIR
+        PHASE4_FIGURES_DIR
         / "polarization"
         / "character_polarization_map.png"
     )
@@ -395,7 +396,7 @@ def step_4312_character_polarization_triangle(
     print("\n=== 4.3.12 Character Polarization Triangle ===")
 
     save_path = (
-            PHASE4_TABLES_DIR
+            PHASE4_FIGURES_DIR
             / "polarization"
             / "character_polarization_triangle.png"
     )
@@ -420,7 +421,7 @@ def step_4313_character_ideology_gradient_map(
     print("\n=== 4.3.13 Character Ideology Gradient Map ===")
 
     save_path = (
-        PHASE4_TABLES_DIR
+        PHASE4_FIGURES_DIR
         / "polarization"
         / "character_ideology_gradient_map.png"
     )
@@ -444,7 +445,7 @@ def step_4314_character_audience_ideology_field(
     print("\n=== 4.3.14 Character–Audience Ideology Field ===")
 
     save_path = (
-            PHASE4_TABLES_DIR
+            PHASE4_FIGURES_DIR
             / "polarization"
             / "character_audience_ideology_field.png"
     )

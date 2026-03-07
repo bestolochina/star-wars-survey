@@ -65,7 +65,7 @@ def plot_character_polarization_map(
     if save_path:
         plt.savefig(save_path, bbox_inches="tight")
 
-    plt.show()
+    plt.close()
 
 
 def plot_character_polarization_triangle(
@@ -116,7 +116,7 @@ def plot_character_polarization_triangle(
     if save_path:
         plt.savefig(save_path, bbox_inches="tight")
 
-    plt.show()
+    plt.close()
 
 
 def plot_character_ideology_gradient_map(
@@ -166,7 +166,7 @@ def plot_character_ideology_gradient_map(
     if save_path:
         plt.savefig(save_path, bbox_inches="tight")
 
-    plt.show()
+    plt.close()
 
 
 def plot_character_audience_ideology_field(
@@ -247,4 +247,4 @@ def plot_character_audience_ideology_field(
     if save_path:
         plt.savefig(save_path, bbox_inches="tight")
 
-    plt.show()
+    plt.close()

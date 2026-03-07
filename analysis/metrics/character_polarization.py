@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pandas as pd
 import numpy as np
-
+from src.config import AUDIENCE_CLUSTER_LABELS
 from analysis.utils.labels import add_audience_labels
 
 
@@ -93,7 +93,7 @@ def compute_character_alignment_matrix(
 
     Output format:
 
-    character | cluster_1 | cluster_2 | cluster_3
+    character | 1 (Narrative Pluralists) | 2 (Canon Boundary Defenders) | 3 (Moral Boundary Enforcers)
     """
 
     matrix = means.pivot(
@@ -102,14 +102,19 @@ def compute_character_alignment_matrix(
         values="mean_rating",
     )
 
+    # enforce cluster order
+    matrix = matrix.reindex(
+        columns=sorted(AUDIENCE_CLUSTER_LABELS)
+    )
+
     matrix.columns = [
-        f"cluster_{c}" for c in matrix.columns
+        f"{c} ({AUDIENCE_CLUSTER_LABELS.get(c, 'Unknown')})"
+        for c in matrix.columns
     ]
 
     matrix = matrix.sort_index()
 
     return matrix
-
 
 # ==========================================================
 # Character Polarization Index
