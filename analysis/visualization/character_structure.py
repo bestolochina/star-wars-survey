@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import matplotlib.pyplot as plt
 import pandas as pd
-from src.config import AUDIENCE_CLUSTER_LABELS
+from src.config import AUDIENCE_CLUSTER_LABELS, CHARACTER_IDEOLOGY_AXES_READABLE
 from sklearn.decomposition import PCA
 
 
@@ -239,8 +239,8 @@ def plot_character_audience_ideology_field(
     ax.axhline(0, linestyle="--")
     ax.axvline(0, linestyle="--")
 
-    ax.set_xlabel("Ideological Axis 1")
-    ax.set_ylabel("Ideological Axis 2")
+    ax.set_xlabel(CHARACTER_IDEOLOGY_AXES_READABLE[1])
+    ax.set_ylabel(CHARACTER_IDEOLOGY_AXES_READABLE[2])
 
     ax.set_title("Character–Audience Ideology Field")
 
@@ -271,8 +271,8 @@ def plot_character_ideology_map(
             fontsize=8,
         )
 
-    ax.set_xlabel("Ideological Axis 1")
-    ax.set_ylabel("Ideological Axis 2")
+    ax.set_xlabel(CHARACTER_IDEOLOGY_AXES_READABLE[1])
+    ax.set_ylabel(CHARACTER_IDEOLOGY_AXES_READABLE[2])
     ax.set_title("Character Ideology Map")
 
     plt.tight_layout()

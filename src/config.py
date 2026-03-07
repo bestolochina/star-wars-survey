@@ -99,3 +99,31 @@ ALL_CLUSTER_LABELS = {
     "character": CHARACTER_CLUSTER_LABELS,
     "audience": AUDIENCE_CLUSTER_LABELS
 }
+
+# ==========================================================
+# Character Ideology Axes
+# ==========================================================
+
+CHARACTER_IDEOLOGY_AXES: dict[int, str] = {
+    1: "Heroic Narrative Alignment",
+    2: "Moral Conflict Axis",
+}
+
+
+CHARACTER_IDEOLOGY_AXES_READABLE: dict[int, str] = {
+    1: "Core Hero ↔ Controversial Character",
+    2: "Moral Complexity ↔ Narrative Reception",
+}
+
+
+CHARACTER_IDEOLOGY_AXIS_DESCRIPTIONS: dict[int, str] = {
+    1: (
+        "Measures alignment with the franchise’s heroic narrative core. "
+        "Characters on the left represent widely accepted heroic figures, "
+        "while those on the right provoke stronger debate."
+    ),
+    2: (
+        "Represents perceived moral complexity and narrative gravitas. "
+        "Higher values correspond to characters associated with deeper moral conflict."
+    ),
+}
