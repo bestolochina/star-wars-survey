@@ -1,0 +1,40 @@
+source,target,correlation,type
+Han Solo,Luke Skywalker,0.5815260413580648,positive
+Han Solo,Princess Leia Organa,0.5550256715530747,positive
+Han Solo,Obi Wan Kenobi,0.5202711593469916,positive
+Han Solo,Lando Calrissian,0.3207268242864442,positive
+Han Solo,R2-D2,0.43701867823388946,positive
+Han Solo,Yoda,0.40987511847799163,positive
+Luke Skywalker,Princess Leia Organa,0.6813346510284838,positive
+Luke Skywalker,Obi Wan Kenobi,0.535990352235343,positive
+Luke Skywalker,R2-D2,0.4813514353801578,positive
+Luke Skywalker,Yoda,0.4452638868866179,positive
+Princess Leia Organa,R2-D2,0.4808755274857161,positive
+Princess Leia Organa,Yoda,0.4402906278191237,positive
+Anakin Skywalker,Luke Skywalker,0.28925700580922786,positive
+Anakin Skywalker,Princess Leia Organa,0.2797404145282479,positive
+Anakin Skywalker,Obi Wan Kenobi,0.29763195724012553,positive
+Anakin Skywalker,C-3P0,0.259436046893896,positive
+Anakin Skywalker,R2-D2,0.2767163153820683,positive
+Anakin Skywalker,Jar-Jar Binks,0.32640636421053737,positive
+Anakin Skywalker,Padme Amidala,0.3880611523300626,positive
+Anakin Skywalker,Yoda,0.2646613070990252,positive
+Obi Wan Kenobi,Princess Leia Organa,0.5170696312333284,positive
+Obi Wan Kenobi,R2-D2,0.5236516705809307,positive
+Obi Wan Kenobi,Yoda,0.49659154121632865,positive
+Emperor Palpatine,Lando Calrissian,0.3211927886840531,positive
+Darth Vader,Emperor Palpatine,0.5320666343673747,positive
+Darth Vader,Lando Calrissian,0.29887019629662137,positive
+Lando Calrissian,Princess Leia Organa,0.2637536395267009,positive
+Boba Fett,Emperor Palpatine,0.48227796098474524,positive
+Boba Fett,Darth Vader,0.5082791236911346,positive
+Boba Fett,Lando Calrissian,0.40880332367272365,positive
+C-3P0,Han Solo,0.42229021277204803,positive
+C-3P0,Luke Skywalker,0.5025452822018569,positive
+C-3P0,Princess Leia Organa,0.5009039461179207,positive
+C-3P0,Obi Wan Kenobi,0.4467993514735058,positive
+C-3P0,R2-D2,0.7119399934625136,positive
+C-3P0,Yoda,0.44032112942980284,positive
+R2-D2,Yoda,0.4977959554276958,positive
+Jar-Jar Binks,Padme Amidala,0.3950236298722417,positive
+Padme Amidala,Yoda,0.3175943098737012,positive

@@ -95,11 +95,6 @@ AUDIENCE_CLUSTER_LABELS = {
     3: "Moral Boundary Enforcers"
 }
 
-ALL_CLUSTER_LABELS = {
-    "character": CHARACTER_CLUSTER_LABELS,
-    "audience": AUDIENCE_CLUSTER_LABELS
-}
-
 # ==========================================================
 # Character Ideology Axes
 # ==========================================================
@@ -109,12 +104,10 @@ CHARACTER_IDEOLOGY_AXES: dict[int, str] = {
     2: "Moral Conflict Axis",
 }
 
-
 CHARACTER_IDEOLOGY_AXES_READABLE: dict[int, str] = {
     1: "Core Hero ↔ Controversial Character",
     2: "Moral Complexity ↔ Narrative Reception",
 }
-
 
 CHARACTER_IDEOLOGY_AXIS_DESCRIPTIONS: dict[int, str] = {
     1: (
@@ -126,4 +119,27 @@ CHARACTER_IDEOLOGY_AXIS_DESCRIPTIONS: dict[int, str] = {
         "Represents perceived moral complexity and narrative gravitas. "
         "Higher values correspond to characters associated with deeper moral conflict."
     ),
+}
+
+CHARACTER_IDEOLOGY_QUADRANTS = {
+    "Q1": "Mythic Pillars",
+    "Q2": "Narrative Anchors",
+    "Q3": "Dark Icons",
+    "Q4": "Peripheral Controversies",
+}
+
+# ==========================================================
+# Character Network Communities
+# ==========================================================
+
+CHARACTER_COMMUNITY_LABELS: dict[int, str] = {
+    1: "Rebel Alliance Core",
+    2: "Imperial Power Axis",
+    3: "Mythic Support Network",
+}
+
+ALL_CLUSTER_LABELS = {
+    "character": CHARACTER_CLUSTER_LABELS,
+    "audience": AUDIENCE_CLUSTER_LABELS,
+    "community": CHARACTER_COMMUNITY_LABELS,
 }

@@ -3,7 +3,12 @@
 from __future__ import annotations
 
 import pandas as pd
-from src.config import ALL_CLUSTER_LABELS
+from src.config import (
+    ALL_CLUSTER_LABELS,
+    CHARACTER_IDEOLOGY_AXES_READABLE,
+    CHARACTER_IDEOLOGY_QUADRANTS,
+    CHARACTER_COMMUNITY_LABELS,
+)
 
 
 # ============================================================
@@ -157,5 +162,37 @@ def attach_all_labels(
     df = add_character_labels(df)
     df = add_attached_cluster_labels(df)
     df = add_dominant_cluster_labels(df)
+
+    return df
+
+
+def format_character_ideology_table(df):
+
+    axis1 = CHARACTER_IDEOLOGY_AXES_READABLE[1]
+    axis2 = CHARACTER_IDEOLOGY_AXES_READABLE[2]
+
+    df = df.rename(
+        columns={
+            "ideology_axis_1": axis1,
+            "ideology_axis_2": axis2,
+        }
+    )
+
+    df["ideology_quadrant"] = df["ideology_quadrant"].map(
+        CHARACTER_IDEOLOGY_QUADRANTS
+    )
+
+    return df
+
+
+def attach_character_community_labels(
+    df,
+):
+
+    if "community" in df.columns:
+
+        df["community_label"] = df["community"].map(
+            CHARACTER_COMMUNITY_LABELS
+        )
 
     return df

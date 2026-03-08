@@ -4,8 +4,11 @@ from __future__ import annotations
 
 import matplotlib.pyplot as plt
 import pandas as pd
-from src.config import AUDIENCE_CLUSTER_LABELS, CHARACTER_IDEOLOGY_AXES_READABLE
+from src.config import AUDIENCE_CLUSTER_LABELS, CHARACTER_IDEOLOGY_AXES_READABLE, CHARACTER_CLUSTER_LABELS
 from sklearn.decomposition import PCA
+import networkx as nx
+from networkx.algorithms.community import greedy_modularity_communities
+
 
 
 def plot_character_polarization_map(
@@ -277,4 +280,139 @@ def plot_character_ideology_map(
 
     plt.tight_layout()
     plt.savefig(save_path, dpi=300)
+    plt.close()
+
+
+def plot_character_archetype_map(
+    df,
+    save_path=None,
+):
+
+    axis_x = CHARACTER_IDEOLOGY_AXES_READABLE[1]
+    axis_y = CHARACTER_IDEOLOGY_AXES_READABLE[2]
+
+    fig, ax = plt.subplots(figsize=(10, 8))
+
+    colors = {
+        1: "#e63946",  # Power & Ambiguity
+        2: "#457b9d",  # Heroic Core
+        3: "#2a9d8f",  # Prequel Identity
+    }
+
+    for cluster, group in df.groupby("attached_cluster"):
+
+        ax.scatter(
+            group[axis_x],
+            group[axis_y],
+            label=CHARACTER_CLUSTER_LABELS[cluster],
+            s=120,
+            alpha=0.8,
+            color=colors.get(cluster, "gray"),
+        )
+
+        for _, row in group.iterrows():
+            ax.text(
+                row[axis_x],
+                row[axis_y],
+                row["character"],
+                fontsize=9,
+                ha="center",
+                va="bottom",
+            )
+
+    ax.axhline(0, linestyle="--", linewidth=1)
+    ax.axvline(0, linestyle="--", linewidth=1)
+
+    ax.set_xlabel(axis_x)
+    ax.set_ylabel(axis_y)
+
+    ax.set_title("Character Ideology Archetype Map")
+
+    ax.legend()
+
+    if save_path:
+        plt.savefig(save_path, dpi=300, bbox_inches="tight")
+
+    plt.close()
+
+
+def plot_character_polarization_network(
+    edges,
+    save_path=None,
+):
+
+    G = nx.Graph()
+
+    for _, row in edges.iterrows():
+
+        G.add_edge(
+            row["source"],
+            row["target"],
+            weight=abs(row["correlation"]),
+            sign=row["type"],
+        )
+
+    pos = nx.spring_layout(G, seed=42)
+
+    # Detect communities
+    communities = list(greedy_modularity_communities(G))
+
+    community_map = {}
+
+    for i, comm in enumerate(communities):
+        for node in comm:
+            community_map[node] = i
+
+    colors = [community_map[n] for n in G.nodes()]
+
+    plt.figure(figsize=(10, 8))
+
+    positive_edges = [
+        (u, v)
+        for u, v, d in G.edges(data=True)
+        if d["sign"] == "positive"
+    ]
+
+    negative_edges = [
+        (u, v)
+        for u, v, d in G.edges(data=True)
+        if d["sign"] == "negative"
+    ]
+
+    nx.draw_networkx_nodes(
+        G,
+        pos,
+        node_size=900,
+        node_color=colors,
+        cmap=plt.cm.Set2,
+    )
+
+    nx.draw_networkx_edges(
+        G,
+        pos,
+        edgelist=positive_edges,
+        width=2,
+    )
+
+    nx.draw_networkx_edges(
+        G,
+        pos,
+        edgelist=negative_edges,
+        style="dashed",
+        width=2,
+    )
+
+    nx.draw_networkx_labels(
+        G,
+        pos,
+        font_size=9,
+    )
+
+    plt.title("Character Polarization Network (Community Structure)")
+
+    plt.axis("off")
+
+    if save_path:
+        plt.savefig(save_path, dpi=300, bbox_inches="tight")
+
     plt.close()

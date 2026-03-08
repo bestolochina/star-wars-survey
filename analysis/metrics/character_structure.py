@@ -4,6 +4,9 @@ from __future__ import annotations
 
 import pandas as pd
 from sklearn.decomposition import PCA
+from src.config import CHARACTER_IDEOLOGY_AXES
+import networkx as nx
+from networkx.algorithms.community import greedy_modularity_communities
 
 
 # ==========================================================
@@ -201,3 +204,126 @@ def build_character_structure_metrics(
     )
 
     return df
+
+
+def compute_character_ideology_quadrants(
+    coords: pd.DataFrame,
+) -> pd.DataFrame:
+
+    df = coords.copy()
+
+    axis_cols = [
+        f"ideology_axis_{axis}"
+        for axis in CHARACTER_IDEOLOGY_AXES
+    ]
+
+    x_col, y_col = axis_cols
+
+    def quadrant(row: pd.Series) -> str:
+
+        x = row[x_col]
+        y = row[y_col]
+
+        if x >= 0 and y >= 0:
+            return "Q1"
+        if x >= 0 and y < 0:
+            return "Q2"
+        if x < 0 and y >= 0:
+            return "Q3"
+        return "Q4"
+
+    df["ideology_quadrant"] = df.apply(quadrant, axis=1)
+
+    return df
+
+
+def compute_character_correlation_network(
+    matrix: pd.DataFrame,
+    threshold: float = 0.25,
+):
+
+    corr = matrix.corr()
+
+    edges = []
+
+    for c1 in corr.columns:
+        for c2 in corr.columns:
+
+            if c1 >= c2:
+                continue
+
+            value = corr.loc[c1, c2]
+
+            if abs(value) >= threshold:
+
+                edges.append(
+                    {
+                        "source": c1,
+                        "target": c2,
+                        "correlation": value,
+                        "type": "positive" if value > 0 else "negative",
+                    }
+                )
+
+    return pd.DataFrame(edges)
+
+
+def compute_character_communities(edges: pd.DataFrame) -> pd.DataFrame:
+
+    G = nx.Graph()
+
+    for _, row in edges.iterrows():
+        G.add_edge(
+            row["source"],
+            row["target"],
+            weight=abs(row["correlation"]),
+        )
+
+    communities = list(greedy_modularity_communities(G))
+
+    rows = []
+
+    for i, community in enumerate(communities, start=1):
+
+        for character in community:
+
+            rows.append(
+                {
+                    "character": character,
+                    "community": i,
+                }
+            )
+
+    return pd.DataFrame(rows)
+
+
+def build_character_structure_triangulation(
+    profiles: pd.DataFrame,
+    communities: pd.DataFrame,
+) -> pd.DataFrame:
+
+    df = profiles.merge(
+        communities,
+        on="character",
+        how="left",
+    )
+
+    df = df[
+        [
+            "character",
+            "attached_cluster_label",
+            "ideology_quadrant",
+            "community",
+        ]
+    ]
+
+    # df = df.rename(
+    #     columns={
+    #         "attached_cluster_label": "archetype_bloc",
+    #         "community": "network_community",
+    #     }
+    # )
+
+    return df.sort_values(
+        ["community", "attached_cluster_label"]
+    )

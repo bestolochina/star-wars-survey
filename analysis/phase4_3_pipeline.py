@@ -4,10 +4,15 @@ from __future__ import annotations
 
 import pandas as pd
 
-from analysis.utils.labels import attach_all_labels
+from analysis.utils.labels import (
+    attach_all_labels,
+    format_character_ideology_table,
+    attach_character_community_labels
+)
 from src.paths import PHASE4_TABLES_DIR, PHASE4_FIGURES_DIR
 from src.io_utils import load_respondent_clusters
 from src.config import CHARACTER_RATING_COLUMNS
+from analysis.utils.pca_stability import stabilize_pca_axes
 
 from analysis.transforms.matrix_builder import build_character_matrix
 
@@ -28,6 +33,10 @@ from analysis.metrics.character_structure import (
     compute_character_audience_variance,
     compute_character_ideology_coordinates,
     build_character_structure_metrics,
+    compute_character_ideology_quadrants,
+    compute_character_correlation_network,
+    compute_character_communities,
+    build_character_structure_triangulation,
 )
 from analysis.visualization.character_structure import (
     plot_character_polarization_map,
@@ -35,6 +44,8 @@ from analysis.visualization.character_structure import (
     plot_character_ideology_gradient_map,
     plot_character_audience_ideology_field,
     plot_character_ideology_map,
+    plot_character_archetype_map,
+    plot_character_polarization_network,
 )
 
 
@@ -471,6 +482,8 @@ def step_4315_character_ideology_coordinates(
 
     coords = compute_character_ideology_coordinates(alignment)
 
+    coords = stabilize_pca_axes(coords)
+
     path = (
         PHASE4_TABLES_DIR
         / "polarization"
@@ -543,6 +556,225 @@ def step_4317_character_ideology_map(
 
 
 # ==========================================================
+# 4.3.18 Character Ideology Quadrants
+# ==========================================================
+
+def step_4318_character_ideology_quadrants(
+        character_ideology_coordinates: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 4.3.18 Character Ideology Quadrants ===")
+
+    quadrants = compute_character_ideology_quadrants(
+        character_ideology_coordinates
+    )
+
+    quadrants = format_character_ideology_table(quadrants)
+
+    save_path = (
+            PHASE4_TABLES_DIR
+            / "polarization"
+            / "character_ideology_quadrants.csv"
+    )
+
+    quadrants.to_csv(save_path, index=False)
+
+    print(f"Saved → {save_path}")
+
+    return quadrants
+
+
+# ==========================================================
+# 4.3.19 Character Ideological Profiles
+# ==========================================================
+
+def step_4319_character_profiles(
+    quadrants: pd.DataFrame,
+    attachment: pd.DataFrame,
+    metrics: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 4.3.19 Character Ideological Profiles ===")
+
+    df = quadrants.merge(
+        attachment[
+            [
+                "character",
+                "attached_cluster",
+                "attached_cluster_label",
+                "attachment_strength",
+            ]
+        ],
+        on="character",
+    )
+
+    df = df.merge(
+        metrics[
+            [
+                "character",
+                "rating_range",
+                "rating_std",
+                "bridge_index",
+                "audience_variance",
+            ]
+        ],
+        on="character",
+    )
+
+    df = df.sort_values(
+        "rating_range",
+        ascending=False,
+    )
+
+    path = (
+        PHASE4_TABLES_DIR
+        / "polarization"
+        / "character_ideological_profiles.csv"
+    )
+
+    df.to_csv(path, index=False)
+
+    print(df.head().to_string())
+    print(f"Saved → {path}")
+
+    return df
+
+
+# ==========================================================
+# 4.3.20 Character Ideology Archetype Map
+# ==========================================================
+
+def step_4320_character_archetype_map(
+    profiles: pd.DataFrame,
+) -> None:
+
+    print("\n=== 4.3.20 Character Ideology Archetype Map ===")
+
+    save_path = (
+        PHASE4_FIGURES_DIR
+        / "polarization"
+        / "character_archetype_map.png"
+    )
+
+    plot_character_archetype_map(
+        profiles,
+        save_path=str(save_path),
+    )
+
+    print(f"Saved → {save_path}")
+
+
+# ==========================================================
+# 4.3.21 Character Correlation Network
+# ==========================================================
+
+def step_4321_character_network(
+    matrix: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 4.3.21 Character Correlation Network ===")
+
+    edges = compute_character_correlation_network(matrix)
+
+    path = (
+        PHASE4_TABLES_DIR
+        / "polarization"
+        / "character_correlation_network.csv"
+    )
+
+    edges.to_csv(path, index=False)
+
+    print(edges.head().to_string())
+    print(f"Saved → {path}")
+
+    return edges
+
+
+# ==========================================================
+# 4.3.22 Character Polarization Network Figure
+# ==========================================================
+
+def step_4322_character_network_plot(
+    edges: pd.DataFrame,
+) -> None:
+
+    print("\n=== 4.3.22 Character Polarization Network ===")
+
+    save_path = (
+        PHASE4_FIGURES_DIR
+        / "polarization"
+        / "character_polarization_network.png"
+    )
+
+    plot_character_polarization_network(
+        edges,
+        save_path=str(save_path),
+    )
+
+    print(f"Saved → {save_path}")
+
+
+# ==========================================================
+# 4.3.23 Character Network Communities
+# ==========================================================
+
+def step_4323_character_network_communities(
+    edges: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 4.3.23 Character Network Communities ===")
+
+    communities = compute_character_communities(edges)
+
+    communities = attach_character_community_labels(communities)
+
+    path = (
+        PHASE4_TABLES_DIR
+        / "polarization"
+        / "character_network_communities.csv"
+    )
+
+    communities.to_csv(path, index=False)
+
+    print(communities.to_string())
+    print(f"Saved → {path}")
+
+    return communities
+
+
+# ==========================================================
+# 4.3.24 Character Structure Triangulation
+# ==========================================================
+
+def step_4324_character_structure_triangulation(
+    profiles: pd.DataFrame,
+    communities: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 4.3.24 Character Structure Triangulation ===")
+
+    table = build_character_structure_triangulation(
+        profiles,
+        communities,
+    )
+
+    table = attach_character_community_labels(table)
+
+    path = (
+        PHASE4_TABLES_DIR
+        / "polarization"
+        / "character_structure_triangulation.csv"
+    )
+
+    table.to_csv(path, index=False)
+
+    print(table.to_string(index=False))
+    print(f"Saved → {path}")
+
+    return table
+
+
+# ==========================================================
 # Pipeline Entry
 # ==========================================================
 
@@ -611,4 +843,25 @@ def run_phase4_3(
 
     step_4317_character_ideology_map(
         character_ideology_coordinates,
+    )
+
+    character_ideology_quadrants = step_4318_character_ideology_quadrants(character_ideology_coordinates)
+
+    character_profiles = step_4319_character_profiles(
+        character_ideology_quadrants,
+        attachment,
+        character_structure_metrics,
+    )
+
+    step_4320_character_archetype_map(character_profiles)
+
+    edges = step_4321_character_network(matrix)
+
+    step_4322_character_network_plot(edges)
+
+    communities = step_4323_character_network_communities(edges)
+
+    triangulation = step_4324_character_structure_triangulation(
+        character_profiles,
+        communities,
     )
