@@ -1,4 +1,4 @@
-cluster,cluster_label,top_bloc,top_bloc_label,second_bloc,second_bloc_label,preference_gap
-1,Narrative Pluralists,2,Heroic Core,3,Prequel Identity Bloc,0.5103525028522071
-2,Canon Boundary Defenders,2,Heroic Core,1,Power & Ambiguity Bloc,0.9762521151697685
-3,Moral Boundary Enforcers,2,Heroic Core,3,Prequel Identity Bloc,1.0925641256367578
+cluster,top_bloc,top_bloc_label,second_bloc,second_bloc_label,preference_gap
+1,2,Heroic Core,3,Prequel Identity Bloc,0.5103525028522071
+2,2,Heroic Core,1,Power & Ambiguity Bloc,0.9762521151697685
+3,2,Heroic Core,3,Prequel Identity Bloc,1.0925641256367578

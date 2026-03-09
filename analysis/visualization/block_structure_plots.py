@@ -15,7 +15,7 @@ def plot_audience_character_cluster_heatmap(
 ) -> None:
 
     matrix = block_means.pivot(
-        index="cluster",
+        index="audience_cluster",
         columns="character_cluster",
         values="mean_rating",
     )
@@ -55,7 +55,7 @@ def plot_block_deviation_heatmap(
     # Pivot
     # -------------------------
     heatmap_data = deviation_df.pivot(
-        index="cluster",
+        index="audience_cluster",
         columns="character_cluster",
         values="deviation",
     )
@@ -97,7 +97,7 @@ def plot_block_zscore_heatmap(
 ) -> None:
 
     pivot = zscore_df.pivot(
-        index="cluster",
+        index="audience_cluster",
         columns="character_cluster",
         values="z_score",
     )
@@ -130,7 +130,7 @@ def plot_block_radar_profiles(
     """
 
     pivot = deviation_df.pivot(
-        index="cluster",
+        index="audience_cluster",
         columns="character_cluster",
         values="deviation",
     ).sort_index()
@@ -161,3 +161,91 @@ def plot_block_radar_profiles(
     plt.close()
 
     print(f"Saved radar plot → {output_path}")
+
+
+def plot_structural_identity_map(
+    identity_df: pd.DataFrame,
+    output_path,
+) -> None:
+    """
+    Step 4.2.16 — Structural Identity Map
+
+    Scatter plot positioning audience clusters
+    in structural identity space.
+    """
+
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    # group by identity type for coloring
+    for identity_type, group in identity_df.groupby(
+        "structural_identity_type"
+    ):
+        ax.scatter(
+            group["narrative_selectivity"],
+            group["block_extremeness"],
+            label=identity_type,
+            s=120,
+        )
+
+        # annotate clusters
+        for _, row in group.iterrows():
+            ax.text(
+                row["narrative_selectivity"] + 0.005,
+                row["block_extremeness"] + 0.005,
+                f"C{int(row.audience_cluster)}",
+                fontsize=10,
+            )
+
+    # reference lines (interpretation quadrants)
+    ax.axhline(
+        identity_df["block_extremeness"].mean(),
+        linestyle="--",
+        linewidth=1,
+    )
+
+    ax.axvline(
+        identity_df["narrative_selectivity"].mean(),
+        linestyle="--",
+        linewidth=1,
+    )
+
+    ax.set_xlabel("Narrative Selectivity")
+    ax.set_ylabel("Structural Extremeness")
+    ax.set_title("Structural Identity Map")
+
+    ax.legend(title="Identity Type")
+    ax.grid(alpha=0.3)
+
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=300)
+    plt.close()
+
+    print(f"Saved identity map → {output_path}")
+
+
+def plot_structural_tension(
+    tension_df: pd.DataFrame,
+    output_path,
+) -> None:
+    """
+    Bar plot of narrative tension by character cluster.
+    """
+
+    fig, ax = plt.subplots(figsize=(7, 5))
+
+    ax.bar(
+        tension_df["character_cluster"].astype(str),
+        tension_df["tension_variance"],
+    )
+
+    ax.set_xlabel("Character Cluster")
+    ax.set_ylabel("Narrative Tension (Variance)")
+    ax.set_title("Structural Narrative Tension")
+
+    ax.grid(axis="y", alpha=0.3)
+
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=300)
+    plt.close()
+
+    print(f"Saved tension plot → {output_path}")

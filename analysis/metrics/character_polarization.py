@@ -93,7 +93,7 @@ def compute_character_alignment_matrix(
 
     Output format:
 
-    character | 1 (Narrative Pluralists) | 2 (Canon Boundary Defenders) | 3 (Moral Boundary Enforcers)
+    character | 1 | 2 | 3
     """
 
     matrix = means.pivot(
@@ -106,11 +106,6 @@ def compute_character_alignment_matrix(
     matrix = matrix.reindex(
         columns=sorted(AUDIENCE_CLUSTER_LABELS)
     )
-
-    matrix.columns = [
-        f"{c} ({AUDIENCE_CLUSTER_LABELS.get(c, 'Unknown')})"
-        for c in matrix.columns
-    ]
 
     matrix = matrix.sort_index()
 

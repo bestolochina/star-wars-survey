@@ -17,15 +17,12 @@ def plot_cluster_profile_heatmap(
     save_path,
 ) -> None:
 
-    import matplotlib.pyplot as plt
-    import seaborn as sns
-
     # -----------------------------------
     # LONG → WIDE (required for heatmap)
     # -----------------------------------
     heatmap_df = profile_df.pivot(
         index="character",
-        columns="cluster",
+        columns="audience_cluster",
         values="mean_rating",
     )
 
@@ -72,13 +69,13 @@ def plot_deviation_heatmap(
 
     Expected columns:
         character
-        cluster
+        audience_cluster
         deviation
     """
 
     pivot = deviations.pivot(
         index="character",
-        columns="cluster",
+        columns="audience_cluster",
         values="deviation",
     )
 
@@ -115,12 +112,12 @@ def plot_cluster_radar_plots(
     save_path,
 ) -> None:
     """
-    Radar chart comparing clusters using deviations.
+    Radar chart comparing audience_clusters using deviations.
     """
 
     pivot = deviations.pivot(
         index="character",
-        columns="cluster",
+        columns="audience_cluster",
         values="deviation",
     ).astype(float)
 
@@ -137,17 +134,17 @@ def plot_cluster_radar_plots(
         subplot_kw=dict(polar=True),
     )
 
-    for cluster in clusters:
-        values = pivot[cluster].values
+    for audience_cluster in clusters:
+        values = pivot[audience_cluster].values
         values = np.concatenate([values, [values[0]]])
 
-        ax.plot(angles, values, label=f"Cluster {cluster}")
+        ax.plot(angles, values, label=f"Cluster {audience_cluster}")
         ax.fill(angles, values, alpha=0.1)
 
     ax.set_xticks(angles[:-1])
     ax.set_xticklabels(characters, fontsize=8)
 
-    ax.set_title("Cluster Preference Signatures (Deviation Radar)")
+    ax.set_title("Audience Cluster Preference Signatures (Deviation Radar)")
     ax.legend(loc="upper right", bbox_to_anchor=(1.3, 1.1))
 
     plt.tight_layout()

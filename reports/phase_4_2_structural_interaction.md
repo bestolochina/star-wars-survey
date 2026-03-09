@@ -96,7 +96,7 @@ All deviations remain significant under resampling, confirming that these patter
 This heatmap shows the magnitude of structural bias.
 
 *(Plot: reports/figures/phase4/deviation_heatmap.png)*
-![deviation_heatmap.png](figures/phase4/deviation_heatmap.png)
+![audience_cluster_deviation_heatmap.png](figures/phase4/phase4_1_audience_cluster_profiles/audience_cluster_deviation_heatmap.png)
 Key patterns visible in the heatmap:
 
 * **Deep red rejection of villains by Cluster 3**
@@ -111,7 +111,7 @@ The heatmap reveals the **ideological geometry of the fandom**.
 ## Cluster Radar Profiles
 
 *(Plot: reports/figures/phase4/cluster_radar_plots.png)*
-![cluster_radar_plots.png](figures/phase4/cluster_radar_plots.png)
+![audience_cluster_radar_plots.png](figures/phase4/phase4_1_audience_cluster_profiles/audience_cluster_radar_plots.png)
 Radar profiles illustrate how each audience cluster evaluates the narrative archetypes.
 
 Interpretation:

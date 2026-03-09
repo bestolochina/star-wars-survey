@@ -1,15 +1,15 @@
 character,community,community_label
-Obi Wan Kenobi,1,Rebel Alliance Core
 Luke Skywalker,1,Rebel Alliance Core
-C-3P0,1,Rebel Alliance Core
 R2-D2,1,Rebel Alliance Core
+C-3P0,1,Rebel Alliance Core
+Obi Wan Kenobi,1,Rebel Alliance Core
 Princess Leia Organa,1,Rebel Alliance Core
 Han Solo,1,Rebel Alliance Core
-Darth Vader,2,Imperial Power Axis
-Boba Fett,2,Imperial Power Axis
 Emperor Palpatine,2,Imperial Power Axis
+Boba Fett,2,Imperial Power Axis
+Darth Vader,2,Imperial Power Axis
 Lando Calrissian,2,Imperial Power Axis
-Padme Amidala,3,Mythic Support Network
-Yoda,3,Mythic Support Network
 Anakin Skywalker,3,Mythic Support Network
+Yoda,3,Mythic Support Network
 Jar-Jar Binks,3,Mythic Support Network
+Padme Amidala,3,Mythic Support Network

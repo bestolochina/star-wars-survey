@@ -14,27 +14,37 @@ from src.io_utils import (
 )
 from src.config import CHARACTER_RATING_COLUMNS
 from analysis.transforms.matrix_builder import build_character_matrix
-from analysis.interpretation.structural_archetypes import derive_structural_archetypes
 
 from analysis.metrics.block_structure import (
     compute_audience_character_cluster_means,
     compute_block_deviations,
     compute_block_zscores,
     bootstrap_block_deviation_significance,
+    compute_block_extremeness,
+    compute_narrative_selectivity,
+    compute_structural_tension,
 )
 from analysis.visualization.block_structure_plots import (
     plot_audience_character_cluster_heatmap,
     plot_block_deviation_heatmap,
     plot_block_zscore_heatmap,
     plot_block_radar_profiles,
+    plot_structural_identity_map,
+    plot_structural_tension,
 )
-from analysis.metrics.structural_indices import compute_block_extremeness
-from analysis.metrics.narrative_selectivity import compute_narrative_selectivity
-from analysis.interpretation.structural_identity_typology import derive_structural_identity_typology
-from analysis.interpretation.narrative_identity_reports import generate_narrative_identity_reports
-from analysis.visualization.structural_identity_map import plot_structural_identity_map
-from analysis.metrics.structural_tension import compute_structural_tension
-from analysis.visualization.structural_tension_plot import plot_structural_tension
+from analysis.interpretation.block_structure_interpretations import (
+derive_structural_archetypes,
+derive_structural_identity_typology,
+generate_narrative_identity_reports,
+)
+
+PHASE4_2_TABLES_DIR = (
+    PHASE4_TABLES_DIR / "phase4_2_structural_interaction_analysis"
+)
+
+PHASE4_2_FIGURES_DIR = (
+    PHASE4_FIGURES_DIR / "phase4_2_structural_interaction_analysis"
+)
 
 
 # ==========================================================
@@ -42,8 +52,8 @@ from analysis.visualization.structural_tension_plot import plot_structural_tensi
 # ==========================================================
 
 def _ensure_dirs() -> None:
-    PHASE4_TABLES_DIR.mkdir(parents=True, exist_ok=True)
-    PHASE4_FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+    PHASE4_2_TABLES_DIR.mkdir(parents=True, exist_ok=True)
+    PHASE4_2_FIGURES_DIR.mkdir(parents=True, exist_ok=True)
 
 
 # ==========================================================
@@ -76,10 +86,19 @@ def step_421_load_character_clusters() -> pd.DataFrame:
 
     df = load_character_clusters()
 
+    # normalize column name
+    if "cluster" in df.columns:
+        df = df.rename(columns={"cluster": "character_cluster"})
+
+    required = {"character", "character_cluster"}
+    missing = required - set(df.columns)
+
+    if missing:
+        raise ValueError(f"Missing columns: {missing}")
+
     print(df.to_string())
 
     return df
-
 
 # ==========================================================
 # 4.2.2 Load Audience Cluster Mapping
@@ -91,10 +110,21 @@ def step_422_load_respondent_clusters() -> pd.DataFrame:
 
     df = load_respondent_clusters()
 
+    # -----------------------------------
+    # Normalize column name
+    # -----------------------------------
+    if "cluster" in df.columns:
+        df = df.rename(columns={"cluster": "audience_cluster"})
+
+    required = {"respondent_id", "audience_cluster"}
+    missing = required - set(df.columns)
+
+    if missing:
+        raise ValueError(f"Missing columns: {missing}")
+
     print(df.head().to_string())
 
     return df
-
 
 # ==========================================================
 # 4.2.3 Audience × Character Cluster Means
@@ -117,7 +147,7 @@ def step_423_block_means(
     )
 
     block_means.to_csv(
-        PHASE4_TABLES_DIR
+        PHASE4_2_TABLES_DIR
         / "audience_character_cluster_means.csv",
         index=False,
     )
@@ -137,7 +167,7 @@ def step_424_block_heatmap(
 
     print("\n=== 4.2.4 Audience × Character Cluster Heatmap ===")
 
-    output_path = PHASE4_FIGURES_DIR / "audience_character_cluster_heatmap.png"
+    output_path = PHASE4_2_FIGURES_DIR / "audience_character_cluster_heatmap.png"
 
     plot_audience_character_cluster_heatmap(
         block_means,
@@ -163,8 +193,8 @@ def step_425_compute_block_deviations(
     print(block_deviations.to_string(index=False))
 
     block_deviations.to_csv(
-        PHASE4_TABLES_DIR
-        / "block_deviations.csv",
+        PHASE4_2_TABLES_DIR
+        / "audience_character_cluster_deviations.csv",
         index=False,
     )
 
@@ -181,7 +211,7 @@ def step_426_deviation_heatmap(
 
     print("\n=== 4.2.6 Deviation Heatmap ===")
 
-    output_path = PHASE4_FIGURES_DIR / "audience_character_cluster_deviation_heatmap.png"
+    output_path = PHASE4_2_FIGURES_DIR / "audience_character_cluster_deviation_heatmap.png"
 
     plot_block_deviation_heatmap(
         deviation_df=block_deviations,
@@ -204,7 +234,7 @@ def step_427_block_zscores(
     z_scores = compute_block_zscores(block_deviations)
 
     z_scores.to_csv(
-        PHASE4_TABLES_DIR / "block_zscores.csv",
+        PHASE4_2_TABLES_DIR / "audience_character_cluster_zscores.csv",
         index=False,
     )
 
@@ -223,7 +253,7 @@ def step_428_zscore_heatmap(
 
     print("\n=== 4.2.8 Z-Score Heatmap ===")
 
-    output_path = PHASE4_FIGURES_DIR / "block_zscore_heatmap.png"
+    output_path = PHASE4_2_FIGURES_DIR / "block_zscore_heatmap.png"
 
     plot_block_zscore_heatmap(
         zscore_df=zscores,
@@ -255,7 +285,7 @@ def step_429_bootstrap_significance(
 
     result = deviations.merge(
         ci_df,
-        on=["cluster", "character_cluster"],
+        on=["audience_cluster", "character_cluster"],
         how="left",
     )
 
@@ -263,7 +293,7 @@ def step_429_bootstrap_significance(
         (result["ci_low"] <= 0) & (result["ci_high"] >= 0)
     )
 
-    output_path = PHASE4_TABLES_DIR / "bootstrap_block_significance.csv"
+    output_path = PHASE4_2_TABLES_DIR / "audience_character_cluster_bootstrap_significance.csv"
 
     result.to_csv(output_path, index=False)
 
@@ -283,7 +313,7 @@ def step_4210_block_radar_profiles(
 
     print("\n=== 4.2.10 Signed Structural Bias Profiles ===")
 
-    output_path = PHASE4_FIGURES_DIR / "block_radar_plot.png"
+    output_path = PHASE4_2_FIGURES_DIR / "audience_character_cluster_radar_profiles.png"
 
     plot_block_radar_profiles(
         deviation_df=deviation_df,
@@ -309,7 +339,7 @@ def step_4211_structural_archetypes(
     )
 
     output_path = (
-        PHASE4_TABLES_DIR
+        PHASE4_2_TABLES_DIR
         / "structural_archetypes.csv"
     )
 
@@ -334,7 +364,7 @@ def step_4212_block_extremeness(
     extremeness = compute_block_extremeness(deviations)
 
     output_path = (
-        PHASE4_TABLES_DIR / "block_extremeness_scores.csv"
+        PHASE4_2_TABLES_DIR / "block_extremeness_scores.csv"
     )
 
     extremeness.to_csv(output_path, index=False)
@@ -360,7 +390,7 @@ def step_4213_narrative_selectivity(
     )
 
     output_path = (
-        PHASE4_TABLES_DIR
+        PHASE4_2_TABLES_DIR
         / "narrative_selectivity_index.csv"
     )
 
@@ -389,7 +419,7 @@ def step_4214_structural_identity_typology(
     )
 
     output_path = (
-        PHASE4_TABLES_DIR
+        PHASE4_2_TABLES_DIR
         / "structural_identity_typology.csv"
     )
 
@@ -418,7 +448,7 @@ def step_4215_narrative_identity_reports(
     )
 
     output_path = (
-        PHASE4_TABLES_DIR
+        PHASE4_2_TABLES_DIR
         / "narrative_identity_reports.csv"
     )
 
@@ -441,7 +471,7 @@ def step_4216_structural_identity_map(
     print("\n=== 4.2.16 Structural Identity Map ===")
 
     output_path = (
-        PHASE4_FIGURES_DIR
+        PHASE4_2_FIGURES_DIR
         / "structural_identity_map.png"
     )
 
@@ -466,7 +496,7 @@ def step_4217_structural_tension(
     tension_df = compute_structural_tension(deviations)
 
     output_table = (
-        PHASE4_TABLES_DIR
+        PHASE4_2_TABLES_DIR
         / "structural_tension.csv"
     )
 
@@ -477,7 +507,7 @@ def step_4217_structural_tension(
 
     # plot
     output_fig = (
-        PHASE4_FIGURES_DIR
+        PHASE4_2_FIGURES_DIR
         / "structural_tension.png"
     )
 
@@ -540,7 +570,7 @@ def run_phase4_2(
 
     extremeness = step_4212_block_extremeness(block_deviations)
 
-    selectivity = step_4213_narrative_selectivity(block_deviations    )
+    selectivity = step_4213_narrative_selectivity(block_deviations)
 
     identity = step_4214_structural_identity_typology(
         extremeness,

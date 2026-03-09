@@ -4,11 +4,6 @@ from __future__ import annotations
 
 import pandas as pd
 
-from analysis.utils.labels import (
-    attach_all_labels,
-    format_character_ideology_table,
-    attach_character_community_labels
-)
 from src.paths import PHASE4_TABLES_DIR, PHASE4_FIGURES_DIR
 from src.io_utils import load_respondent_clusters
 from src.config import CHARACTER_RATING_COLUMNS
@@ -98,8 +93,6 @@ def step_431_load_clusters() -> pd.DataFrame:
 
     clusters = load_respondent_clusters()
 
-    clusters = attach_all_labels(clusters)
-
     print(clusters.head().to_string())
 
     return clusters
@@ -126,8 +119,6 @@ def step_432_character_cluster_means(
         / "polarization"
         / "character_cluster_means.csv"
     )
-
-    means = attach_all_labels(means)
 
     means.to_csv(path, index=False)
 
@@ -213,8 +204,6 @@ def step_435_bloc_dominance(
         / "audience_bloc_dominance.csv"
     )
 
-    dominance = attach_all_labels(dominance)
-
     dominance.to_csv(path, index=False)
 
     print(dominance.to_string(index=False))
@@ -242,8 +231,6 @@ def step_436_preference_gap(
         / "polarization"
         / "audience_preference_gap.csv"
     )
-
-    gap = attach_all_labels(gap)
 
     gap.to_csv(path, index=False)
 
@@ -273,8 +260,6 @@ def step_437_alignment_index(
         / "narrative_alignment_index.csv"
     )
 
-    index = attach_all_labels(index)
-
     index.to_csv(path, index=False)
 
     print(index.to_string(index=False))
@@ -300,8 +285,6 @@ def step_438_bridge_index(
         / "polarization"
         / "character_bridge_index.csv"
     )
-
-    bridge = attach_all_labels(bridge)
 
     bridge.to_csv(path, index=False)
 
@@ -331,8 +314,6 @@ def step_439_cluster_attachment(
         / "character_cluster_attachment.csv"
     )
 
-    attachment = attach_all_labels(attachment)
-
     attachment.to_csv(path, index=False)
 
     print(attachment.head().to_string())
@@ -360,8 +341,6 @@ def step_4310_audience_variance(
         / "polarization"
         / "character_audience_variance.csv"
     )
-
-    variance = attach_all_labels(variance)
 
     variance.to_csv(path, index=False)
 
@@ -499,6 +478,40 @@ def step_4315_character_ideology_coordinates(
 
 
 # ==========================================================
+# 4.3.15.1 Audience Cluster Ideology Coordinates
+# ==========================================================
+
+def step_43151_cluster_ideology_coordinates(
+    alignment: pd.DataFrame,
+    character_ideology_coordinates: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 4.3.15.1 Audience Cluster Ideology Coordinates ===")
+
+    from analysis.metrics.character_structure import (
+        compute_cluster_ideology_coordinates,
+    )
+
+    cluster_coords = compute_cluster_ideology_coordinates(
+        alignment,
+        character_ideology_coordinates,
+    )
+
+    path = (
+        PHASE4_TABLES_DIR
+        / "polarization"
+        / "audience_cluster_ideology_coordinates.csv"
+    )
+
+    cluster_coords.to_csv(path, index=False)
+
+    print(cluster_coords.to_string(index=False))
+    print(f"Saved → {path}")
+
+    return cluster_coords
+
+
+# ==========================================================
 # 4.3.16 Character Structure Metrics
 # ==========================================================
 
@@ -569,8 +582,6 @@ def step_4318_character_ideology_quadrants(
         character_ideology_coordinates
     )
 
-    quadrants = format_character_ideology_table(quadrants)
-
     save_path = (
             PHASE4_TABLES_DIR
             / "polarization"
@@ -601,7 +612,6 @@ def step_4319_character_profiles(
             [
                 "character",
                 "attached_cluster",
-                "attached_cluster_label",
                 "attachment_strength",
             ]
         ],
@@ -726,8 +736,6 @@ def step_4323_character_network_communities(
 
     communities = compute_character_communities(edges)
 
-    communities = attach_character_community_labels(communities)
-
     path = (
         PHASE4_TABLES_DIR
         / "polarization"
@@ -757,8 +765,6 @@ def step_4324_character_structure_triangulation(
         profiles,
         communities,
     )
-
-    table = attach_character_community_labels(table)
 
     path = (
         PHASE4_TABLES_DIR
@@ -800,7 +806,7 @@ def run_phase4_3(
     polarization = step_434_character_polarization(means)
 
     block_means = pd.read_csv(
-        PHASE4_TABLES_DIR
+        PHASE4_2_TABLES_DIR
         / "audience_character_cluster_means.csv"
     )
 
@@ -833,6 +839,11 @@ def run_phase4_3(
     step_4314_character_audience_ideology_field(alignment)
 
     character_ideology_coordinates = step_4315_character_ideology_coordinates(alignment)
+
+    cluster_ideology_coordinates = step_43151_cluster_ideology_coordinates(
+        alignment,
+        character_ideology_coordinates,
+    )
 
     character_structure_metrics = step_4316_character_structure_metrics(
         polarization,

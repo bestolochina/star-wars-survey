@@ -162,11 +162,12 @@ def attach_all_labels(
     df = add_character_labels(df)
     df = add_attached_cluster_labels(df)
     df = add_dominant_cluster_labels(df)
+    df = add_ideology_quadrant_labels(df)
 
     return df
 
 
-def format_character_ideology_table(df):
+def format_ideology_axes_column_names(df: pd.DataFrame) -> pd.DataFrame:
 
     axis1 = CHARACTER_IDEOLOGY_AXES_READABLE[1]
     axis2 = CHARACTER_IDEOLOGY_AXES_READABLE[2]
@@ -178,8 +179,26 @@ def format_character_ideology_table(df):
         }
     )
 
-    df["ideology_quadrant"] = df["ideology_quadrant"].map(
-        CHARACTER_IDEOLOGY_QUADRANTS
+    return df
+
+
+def add_ideology_quadrant_labels(df):
+
+    df = df.copy()
+
+    if "ideology_quadrant" not in df.columns:
+        return df
+
+    if "ideology_quadrant_label" not in df.columns:
+        df["ideology_quadrant_label"] = (
+            df["ideology_quadrant"]
+            .map(CHARACTER_IDEOLOGY_QUADRANTS)
+        )
+
+    df = _move_column_after(
+        df,
+        "ideology_quadrant_label",
+        "ideology_quadrant",
     )
 
     return df

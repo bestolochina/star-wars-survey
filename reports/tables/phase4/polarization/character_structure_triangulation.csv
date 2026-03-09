@@ -1,15 +1,15 @@
 character,attached_cluster_label,ideology_quadrant,community,community_label
-Han Solo,Heroic Core,Mythic Pillars,1,Rebel Alliance Core
-Obi Wan Kenobi,Heroic Core,Mythic Pillars,1,Rebel Alliance Core
-Princess Leia Organa,Heroic Core,Mythic Pillars,1,Rebel Alliance Core
-Luke Skywalker,Heroic Core,Mythic Pillars,1,Rebel Alliance Core
-C-3P0,Prequel Identity Bloc,Narrative Anchors,1,Rebel Alliance Core
-R2-D2,Prequel Identity Bloc,Narrative Anchors,1,Rebel Alliance Core
-Darth Vader,Heroic Core,Dark Icons,2,Imperial Power Axis
-Boba Fett,Heroic Core,Dark Icons,2,Imperial Power Axis
-Lando Calrissian,Heroic Core,Peripheral Controversies,2,Imperial Power Axis
-Emperor Palpatine,Power & Ambiguity Bloc,Dark Icons,2,Imperial Power Axis
-Jar-Jar Binks,Power & Ambiguity Bloc,Peripheral Controversies,3,Mythic Support Network
-Anakin Skywalker,Power & Ambiguity Bloc,Peripheral Controversies,3,Mythic Support Network
-Padme Amidala,Prequel Identity Bloc,Peripheral Controversies,3,Mythic Support Network
-Yoda,Prequel Identity Bloc,Narrative Anchors,3,Mythic Support Network
+Han Solo,Heroic Core,Q1,1,Rebel Alliance Core
+Obi Wan Kenobi,Heroic Core,Q1,1,Rebel Alliance Core
+Princess Leia Organa,Heroic Core,Q1,1,Rebel Alliance Core
+Luke Skywalker,Heroic Core,Q1,1,Rebel Alliance Core
+C-3P0,Prequel Identity Bloc,Q2,1,Rebel Alliance Core
+R2-D2,Prequel Identity Bloc,Q2,1,Rebel Alliance Core
+Darth Vader,Heroic Core,Q3,2,Imperial Power Axis
+Boba Fett,Heroic Core,Q3,2,Imperial Power Axis
+Lando Calrissian,Heroic Core,Q4,2,Imperial Power Axis
+Emperor Palpatine,Power & Ambiguity Bloc,Q3,2,Imperial Power Axis
+Jar-Jar Binks,Power & Ambiguity Bloc,Q4,3,Mythic Support Network
+Anakin Skywalker,Power & Ambiguity Bloc,Q4,3,Mythic Support Network
+Padme Amidala,Prequel Identity Bloc,Q4,3,Mythic Support Network
+Yoda,Prequel Identity Bloc,Q2,3,Mythic Support Network

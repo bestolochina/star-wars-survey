@@ -181,6 +181,64 @@ def compute_character_ideology_coordinates(
     return result
 
 
+def compute_cluster_ideology_coordinates(
+    alignment: pd.DataFrame,
+    character_coords: pd.DataFrame,
+) -> pd.DataFrame:
+    """
+    Project audience clusters into the character ideological space.
+
+    Parameters
+    ----------
+    alignment : DataFrame
+        Character × cluster rating matrix.
+
+    character_coords : DataFrame
+        Character ideology coordinates with columns:
+        ['character','ideology_axis_1','ideology_axis_2']
+
+    Returns
+    -------
+    DataFrame
+        Cluster ideology coordinates.
+    """
+
+    # clusters × characters
+    matrix = alignment.T
+
+    # ensure same character order
+    coords = character_coords.set_index("character").loc[matrix.columns]
+
+    char_axes = coords[
+        ["ideology_axis_1", "ideology_axis_2"]
+    ].values
+
+    ratings = matrix.values
+
+    weighted = ratings @ char_axes
+
+    weights = ratings.sum(axis=1).reshape(-1, 1)
+
+    cluster_axes = weighted / weights
+
+    result = pd.DataFrame(
+        cluster_axes,
+        index=matrix.index,
+        columns=["ideology_axis_1", "ideology_axis_2"],
+    ).reset_index()
+
+    result = result.rename(columns={"index": "cluster"})
+
+    # FIX: extract numeric cluster id
+    result["cluster"] = (
+        result["cluster"]
+        .astype(str)
+        .str.extract(r"(\d+)")
+        .astype(int)
+    )
+
+    return result
+
 def build_character_structure_metrics(
     polarization: pd.DataFrame,
     bridge: pd.DataFrame,
@@ -316,13 +374,6 @@ def build_character_structure_triangulation(
             "community",
         ]
     ]
-
-    # df = df.rename(
-    #     columns={
-    #         "attached_cluster_label": "archetype_bloc",
-    #         "community": "network_community",
-    #     }
-    # )
 
     return df.sort_values(
         ["community", "attached_cluster_label"]

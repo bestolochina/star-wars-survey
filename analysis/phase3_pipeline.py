@@ -11,7 +11,7 @@ from analysis.transforms.matrix_builder import build_character_matrix
 from analysis.metrics.correlation_structure import compute_character_correlation
 from analysis.metrics.hierarchical_clustering import hierarchical_character_clustering
 from analysis.metrics.pca_structure import compute_character_pca
-from analysis.metrics.cluster_profiles import compute_cluster_profiles
+from analysis.metrics.audience_cluster_metrics import compute_cluster_profiles
 
 from analysis.visualization.structure_plots import plot_correlation_heatmap
 from analysis.visualization.clustering_plots import plot_character_dendrogram

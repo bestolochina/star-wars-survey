@@ -16,7 +16,7 @@ def compute_audience_character_cluster_means(
     by audience clusters.
 
     Returns:
-        cluster | character_cluster | mean_rating
+        audience_cluster | character_cluster | mean_rating
     """
 
     # ----------------------------------
@@ -46,9 +46,7 @@ def compute_audience_character_cluster_means(
     # Attach character clusters
     # ----------------------------------
     long_df = long_df.merge(
-        character_clusters.rename(
-            columns={"cluster": "character_cluster"}
-        ),
+        character_clusters,
         on="character",
         how="inner",
     )
@@ -59,12 +57,12 @@ def compute_audience_character_cluster_means(
     block_means = (
         long_df
         .groupby(
-            ["cluster", "character_cluster"],
+            ["audience_cluster", "character_cluster"],
             as_index=False,
         )["rating"]
         .mean()
         .rename(columns={"rating": "mean_rating"})
-        .sort_values(["cluster", "character_cluster"])
+        .sort_values(["audience_cluster", "character_cluster"])
     )
 
     return block_means
@@ -81,7 +79,7 @@ def compute_block_deviations(
     ----------
     block_means : pd.DataFrame
         Columns:
-            - cluster
+            - audience_cluster
             - character_cluster
             - mean_rating
 
@@ -165,7 +163,7 @@ def bootstrap_block_deviation_significance(
         .merge(respondent_clusters, on="respondent_id")
     )
 
-    clusters = matrix["cluster"].unique()
+    clusters = matrix["audience_cluster"].unique()
 
     bootstrap_results = []
 
@@ -177,7 +175,7 @@ def bootstrap_block_deviation_significance(
         sampled_frames = []
 
         for c in clusters:
-            subset = matrix[matrix["cluster"] == c]
+            subset = matrix[matrix["audience_cluster"] == c]
 
             sampled = subset.sample(
                 n=len(subset),
@@ -190,7 +188,7 @@ def bootstrap_block_deviation_significance(
         sampled_matrix = pd.concat(sampled_frames)
 
         sampled_matrix = sampled_matrix.set_index("respondent_id")
-        sampled_matrix = sampled_matrix.drop(columns="cluster")
+        sampled_matrix = sampled_matrix.drop(columns="audience_cluster")
 
         means = compute_audience_character_cluster_means(
             sampled_matrix,
@@ -209,7 +207,7 @@ def bootstrap_block_deviation_significance(
     # ----------------------------------
     summary = (
         boot_df
-        .groupby(["cluster", "character_cluster"])["deviation"]
+        .groupby(["audience_cluster", "character_cluster"])["deviation"]
         .agg(
             ci_low=lambda x: np.percentile(x, 2.5),
             ci_high=lambda x: np.percentile(x, 97.5),
@@ -218,3 +216,132 @@ def bootstrap_block_deviation_significance(
     )
 
     return summary
+
+
+# ==========================================================
+# 4.2.12 Block Extremeness Index
+# ==========================================================
+
+def compute_block_extremeness(
+    deviation_df: pd.DataFrame,
+) -> pd.DataFrame:
+    """
+    Computes structural extremeness for each audience cluster.
+
+    Extremeness = mean absolute deviation across character blocs.
+
+    Parameters
+    ----------
+    deviation_df :
+        Output of compute_block_deviations()
+
+    Returns
+    -------
+    pd.DataFrame
+        cluster | block_extremeness
+    """
+
+    extremeness = (
+        deviation_df
+        .assign(abs_dev=lambda df: df["deviation"].abs())
+        .groupby("audience_cluster", as_index=False)["abs_dev"]
+        .mean()
+        .rename(columns={"abs_dev": "block_extremeness"})
+        .sort_values("audience_cluster")
+        .reset_index(drop=True)
+    )
+
+    return extremeness
+
+
+def compute_narrative_selectivity(
+    deviation_df: pd.DataFrame,
+) -> pd.DataFrame:
+    """
+    Step 4.2.13 — Narrative Selectivity Index (NSI)
+
+    Measures how concentrated each audience cluster's
+    structural preferences are across character archetypes.
+
+    High selectivity:
+        → strong preference for few archetypes
+
+    Low selectivity:
+        → diffuse or general preference pattern
+    """
+
+    required_cols = {
+        "audience_cluster",
+        "character_cluster",
+        "deviation",
+    }
+
+    missing = required_cols - set(deviation_df.columns)
+    if missing:
+        raise ValueError(
+            f"Missing required columns: {missing}"
+        )
+
+    df = deviation_df.copy()
+
+    # --------------------------------------------------
+    # Absolute structural strength
+    # --------------------------------------------------
+    df["abs_dev"] = df["deviation"].abs()
+
+    results = []
+
+    # --------------------------------------------------
+    # Compute concentration per audience cluster
+    # --------------------------------------------------
+    for cluster, g in df.groupby("audience_cluster"):
+
+        total = g["abs_dev"].sum()
+
+        if total == 0:
+            selectivity = 0.0
+        else:
+            proportions = g["abs_dev"] / total
+
+            # Herfindahl concentration index
+            selectivity = float(np.sum(proportions**2))
+
+        results.append(
+            {
+                "audience_cluster": cluster,
+                "narrative_selectivity": selectivity,
+            }
+        )
+
+    result_df = (
+        pd.DataFrame(results)
+        .sort_values("narrative_selectivity", ascending=False)
+        .reset_index(drop=True)
+    )
+
+    return result_df
+
+
+def compute_structural_tension(
+    deviation_df: pd.DataFrame,
+) -> pd.DataFrame:
+    """
+    Step 4.2.17 — Structural Narrative Tension
+
+    Measures disagreement between audience clusters
+    for each character cluster.
+    """
+
+    tension = (
+        deviation_df
+        .groupby("character_cluster")["deviation"]
+        .agg(
+            tension_variance="var",
+            tension_std="std",
+            mean_abs_deviation=lambda x: x.abs().mean(),
+        )
+        .reset_index()
+        .sort_values("tension_variance", ascending=False)
+    )
+
+    return tension
