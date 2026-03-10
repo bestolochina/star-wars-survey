@@ -1,4 +1,4 @@
-# analysis/visualization/segmentation_plots.py
+# analysis/visualization/phase2_plots.py
 
 import os
 import matplotlib.pyplot as plt
@@ -43,6 +43,8 @@ def plot_segmentation_comparison(
     filepath = os.path.join(save_dir, "segmentation_comparison.png")
     plt.savefig(filepath, dpi=300)
     plt.close()
+
+    print(f"Saved → {filepath}\n")
 
 
 # ==========================================================
@@ -90,6 +92,8 @@ def plot_variable_divergence_heatmap(
     plt.savefig(filepath, dpi=300)
     plt.close()
 
+    print(f"Saved → {filepath}\n")
+
 
 # ==========================================================
 # 3️⃣ DRIVER VISUALIZATION
@@ -126,3 +130,43 @@ def plot_variable_drivers(
 
         plt.savefig(filepath, dpi=300)
         plt.close()
+
+        print(f"Saved → {filepath}\n")
+
+
+def plot_eta_squared_summary(
+    anova_df: pd.DataFrame,
+    save_path,
+) -> None:
+    """
+    Boxplot of η² distributions across demographic axes.
+    """
+
+    fig, ax = plt.subplots(figsize=(7, 5))
+
+    axes = ["age_group", "gender", "census_region"]
+
+    data = [
+        anova_df.loc[anova_df["axis"] == axis, "eta_sq"]
+        for axis in axes
+    ]
+
+    ax.boxplot(
+        data,
+        labels=["Age", "Gender", "Region"],
+    )
+
+    # jittered points
+    for i, vals in enumerate(data, start=1):
+        ax.scatter(
+            [i] * len(vals),
+            vals,
+            alpha=0.6,
+        )
+
+    ax.set_ylabel("η² (Effect Size)")
+    ax.set_title("Segmentation Strength by Demographic Axis")
+
+    plt.tight_layout()
+    plt.savefig(save_path, dpi=300)
+    plt.close()
