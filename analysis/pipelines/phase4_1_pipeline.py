@@ -9,7 +9,7 @@ from src.config import CHARACTER_RATING_COLUMNS
 
 from analysis.transforms.matrix_builder import build_character_matrix
 
-from analysis.metrics.audience_cluster_metrics import(
+from analysis.metrics.character_audience_structure_validation import(
     compute_audience_cluster_profiles,
     compute_overall_means,
     compute_cluster_extremeness,

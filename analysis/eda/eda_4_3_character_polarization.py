@@ -1,11 +1,9 @@
-# analysis/eda_character_polarization.py
+# analysis/eda_4_3_character_polarization.py
 
 from __future__ import annotations
 
-import pandas as pd
-
 from src.io_utils import load_clean_star_wars
-from analysis.phase4_3_pipeline import run_phase4_3
+from analysis.pipelines.phase4_3_pipeline import run_phase4_3
 
 
 # ==========================================================

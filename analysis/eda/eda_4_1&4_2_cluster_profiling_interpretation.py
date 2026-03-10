@@ -1,9 +1,8 @@
-# analysis/eda_cluster_profiling_interpretation.py
+# analysis/eda_4_1&4_2_cluster_profiling_interpretation.py
 
 from __future__ import annotations
 
-from analysis.phase4_1_pipeline import run_phase4_1
-from analysis.phase4_2_pipeline import run_phase4_2
+from analysis.pipelines.phase4_2_pipeline import run_phase4_2
 from src.io_utils import load_clean_star_wars
 
 

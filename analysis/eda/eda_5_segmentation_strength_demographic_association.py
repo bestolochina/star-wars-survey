@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 from src.io_utils import load_clean_star_wars
-from analysis.phase5_1_pipeline import run_phase5_1
-from analysis.phase5_2_pipeline import run_phase5_2
+from analysis.pipelines.phase5_1_pipeline import run_phase5_1
+from analysis.pipelines.phase5_2_pipeline import run_phase5_2
 
 
 # ==========================================================
