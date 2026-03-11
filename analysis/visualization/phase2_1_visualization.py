@@ -72,23 +72,184 @@ def plot_episode_scores(
 
 def plot_episode_rank_histograms(
     long_df: pd.DataFrame,
-    save_path,
+    *,
+    save_path: Path,
 ) -> None:
+    """
+    Plot rank distributions for each Star Wars episode.
 
-    plt.figure(figsize=(8, 5))
+    Each subplot shows:
+    - Histogram of ranking positions (1 = best, 6 = worst)
+    - Percentage labels above bars
+    - Median (solid black line)
+    - Mean (dashed blue line)
+    - Interquartile Range (IQR) shaded area
 
-    long_df["rank"].hist(
-        bins=6,
+    Bars are colored by rank quality (green = best, red = worst).
+    """
+
+    # ------------------------------------------------------
+    # Prepare episode order and subplot layout
+    # ------------------------------------------------------
+    episodes = list(EPISODE_RANK_COLUMNS.values())
+    n = len(episodes)
+
+    fig, axes = plt.subplots(
+        nrows=n,
+        ncols=1,
+        figsize=(9, 1.5 * n),
+        sharex=True,
+        sharey=True,
     )
 
-    plt.title("Episode Rank Distribution")
-    plt.xlabel("Rank")
+    # Explanation text for color encoding
+    fig.text(
+        0.01,
+        0.01,
+        "Bar colors represent ranking quality (green = best, red = worst)",
+        fontsize=9,
+        alpha=0.7,
+    )
 
-    plt.tight_layout()
+    # ------------------------------------------------------
+    # Define histogram bins centered on ranks 1–6
+    # ------------------------------------------------------
+    bins = np.arange(0.5, 7.5, 1)
+
+    # Precompute total responses per episode for percentages
+    total_per_episode = long_df.groupby("episode").size()
+
+    # ------------------------------------------------------
+    # Plot histogram for each episode
+    # ------------------------------------------------------
+    for ax, episode in zip(axes, episodes):
+
+        # Extract ranking data for the episode
+        data = long_df.loc[long_df["episode"] == episode, "rank"]
+
+        # Plot histogram
+        counts, _, bars = ax.hist(
+            data,
+            bins=bins,
+            edgecolor="black",
+        )
+
+        # Slightly increase y-limit so labels fit above bars
+        ymax = ax.get_ylim()[1]
+        ax.set_ylim(0, ymax * 1.06)
+
+        offset = ax.get_ylim()[1] * 0.015
+
+        # --------------------------------------------------
+        # Color bars and add percentage labels
+        # --------------------------------------------------
+        for bar, rank in zip(bars, range(1, 7)):
+
+            # Color bars by rank quality
+            bar.set_facecolor(RANK_COLORS[rank])
+
+            # Compute percentage for this rank
+            pct = counts[rank - 1] / total_per_episode[episode] * 100
+
+            # Show label only if visible enough
+            if pct >= 3:
+                ax.text(
+                    bar.get_x() + bar.get_width() / 2,
+                    bar.get_height() + offset,
+                    f"{pct:.1f}%",
+                    ha="center",
+                    va="bottom",
+                    fontsize=8,
+                    bbox=dict(
+                        boxstyle="round,pad=0.2",
+                        facecolor="white",
+                        edgecolor="none",
+                        alpha=0.8,
+                    ),
+                )
+
+        # --------------------------------------------------
+        # Summary statistics
+        # --------------------------------------------------
+        mean = data.mean()
+        median = data.median()
+        q1, q3 = data.quantile([0.25, 0.75])
+
+        # Interquartile range (middle 50%)
+        ax.axvspan(
+            q1,
+            q3,
+            alpha=0.2,
+            color="gray",
+            label="IQR",
+        )
+
+        # Median line
+        ax.axvline(
+            median,
+            linestyle="-",
+            linewidth=2,
+            color="black",
+            alpha=0.8,
+            label="Median",
+        )
+
+        # Mean line
+        ax.axvline(
+            mean,
+            linestyle="--",
+            linewidth=2,
+            color="#2b83ba",
+            alpha=0.8,
+            label="Mean",
+        )
+
+        # Episode label on the left
+        ax.set_ylabel(
+            episode,
+            rotation=0,
+            labelpad=40,
+            va="center",
+        )
+
+        # Light horizontal grid
+        ax.grid(axis="y", alpha=0.3)
+
+    # ------------------------------------------------------
+    # Final axis labels
+    # ------------------------------------------------------
+    axes[-1].set_xlabel("Rank (1 = best)")
+
+    # ------------------------------------------------------
+    # Create a single legend for the entire figure
+    # ------------------------------------------------------
+    handles = [
+        plt.Line2D([0], [0], color="black", linestyle="-", linewidth=2, label="Median"),
+        plt.Line2D([0], [0], color="#2b83ba", linestyle="--", linewidth=2, label="Mean"),
+        plt.Rectangle((0, 0), 1, 1, color="gray", alpha=0.2, label="IQR"),
+    ]
+
+    fig.legend(
+        handles=handles,
+        loc="upper right",
+        bbox_to_anchor=(0.98, 0.98),
+    )
+
+    # ------------------------------------------------------
+    # Title and layout adjustments
+    # ------------------------------------------------------
+    fig.suptitle("Episode Rank Distributions with Summary Statistics")
+
+    plt.tight_layout(rect=(0, 0, 1, 0.96))
+
+    # Ensure output directory exists
+    save_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # Save figure
     plt.savefig(save_path)
 
+    # Display plot
     plt.close()
-
 
 # ==========================================================
 # CHARACTER RATING DISTRIBUTION

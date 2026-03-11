@@ -198,7 +198,7 @@ These descriptive patterns suggest that the two franchises occupy distinct cultu
 ## Phase 2.2.1 — Episode Ranking Distributions (Ordinal Analysis)
 
 **Figure 2.2.1.a** show the distribution of each episode rankings with Mean, Median, and IQR.
-![episode_rank_histograms.png](figures/episode_rank_histograms.png)
+![episode_rank_histograms.png](figures/phase2/episodes/episode_rank_histograms.png)
 ---
 
 ### Key observations
