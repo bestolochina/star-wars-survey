@@ -302,7 +302,7 @@ def plot_boolean_summary(
         kind="bar",
         stacked=True,
         width=0.8,
-        ax=ax,  # 👈 IMPORTANT
+        ax=ax,
     )
 
     ax.set_ylabel("Percentage of respondents")
@@ -310,11 +310,21 @@ def plot_boolean_summary(
     ax.set_title(title)
 
     plt.xticks(rotation=45, ha="right")
-    plt.legend(title="Response", loc='lower right', bbox_to_anchor=(1.0, 1.05))
+    plt.legend(title="Response", loc="lower right", bbox_to_anchor=(1.0, 1.05))
 
-    # Add percentage labels inside bars (optional but nice)
+    # --------------------------------------------------
+    # Add percentage labels inside bars
+    # Hide labels when the value is 0
+    # --------------------------------------------------
     for container in ax.containers:
-        ax.bar_label(container, fmt="%.1f%%", label_type="center")
+        labels = []
+        for value in container.datavalues:
+            if value == 0:
+                labels.append("")  # hide 0%
+            else:
+                labels.append(f"{value:.1f}%")
+
+        ax.bar_label(container, labels=labels, label_type="center")
 
     plt.tight_layout()
 
@@ -323,7 +333,6 @@ def plot_boolean_summary(
         plt.savefig(save_path)
 
     plt.close()
-
 
 def value_counts_nominal(series: pd.Series) -> pd.Series:
     """
