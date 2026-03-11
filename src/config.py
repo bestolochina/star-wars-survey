@@ -4,6 +4,20 @@
 # CONFIGURATION DICTIONARIES
 # =========================
 
+BOOLEAN_COLUMNS: list[str] = [
+    "seen_star_wars",
+    "fan_star_wars",
+    "seen_ep1_phantom_menace",
+    "seen_ep2_attack_clones",
+    "seen_ep3_revenge_sith",
+    "seen_ep4_new_hope",
+    "seen_ep5_empire_strikes_back",
+    "seen_ep6_return_jedi",
+    "familiar_expanded_universe",
+    "fan_expanded_universe",
+    "fan_star_trek",
+]
+
 # Mapping from dataset column names to human-readable character names
 CHARACTER_RATING_COLUMNS: dict[str, str] = {
     "rating_han_solo":              "Han Solo",

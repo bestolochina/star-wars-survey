@@ -62,9 +62,9 @@ behavior and fandom.
 -   **36%** identify as Star Trek fans, indicating overlap potential for
     later analysis.
 
-**Figure 1** (`analysis/figures/boolean_summary.png`) visualizes the
+**Figure 1** (`analysis/figures/phase2/boolean/boolean_summary.png`) visualizes the
 distribution of True / False / NA across all boolean columns.
-![boolean_summary.png](figures/boolean_summary.png)
+![boolean_summary.png](figures/phase2/boolean/boolean_summary.png)
 ------------------------------------------------------------------------
 
 ## Episode Ranking and Scoring
@@ -86,7 +86,7 @@ Average scores show a clear pattern:
 
 **Figure 2** (`analysis/figures/episode_scores.png`) shows average
 episode scores by episode number.
-![episode_average_scores.png](figures/episode_average_scores.png)
+![episode_average_scores.png](figures/phase2/episodes/episode_average_scores.png)
 This confirms internal consistency and aligns with common fan discourse.
 
 ------------------------------------------------------------------------
@@ -110,9 +110,9 @@ Gender is reasonably balanced, with moderate non-response.
 
 Education is well-distributed across post-secondary categories.
 
-**Figure 3** (`analysis/figures/education_level.png`) shows the ordered
+**Figure 3** (`reports/figures/phase2/nominal/education_level.png`) shows the ordered
 education distribution.
-![education_level.png](figures/education_level.png)
+![education_level.png](figures/phase2/nominal/education_level.png)
 ### Household Income (Ordinal)
 
 -   \$50--99k is the most common bracket (**25.1%**)
@@ -120,18 +120,18 @@ education distribution.
 
 Income non-response suggests caution in later subgroup analysis.
 
-**Figure 4** (`analysis/figures/household_income.png`) displays income
+**Figure 4** (`reports/figures/phase2/nominal/household_income.png`) displays income
 distribution in ordinal order.
-![household_income.png](figures/household_income.png)
+![household_income.png](figures/phase2/nominal/household_income.png)
 ### Census Region
 
 All major U.S. census regions are represented. - East North Central,
 Pacific, and South Atlantic are most common. - Missing region data:
 **12.1%**
 
-**Figure 5** (`analysis/figures/census_region.png`) shows regional
+**Figure 5** (`reports/figures/phase2/nominal/census_region.png`) shows regional
 distribution.
-![census_region.png](figures/census_region.png)
+![census_region.png](figures/phase2/nominal/census_region.png)
 ### "Who Shot First?"
 
 -   Han: **27.4%**
