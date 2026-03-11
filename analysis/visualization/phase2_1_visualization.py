@@ -9,7 +9,7 @@ import pandas as pd
 from pathlib import Path
 import numpy as np
 from matplotlib.lines import Line2D
-from src.config import EPISODE_RANK_COLUMNS, RANK_COLORS, CHARACTER_RATING_COLUMNS
+from src.config import EPISODE_RANK_COLUMNS, RANK_COLORS, CHARACTER_RATING_COLUMNS, BOOLEAN_COLUMNS
 from pandas.api.types import CategoricalDtype
 
 
@@ -295,6 +295,9 @@ def plot_boolean_summary(
     for boolean survey variables.
     """
     plot_df: pd.DataFrame = prepare_boolean_plot_data(summary)
+
+    # Replace variable names with human-readable labels
+    plot_df.index = plot_df.index.map(BOOLEAN_COLUMNS)
 
     fig, ax = plt.subplots(figsize=(10, 6))
 

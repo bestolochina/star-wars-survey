@@ -4,19 +4,19 @@
 # CONFIGURATION DICTIONARIES
 # =========================
 
-BOOLEAN_COLUMNS: list[str] = [
-    "seen_star_wars",
-    "fan_star_wars",
-    "seen_ep1_phantom_menace",
-    "seen_ep2_attack_clones",
-    "seen_ep3_revenge_sith",
-    "seen_ep4_new_hope",
-    "seen_ep5_empire_strikes_back",
-    "seen_ep6_return_jedi",
-    "familiar_expanded_universe",
-    "fan_expanded_universe",
-    "fan_star_trek",
-]
+BOOLEAN_COLUMNS: dict[str, str] = {
+    "seen_ep1_phantom_menace":      "Seen Episode I: The Phantom Menace",
+    "seen_ep2_attack_clones":       "Seen Episode II: Attack of the Clones",
+    "seen_ep3_revenge_sith":        "Seen Episode III: Revenge of the Sith",
+    "seen_ep4_new_hope":            "Seen Episode IV: A New Hope",
+    "seen_ep5_empire_strikes_back": "Seen Episode V: The Empire Strikes Back",
+    "seen_ep6_return_jedi":         "Seen Episode VI: Return of the Jedi",
+    "seen_star_wars":               "Seen Star Wars",
+    "familiar_expanded_universe":   "Familiar with Expanded Universe",
+    "fan_expanded_universe":        "Fan of Expanded Universe",
+    "fan_star_wars":                "Fan of Star Wars",
+    "fan_star_trek":                "Fan of Star Trek",
+}
 
 # Mapping from dataset column names to human-readable character names
 CHARACTER_RATING_COLUMNS: dict[str, str] = {
