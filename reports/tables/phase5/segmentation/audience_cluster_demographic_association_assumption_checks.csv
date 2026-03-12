@@ -1,0 +1,6 @@
+demographic_variable,min_expected_cell_count_ok
+gender,True
+age_group,True
+household_income,True
+education_level,False
+census_region,True

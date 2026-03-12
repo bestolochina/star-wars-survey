@@ -31,14 +31,14 @@ def _ensure_dirs() -> None:
 
 
 # ==========================================================
-# 5.1.1 Load Clusters
+# 5.1.1 Load Respondent Audience Clusters
 # ==========================================================
 
-def step_511_load_clusters(
+def step_511_load_respondent_audience_clusters(
     df: pd.DataFrame,
 ) -> pd.DataFrame:
 
-    print("\n=== 5.1.1 Load Respondent Clusters ===")
+    print("\n=== 5.1.1 Load Respondent Audience Clusters ===")
 
     clusters = load_respondent_clusters()
 
@@ -54,15 +54,16 @@ def step_511_load_clusters(
 
     return merged
 
+
 # ==========================================================
-# 5.1.2 Contingency Tables
+# 5.1.2 Audience Cluster × Demographic Contingency Tables
 # ==========================================================
 
-def step_512_contingency_tables(
+def step_512_audience_cluster_demographic_contingency_tables(
     df: pd.DataFrame,
 ) -> dict:
 
-    print("\n=== 5.1.2 Demographic Contingency Tables ===")
+    print("\n=== 5.1.2 Audience Cluster × Demographic Contingency Tables ===")
 
     tables = {}
 
@@ -75,21 +76,30 @@ def step_512_contingency_tables(
 
         tables[demo] = table
 
+        path = (
+                PHASE5_TABLES_DIR
+                / "segmentation"
+                / f"audience_cluster_by_{demo}_contingency_table.csv"
+        )
+
+        table.to_csv(path)
+
         print(f"\n{demo}")
         print(table.to_string())
+        print(f"Saved → {path}")
 
     return tables
 
 
 # ==========================================================
-# 5.1.3 Chi-square Tests
+# 5.1.3 Audience Cluster–Demographic Chi-square Tests
 # ==========================================================
 
-def step_513_chisquare_tests(
+def step_513_audience_cluster_demographic_chisquare_tests(
     tables: dict,
 ) -> pd.DataFrame:
 
-    print("\n=== 5.1.3 Chi-square Tests ===")
+    print("\n=== 5.1.3 Audience Cluster–Demographic Chi-square Tests ===")
 
     rows = []
 
@@ -99,7 +109,7 @@ def step_513_chisquare_tests(
 
         rows.append(
             {
-                "demographic": demo,
+                "demographic_variable": demo,
                 **stats,
             }
         )
@@ -112,31 +122,31 @@ def step_513_chisquare_tests(
 
 
 # ==========================================================
-# 5.1.4 Effect Size
+# 5.1.4 Audience Cluster–Demographic Effect Sizes
 # ==========================================================
 
-def step_514_effect_sizes(
+def step_514_audience_cluster_demographic_effect_sizes(
     chisq: pd.DataFrame,
     tables: dict,
 ) -> pd.DataFrame:
 
-    print("\n=== 5.1.4 Cramér's V ===")
+    print("\n=== 5.1.4 Audience Cluster–Demographic Effect Sizes (Cramér's V) ===")
 
     values = []
 
     for _, row in chisq.iterrows():
 
-        demo = row["demographic"]
+        demo = row["demographic_variable"]
 
         v = compute_cramers_v(
-            row["chi2"],
-            row["n"],
+            row["chi_square_statistic"],
+            row["sample_size"],
             tables[demo],
         )
 
         values.append(v)
 
-    chisq["cramers_v"] = values
+    chisq["cramers_v_effect_size"] = values
 
     print(chisq.to_string(index=False))
 
@@ -147,15 +157,25 @@ def step_514_effect_sizes(
 # 5.1.5 Multiple Comparison Correction
 # ==========================================================
 
-def step_515_adjust_pvalues(
+def step_515_adjust_demographic_association_pvalues(
     results: pd.DataFrame,
 ) -> pd.DataFrame:
 
-    print("\n=== 5.1.5 Adjust P-values (FDR) ===")
+    print("\n=== 5.1.5 Adjust Demographic Association P-values (FDR) ===")
 
     results = adjust_pvalues(results)
 
     print(results.to_string(index=False))
+
+    path = (
+            PHASE5_TABLES_DIR
+            / "segmentation"
+            / "audience_cluster_demographic_association_statistics.csv"
+    )
+
+    results.to_csv(path, index=False)
+
+    print(f"Saved → {path}")
 
     return results
 
@@ -164,11 +184,11 @@ def step_515_adjust_pvalues(
 # 5.1.6 Robustness Checks
 # ==========================================================
 
-def step_516_robustness(
+def step_516_demographic_association_robustness_checks(
     tables: dict,
 ) -> pd.DataFrame:
 
-    print("\n=== 5.1.6 Robustness Checks ===")
+    print("\n=== 5.1.6 Demographic Association Robustness Checks ===")
 
     rows = []
 
@@ -178,14 +198,24 @@ def step_516_robustness(
 
         rows.append(
             {
-                "demographic": demo,
-                "min_expected_ok": ok,
+                "demographic_variable": demo,
+                "min_expected_cell_count_ok": ok,
             }
         )
 
     df = pd.DataFrame(rows)
 
     print(df.to_string(index=False))
+
+    path = (
+            PHASE5_TABLES_DIR
+            / "segmentation"
+            / "audience_cluster_demographic_association_assumption_checks.csv"
+    )
+
+    df.to_csv(path, index=False)
+
+    print(f"Saved → {path}")
 
     return df
 
@@ -198,18 +228,18 @@ def run_phase5_1(
     df: pd.DataFrame,
 ) -> None:
 
-    print("=== PHASE 5.1: SEGMENTATION STRENGTH ===")
+    print("=== PHASE 5.1: AUDIENCE SEGMENTATION STRENGTH ===")
 
     _ensure_dirs()
 
-    df = step_511_load_clusters(df)
+    df = step_511_load_respondent_audience_clusters(df)
 
-    tables = step_512_contingency_tables(df)
+    tables = step_512_audience_cluster_demographic_contingency_tables(df)
 
-    chisq = step_513_chisquare_tests(tables)
+    chisq = step_513_audience_cluster_demographic_chisquare_tests(tables)
 
-    chisq = step_514_effect_sizes(chisq, tables)
+    chisq = step_514_audience_cluster_demographic_effect_sizes(chisq, tables)
 
-    chisq = step_515_adjust_pvalues(chisq)
+    chisq = step_515_adjust_demographic_association_pvalues(chisq)
 
-    robustness = step_516_robustness(tables)
+    step_516_demographic_association_robustness_checks(tables)

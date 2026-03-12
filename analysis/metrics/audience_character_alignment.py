@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import pandas as pd
 import numpy as np
+from scipy.stats import f_oneway
 
 
 # ==========================================================
@@ -24,7 +25,7 @@ def build_audience_character_alignment_matrix(
     """
 
     matrix = means.pivot(
-        index="cluster",
+        index="audience_cluster",
         columns="character",
         values="mean_rating",
     )
@@ -36,7 +37,7 @@ def build_audience_character_alignment_matrix(
 # Cluster Character Rankings
 # ==========================================================
 
-def compute_cluster_character_rankings(
+def compute_audience_cluster_character_rankings(
     matrix: pd.DataFrame,
 ) -> pd.DataFrame:
 
@@ -53,7 +54,7 @@ def compute_cluster_character_rankings(
 # Cluster Character Variance
 # ==========================================================
 
-def compute_cluster_character_variance(
+def compute_character_evaluation_variance_across_audience_clusters(
     matrix: pd.DataFrame,
 ) -> pd.DataFrame:
 
@@ -62,10 +63,10 @@ def compute_cluster_character_variance(
     return pd.DataFrame(
         {
             "character": variance.index,
-            "cluster_variance": variance.values,
+            "character_evaluation_variance_across_audience_clusters": variance.values,
         }
     ).sort_values(
-        "cluster_variance",
+        "character_evaluation_variance_across_audience_clusters",
         ascending=False,
     )
 
@@ -74,7 +75,7 @@ def compute_cluster_character_variance(
 # Character Divergence
 # ==========================================================
 
-def compute_character_divergence(
+def compute_character_divergence_across_audience_clusters(
     matrix: pd.DataFrame,
 ) -> pd.DataFrame:
     """
@@ -86,10 +87,10 @@ def compute_character_divergence(
     return pd.DataFrame(
         {
             "character": divergence.index,
-            "cluster_divergence": divergence.values,
+            "character_evaluation_divergence_across_audience_clusters": divergence.values,
         }
     ).sort_values(
-        "cluster_divergence",
+        "character_evaluation_divergence_across_audience_clusters",
         ascending=False,
     )
 
@@ -98,7 +99,7 @@ def compute_character_divergence(
 # Ideological Distance
 # ==========================================================
 
-def compute_cluster_character_ideology_distance(
+def compute_audience_cluster_character_ideology_distance(
     cluster_coords: pd.DataFrame,
     character_coords: pd.DataFrame,
 ) -> pd.DataFrame:
@@ -107,10 +108,10 @@ def compute_cluster_character_ideology_distance(
 
     for _, c_row in cluster_coords.iterrows():
 
-        cluster = c_row["cluster"]
+        cluster = c_row["audience_cluster"]
 
-        cx = c_row["axis_1"]
-        cy = c_row["axis_2"]
+        cx = c_row["ideology_axis_1"]
+        cy = c_row["ideology_axis_2"]
 
         for _, char_row in character_coords.iterrows():
 
@@ -123,10 +124,56 @@ def compute_cluster_character_ideology_distance(
 
             rows.append(
                 {
-                    "cluster": cluster,
+                    "audience_cluster": cluster,
                     "character": char,
-                    "ideology_distance": dist,
+                    "audience_character_ideological_distance": dist,
                 }
             )
 
     return pd.DataFrame(rows)
+
+
+def compute_character_segmentation_strength_across_audience_clusters(
+    respondent_cluster_df: pd.DataFrame,
+    character_rating_columns: dict[str, str],
+) -> pd.DataFrame:
+
+    results = []
+
+    for character_column, character_name in character_rating_columns.items():
+
+        cluster_groups = []
+
+        for audience_cluster in sorted(
+            respondent_cluster_df["audience_cluster"].dropna().unique()
+        ):
+
+            ratings = respondent_cluster_df.loc[
+                respondent_cluster_df["audience_cluster"] == audience_cluster,
+                character_column,
+            ].dropna()
+
+            if len(ratings) > 0:
+                cluster_groups.append(ratings)
+
+        if len(cluster_groups) >= 2:
+
+            f_statistic, p_value = f_oneway(*cluster_groups)
+
+            results.append(
+                {
+                    "character": character_name,
+                    "character_segmentation_strength_f_statistic": f_statistic,
+                    "character_segmentation_strength_p_value": p_value,
+                }
+            )
+
+    segmentation_df = (
+        pd.DataFrame(results)
+        .sort_values(
+            "character_segmentation_strength_f_statistic",
+            ascending=False,
+        )
+    )
+
+    return segmentation_df

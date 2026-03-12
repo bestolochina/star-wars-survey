@@ -141,9 +141,9 @@ distribution.
 This question exhibits **structural missingness**, likely because it was
 only relevant to a subset of respondents.
 
-**Figure 6** (`reports/figures/who_shot_first.png`) illustrates this
+**Figure 6** (`reports/figures/phase2/nominal/who_shot_first.png`) illustrates this
 imbalance.
-![who_shot_first.png](figures/who_shot_first.png)
+![who_shot_first.png](figures/phase2/nominal/who_shot_first.png)
 ------------------------------------------------------------------------
 
 ## Data Quality Observations

@@ -36,10 +36,10 @@ def compute_chisquare(
     chi2, p, dof, expected = chi2_contingency(table)
 
     return {
-        "chi2": chi2,
-        "p_value": p,
-        "dof": dof,
-        "n": table.values.sum(),
+        "chi_square_statistic": chi2,
+        "chi_square_p_value": p,
+        "chi_square_degrees_of_freedom": dof,
+        "sample_size": table.values.sum(),
     }
 
 
@@ -68,11 +68,11 @@ def adjust_pvalues(
 ) -> pd.DataFrame:
 
     corrected = multipletests(
-        results["p_value"],
+        results["chi_square_p_value"],
         method=method,
     )[1]
 
-    results["p_value_adj"] = corrected
+    results["fdr_adjusted_p_value"] = corrected
 
     return results
 

@@ -114,3 +114,10 @@ def load_character_clusters() -> pd.DataFrame:
         )
 
     return df
+
+
+def load_clean_star_wars_with_audience_clusters() -> pd.DataFrame:
+    df = load_clean_star_wars()
+    clusters = load_respondent_clusters()
+
+    return df.merge(clusters, on="respondent_id", how="left")
