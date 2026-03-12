@@ -69,8 +69,10 @@ def run_nominal_distributions(df: pd.DataFrame) -> None:
     tables_dir.mkdir(parents=True, exist_ok=True)
     figures_dir.mkdir(parents=True, exist_ok=True)
 
-    for column in DEMOGRAPHICS_COLUMNS:
+    # combine demographic variables with additional nominal variables
+    nominal_columns = list(DEMOGRAPHICS_COLUMNS) + ["who_shot_first"]
 
+    for column in nominal_columns:
         summary = summarize_nominal_column(df, column)
 
         print(f"\n--- {column} ---")
