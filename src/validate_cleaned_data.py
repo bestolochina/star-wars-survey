@@ -1,86 +1,142 @@
+from __future__ import annotations
+
 import pandas as pd
 
 from src.io_utils import load_raw_star_wars
-from cleaning import clean_all
+from src.cleaning import clean_all
+from src.config import (
+    BOOLEAN_COLUMNS,
+    EPISODE_RANK_COLUMNS,
+    CHARACTER_RATING_COLUMNS,
+)
 
-def check_boolean_columns(df: pd.DataFrame, columns: list[str]) -> None:
-    # Boolean columns must be boolean
-    for col in columns:
+
+# ==========================================================
+# BASIC DATASET CHECKS
+# ==========================================================
+
+def check_row_count(raw: pd.DataFrame, clean: pd.DataFrame) -> None:
+    """Ensure cleaning does not add or remove rows."""
+    assert len(raw) == len(clean), "Row count changed during cleaning"
+
+
+def check_index_integrity(df: pd.DataFrame) -> None:
+    """Ensure index and columns are valid."""
+    assert df.index.is_unique, "Index is not unique"
+    assert not df.columns.duplicated().any(), "Duplicate columns detected"
+
+
+# ==========================================================
+# BOOLEAN COLUMN VALIDATION
+# ==========================================================
+
+def check_boolean_columns(df: pd.DataFrame) -> None:
+    """Boolean columns must use pandas nullable boolean dtype."""
+    for col in BOOLEAN_COLUMNS.keys():
         dtype = df[col].dtype.name
         print(f"{col}: {dtype}")
-        assert dtype == "boolean", f"{col} is not boolean"
+        assert dtype == "boolean", f"{col} is not boolean dtype"
 
-def check_rank_columns(df: pd.DataFrame, columns: list[str]) -> None:
-    # Episode ranks must be 1–6 (or NA)
-    for col in columns:
+
+# ==========================================================
+# EPISODE RANK VALIDATION
+# ==========================================================
+
+def check_rank_columns(df: pd.DataFrame) -> None:
+    """Episode ranks must be integers 1–6 (or NA)."""
+    valid = {1, 2, 3, 4, 5, 6}
+
+    for col in EPISODE_RANK_COLUMNS:
         values = set(df[col].dropna().unique())
-        assert values.issubset({1, 2, 3, 4, 5, 6}), f"{col} out of range"
+        assert values.issubset(valid), f"{col} contains invalid rank values"
 
-def check_rating_columns(df: pd.DataFrame, columns: list[str]) -> None:
-    # Character ratings must be 0–5
-    for col in columns:
+
+# ==========================================================
+# CHARACTER RATING VALIDATION
+# ==========================================================
+
+def check_rating_columns(df: pd.DataFrame) -> None:
+    """Character ratings must be integers 1–5 (or NA)."""
+    valid = {1, 2, 3, 4, 5}
+
+    for col in CHARACTER_RATING_COLUMNS:
         values = set(df[col].dropna().unique())
-        assert values.issubset({0, 1, 2, 3, 4, 5}), f"{col} invalid rating"
+        assert values.issubset(valid), f"{col} contains invalid rating values"
 
-def inspect_ordered_category(df: pd.DataFrame, col: str) -> None:
-    # Ordered categorical validation
+
+# ==========================================================
+# SPECIAL VARIABLE VALIDATION
+# ==========================================================
+
+def check_who_shot_first(df: pd.DataFrame) -> None:
+    """Validate 'who_shot_first' responses."""
+    values = set(df["who_shot_first"].dropna().unique())
+    assert values.issubset({"Han", "Greedo"}), "Invalid values in who_shot_first"
+
+
+# ==========================================================
+# ORDERED CATEGORY VALIDATION
+# ==========================================================
+
+def check_category_order(
+    df: pd.DataFrame,
+    col: str,
+    expected_categories: list[str],
+) -> None:
+    """Ensure categorical variables have correct ordering."""
     cat = df[col].cat
+
     print(f"\n{col}")
     print("categories:", list(cat.categories))
     print("ordered:", cat.ordered)
     print(df[col].value_counts(dropna=False))
 
-def check_row_count(raw: pd.DataFrame, clean: pd.DataFrame) -> None:
-    # Row count sanity check (very important)
-    assert len(raw) == len(clean), "Row count changed during cleaning"
+    assert list(cat.categories) == expected_categories, f"{col} category mismatch"
+    assert cat.ordered, f"{col} should be ordered"
 
+
+# ==========================================================
+# MAIN VALIDATION
+# ==========================================================
 
 if __name__ == "__main__":
 
     raw_df = load_raw_star_wars()
     clean_df = clean_all(raw_df.copy())
 
+    print("\n=== VALIDATING CLEANED DATA ===")
+
     check_row_count(raw_df, clean_df)
+    check_index_integrity(clean_df)
 
-    check_boolean_columns(
+    check_boolean_columns(clean_df)
+    check_rank_columns(clean_df)
+    check_rating_columns(clean_df)
+
+    check_who_shot_first(clean_df)
+
+    check_category_order(
         clean_df,
+        "age_group",
+        ["18-29", "30-44", "45-60", "60+"],
+    )
+
+    check_category_order(
+        clean_df,
+        "household_income",
+        ["$0–24k", "$25–49k", "$50–99k", "$100–149k", "$150k+"],
+    )
+
+    check_category_order(
+        clean_df,
+        "education_level",
         [
-            "seen_star_wars",
-            "fan_star_wars",
-            "familiar_expanded_universe",
-            "fan_expanded_universe",
-            "fan_star_trek",
+            "Less than HS",
+            "High school",
+            "Some college / Associate",
+            "Bachelor’s",
+            "Graduate",
         ],
     )
 
-    check_rank_columns(
-        clean_df,
-        ["rank_ep1", "rank_ep2", "rank_ep3", "rank_ep4", "rank_ep5", "rank_ep6"],
-    )
-
-    check_rating_columns(
-        clean_df,
-        [
-            "rating_han_solo",
-            "rating_luke_skywalker",
-            "rating_princess_leia_organa",
-            "rating_anakin_skywalker",
-            "rating_obi_wan_kenobi",
-            "rating_emperor_palpatine",
-            "rating_darth_vader",
-            "rating_lando_calrissian",
-            "rating_boba_fett",
-            "rating_c-3p0",
-            "rating_r2_d2",
-            "rating_jar_jar_binks",
-            "rating_padme_amidala",
-            "rating_yoda",
-        ],
-    )
-
-    inspect_ordered_category(clean_df, "age_group")
-    inspect_ordered_category(clean_df, "household_income")
-    inspect_ordered_category(clean_df, "education_level")
-
-    print("\n✅ Cleaned-data EDA passed")
-
+    print("\n✅ Cleaned-data validation passed\n")
