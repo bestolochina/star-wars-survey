@@ -1,4 +1,4 @@
-character,cluster,mean_rating
+character,audience_cluster,mean_rating
 Anakin Skywalker,1,4.014760147601476
 Anakin Skywalker,2,3.5382059800664454
 Anakin Skywalker,3,3.809045226130653

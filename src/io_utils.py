@@ -89,7 +89,7 @@ def load_respondent_clusters() -> pd.DataFrame:
 
     df = pd.read_csv(path)
 
-    expected_cols = {"respondent_id", "cluster"}
+    expected_cols = {"respondent_id", "audience_cluster"}
     if not expected_cols.issubset(df.columns):
         raise ValueError(
             "respondent_cluster_assignments.csv missing required columns"
@@ -97,18 +97,17 @@ def load_respondent_clusters() -> pd.DataFrame:
 
     return df
 
-
 def load_character_clusters() -> pd.DataFrame:
     """
     Load character → character cluster mapping
-    produced in Phase 4.1.
+    produced in Phase 3 clustering.
     """
 
     path = PHASE3_TABLES_DIR / "character_cluster_assignments.csv"
 
     df = pd.read_csv(path)
 
-    expected_cols = {"character", "cluster"}
+    expected_cols = {"character", "character_cluster"}
     if not expected_cols.issubset(df.columns):
         raise ValueError(
             "character_cluster_assignments.csv missing required columns"

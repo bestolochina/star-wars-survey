@@ -63,6 +63,8 @@ def derive_structural_archetypes(
         )
     )
 
+    df["rating_deviation"] = df["rating_deviation"].astype(float)
+
     # ------------------------------------------------------
     # Keep strong + significant structural effects
     # ------------------------------------------------------
@@ -72,7 +74,7 @@ def derive_structural_archetypes(
     ].copy()
 
     # Direction label
-    strong["direction"] = strong["deviation"].apply(
+    strong["direction"] = strong["rating_deviation"].apply(
         lambda x: "likes" if x > 0 else "dislikes"
     )
 

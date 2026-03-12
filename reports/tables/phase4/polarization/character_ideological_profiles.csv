@@ -1,4 +1,4 @@
-character,ideology_axis_1,ideology_axis_2,ideology_quadrant,attached_cluster,attachment_strength,rating_range,rating_std,bridge_index,audience_variance
+character,ideology_axis_1,ideology_axis_2,character_ideology_quadrant,attached_audience_cluster,attachment_strength,audience_rating_range,audience_rating_std,character_bridge_index,audience_variance
 Darth Vader,-1.6308467793278123,1.460900976676251,Q3,2,4.294117647058823,2.5817888799355355,1.402283151933268,-1.5817888799355355,1.9663980381959005
 Jar-Jar Binks,-1.859194922900127,-1.3650624033047278,Q4,1,3.5,1.6063829787234043,0.8452626247876022,-0.6063829787234043,0.7144689048628267
 Emperor Palpatine,-2.0101364122916,0.31241836597907247,Q3,1,3.60352422907489,1.5256021511528122,0.7886712797753391,-0.5256021511528122,0.6220023875424712

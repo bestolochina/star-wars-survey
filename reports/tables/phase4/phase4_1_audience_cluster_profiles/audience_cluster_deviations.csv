@@ -1,4 +1,4 @@
-character,audience_cluster,mean_rating,mean_rating_overall,deviation
+character,audience_cluster,mean_rating,mean_rating_overall,character_deviation
 Anakin Skywalker,1,4.014760147601476,3.7873371179328585,0.22742302966861727
 Boba Fett,1,3.5569105691056913,3.2433445363784017,0.31356603272728956
 C-3P0,1,4.106529209621993,4.433263192761863,-0.3267339831398699

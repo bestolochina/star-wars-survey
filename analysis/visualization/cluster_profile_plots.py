@@ -7,6 +7,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+from src.config import AUDIENCE_CLUSTER_LABELS
+
 
 # ==========================================================
 # Cluster Profile Heatmap
@@ -47,7 +49,7 @@ def plot_cluster_profile_heatmap(
         linewidths=0.5,
     )
 
-    plt.title("Audience Cluster Mean Ratings")
+    plt.title("Character Ratings by Audience Segment")
     plt.tight_layout()
 
     plt.savefig(save_path, dpi=300)
@@ -70,13 +72,13 @@ def plot_deviation_heatmap(
     Expected columns:
         character
         audience_cluster
-        deviation
+        character_deviation
     """
 
     pivot = deviations.pivot(
         index="character",
         columns="audience_cluster",
-        values="deviation",
+        values="character_deviation",
     )
 
     # ensure numeric dtype (prevents seaborn crash)
@@ -94,7 +96,7 @@ def plot_deviation_heatmap(
         cbar_kws={"label": "Deviation from Overall Mean"},
     )
 
-    ax.set_title("Cluster Preference Deviations")
+    ax.set_title("Audience Character Preference Deviations")
 
     plt.tight_layout()
     plt.savefig(save_path, dpi=300)
@@ -118,7 +120,7 @@ def plot_cluster_radar_plots(
     pivot = deviations.pivot(
         index="character",
         columns="audience_cluster",
-        values="deviation",
+        values="character_deviation",
     ).astype(float)
 
     characters = pivot.index.tolist()
@@ -138,13 +140,16 @@ def plot_cluster_radar_plots(
         values = pivot[audience_cluster].values
         values = np.concatenate([values, [values[0]]])
 
-        ax.plot(angles, values, label=f"Cluster {audience_cluster}")
+        ax.plot(angles, values, label=AUDIENCE_CLUSTER_LABELS.get(
+            audience_cluster,
+            f"Cluster {audience_cluster}"
+            ))
         ax.fill(angles, values, alpha=0.1)
 
     ax.set_xticks(angles[:-1])
     ax.set_xticklabels(characters, fontsize=8)
 
-    ax.set_title("Audience Cluster Preference Signatures (Deviation Radar)")
+    ax.set_title("Audience Preference Signatures (Character Deviation Radar)")
     ax.legend(loc="upper right", bbox_to_anchor=(1.3, 1.1))
 
     plt.tight_layout()

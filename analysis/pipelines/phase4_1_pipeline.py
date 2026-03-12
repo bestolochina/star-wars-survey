@@ -184,7 +184,7 @@ def step_417_compute_deviations(
         how="left",
     )
 
-    deviations["deviation"] = (
+    deviations["character_deviation"] = (
             deviations["mean_rating"]
             - deviations["mean_rating_overall"]
     )
@@ -243,7 +243,7 @@ def step_420_top_deviations_table(
     print("\n=== 4.1.10 Top Deviations Table ===")
 
     top_dev = (
-        deviations.assign(abs_dev=lambda d: d["deviation"].abs())
+        deviations.assign(abs_dev=lambda d: d["character_deviation"].abs())
         .sort_values(["audience_cluster", "abs_dev"], ascending=[True, False])
         .groupby("audience_cluster")
         .head(top_n)

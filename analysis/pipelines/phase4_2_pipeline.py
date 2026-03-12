@@ -86,10 +86,6 @@ def step_421_load_character_clusters() -> pd.DataFrame:
 
     df = load_character_clusters()
 
-    # normalize column name
-    if "cluster" in df.columns:
-        df = df.rename(columns={"cluster": "character_cluster"})
-
     required = {"character", "character_cluster"}
     missing = required - set(df.columns)
 
@@ -537,51 +533,69 @@ def run_phase4_2(
 
     respondent_clusters = step_422_load_respondent_clusters()
 
-    block_means = step_423_block_means(
+    audience_character_cluster_mean_ratings = step_423_block_means(
         matrix_raw,
         respondent_clusters,
         character_clusters,
     )
 
-    step_424_block_heatmap(block_means)
+    step_424_block_heatmap(audience_character_cluster_mean_ratings)
 
-    block_deviations = step_425_compute_block_deviations(block_means)
-
-    step_426_deviation_heatmap(block_deviations)
-
-    zscores = step_427_block_zscores(block_deviations)
-
-    step_428_zscore_heatmap(zscores)
-
-    significance = step_429_bootstrap_significance(
-        matrix_raw,
-        respondent_clusters,
-        character_clusters,
-        block_deviations,
+    audience_character_cluster_rating_deviations = (
+        step_425_compute_block_deviations(
+            audience_character_cluster_mean_ratings
+        )
     )
 
-    step_4210_block_radar_profiles(block_deviations)
+    step_426_deviation_heatmap(
+        audience_character_cluster_rating_deviations
+    )
+
+    audience_character_cluster_zscores = step_427_block_zscores(
+        audience_character_cluster_rating_deviations
+    )
+
+    step_428_zscore_heatmap(audience_character_cluster_zscores)
+
+    audience_character_cluster_bootstrap_significance = (
+        step_429_bootstrap_significance(
+            matrix_raw,
+            respondent_clusters,
+            character_clusters,
+            audience_character_cluster_rating_deviations,
+        )
+    )
+
+    step_4210_block_radar_profiles(
+        audience_character_cluster_rating_deviations
+    )
 
     archetypes = step_4211_structural_archetypes(
-        block_deviations,
-        zscores,
-        significance,
+        audience_character_cluster_rating_deviations,
+        audience_character_cluster_zscores,
+        audience_character_cluster_bootstrap_significance,
     )
 
-    extremeness = step_4212_block_extremeness(block_deviations)
+    audience_cluster_block_extremeness = step_4212_block_extremeness(
+        audience_character_cluster_rating_deviations
+    )
 
-    selectivity = step_4213_narrative_selectivity(block_deviations)
+    narrative_selectivity = step_4213_narrative_selectivity(
+        audience_character_cluster_rating_deviations
+    )
 
-    identity = step_4214_structural_identity_typology(
-        extremeness,
-        selectivity,
+    structural_identity_typology = step_4214_structural_identity_typology(
+        audience_cluster_block_extremeness,
+        narrative_selectivity,
     )
 
     reports = step_4215_narrative_identity_reports(
         archetypes,
-        identity,
+        structural_identity_typology,
     )
 
-    step_4216_structural_identity_map(identity)
+    step_4216_structural_identity_map(structural_identity_typology)
 
-    step_4217_structural_tension(block_deviations)
+    step_4217_structural_tension(
+        audience_character_cluster_rating_deviations
+    )

@@ -67,8 +67,11 @@ def step_512_contingency_tables(
     tables = {}
 
     for demo in DEMOGRAPHICS_COLUMNS.keys():
-
-        table = build_contingency_table(df, demo)
+        table = build_contingency_table(
+            df,
+            demo,
+            cluster_col="audience_cluster",
+        )
 
         tables[demo] = table
 

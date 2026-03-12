@@ -20,10 +20,10 @@ def plot_character_polarization_map(
     Character Polarization Map
 
     X-axis:
-        polarization (rating_range)
+        polarization (audience_rating_range)
 
     Y-axis:
-        bridge_index
+        character_bridge_index
 
     Each point = character
     """
@@ -37,14 +37,14 @@ def plot_character_polarization_map(
     fig, ax = plt.subplots(figsize=(10, 8))
 
     ax.scatter(
-        df["rating_range"],
-        df["bridge_index"],
+        df["audience_rating_range"],
+        df["character_bridge_index"],
     )
 
     for _, row in df.iterrows():
         ax.text(
-            row["rating_range"],
-            row["bridge_index"],
+            row["audience_rating_range"],
+            row["character_bridge_index"],
             row["character"],
             fontsize=9,
         )
@@ -54,13 +54,13 @@ def plot_character_polarization_map(
     ax.set_title("Character Polarization Map")
 
     ax.axhline(
-        df["bridge_index"].median(),
+        df["character_bridge_index"].median(),
         linestyle="--",
         linewidth=1,
     )
 
     ax.axvline(
-        df["rating_range"].median(),
+        df["audience_rating_range"].median(),
         linestyle="--",
         linewidth=1,
     )
@@ -80,7 +80,7 @@ def plot_character_polarization_triangle(
         means
         .pivot(
             index="character",
-            columns="cluster",
+            columns="audience_cluster",
             values="mean_rating",
         )
     )
@@ -120,7 +120,6 @@ def plot_character_polarization_triangle(
         plt.savefig(save_path, bbox_inches="tight")
 
     plt.close()
-
 
 def plot_character_ideology_gradient_map(
     variance: pd.DataFrame,
@@ -288,8 +287,11 @@ def plot_character_archetype_map(
     save_path=None,
 ):
 
-    axis_x = CHARACTER_IDEOLOGY_AXES_READABLE[1]
-    axis_y = CHARACTER_IDEOLOGY_AXES_READABLE[2]
+    axis_x = "ideology_axis_1"
+    axis_y = "ideology_axis_2"
+
+    axis_x_label = CHARACTER_IDEOLOGY_AXES_READABLE[1]
+    axis_y_label = CHARACTER_IDEOLOGY_AXES_READABLE[2]
 
     fig, ax = plt.subplots(figsize=(10, 8))
 
@@ -299,7 +301,7 @@ def plot_character_archetype_map(
         3: "#2a9d8f",  # Prequel Identity
     }
 
-    for cluster, group in df.groupby("attached_cluster"):
+    for cluster, group in df.groupby("attached_audience_cluster"):
 
         ax.scatter(
             group[axis_x],
@@ -323,8 +325,8 @@ def plot_character_archetype_map(
     ax.axhline(0, linestyle="--", linewidth=1)
     ax.axvline(0, linestyle="--", linewidth=1)
 
-    ax.set_xlabel(axis_x)
-    ax.set_ylabel(axis_y)
+    ax.set_xlabel(axis_x_label)
+    ax.set_ylabel(axis_y_label)
 
     ax.set_title("Character Ideology Archetype Map")
 
@@ -334,7 +336,6 @@ def plot_character_archetype_map(
         plt.savefig(save_path, dpi=300, bbox_inches="tight")
 
     plt.close()
-
 
 def plot_character_polarization_network(
     edges,
@@ -408,7 +409,7 @@ def plot_character_polarization_network(
         font_size=9,
     )
 
-    plt.title("Character Polarization Network (Community Structure)")
+    plt.title("Character Polarization Network (character_network_community Structure)")
 
     plt.axis("off")
 

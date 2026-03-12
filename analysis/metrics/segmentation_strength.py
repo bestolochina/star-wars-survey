@@ -15,15 +15,15 @@ from statsmodels.stats.multitest import multipletests
 def build_contingency_table(
     df: pd.DataFrame,
     demographic: str,
+    cluster_col: str,
 ) -> pd.DataFrame:
 
     table = pd.crosstab(
-        df["cluster"],
+        df[cluster_col],
         df[demographic],
     )
 
     return table
-
 
 # ==========================================================
 # Chi-square Test

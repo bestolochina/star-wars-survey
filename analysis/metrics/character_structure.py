@@ -27,7 +27,7 @@ def _pivot_character_cluster_means(
         mean_rating
     """
 
-    required = {"character", "cluster", "mean_rating"}
+    required = {"character", "audience_cluster", "mean_rating"}
 
     missing = required - set(means.columns)
 
@@ -40,7 +40,7 @@ def _pivot_character_cluster_means(
         means
         .pivot(
             index="character",
-            columns="cluster",
+            columns="audience_cluster",
             values="mean_rating",
         )
         .sort_index()
@@ -62,7 +62,7 @@ def compute_character_bridge_index(
 
     Formula:
 
-        bridge_index = 1 - (max - min)
+        character_bridge_index = 1 - (max - min)
 
     High value  → broadly liked across blocs
     Low value   → strongly polarized character
@@ -78,12 +78,12 @@ def compute_character_bridge_index(
     result = pd.DataFrame(
         {
             "character": matrix.index,
-            "bridge_index": bridge_index.values,
+            "character_bridge_index": bridge_index.values,
         }
     )
 
     return result.sort_values(
-        "bridge_index",
+        "character_bridge_index",
         ascending=False,
     ).reset_index(drop=True)
 
@@ -104,13 +104,13 @@ def compute_character_cluster_attachment(
     -------
     DataFrame:
         character
-        attached_cluster
+        attached_audience_cluster
         attachment_strength
     """
 
     pivot = means.pivot(
         index="character",
-        columns="cluster",
+        columns="audience_cluster",
         values="mean_rating",
     )
 
@@ -118,13 +118,13 @@ def compute_character_cluster_attachment(
 
     for character, row in pivot.iterrows():
 
-        attached_cluster = row.idxmax()
+        attached_audience_cluster = row.idxmax()
         strength = row.max()
 
         rows.append(
             {
                 "character": character,
-                "attached_cluster": attached_cluster,
+                "attached_audience_cluster": attached_audience_cluster,
                 "attachment_strength": strength,
             }
         )
@@ -227,11 +227,11 @@ def compute_cluster_ideology_coordinates(
         columns=["ideology_axis_1", "ideology_axis_2"],
     ).reset_index()
 
-    result = result.rename(columns={"index": "cluster"})
+    result = result.rename(columns={"index": "audience_cluster"})
 
     # FIX: extract numeric cluster id
-    result["cluster"] = (
-        result["cluster"]
+    result["audience_cluster"] = (
+        result["audience_cluster"]
         .astype(str)
         .str.extract(r"(\d+)")
         .astype(int)
@@ -290,7 +290,7 @@ def compute_character_ideology_quadrants(
             return "Q3"
         return "Q4"
 
-    df["ideology_quadrant"] = df.apply(quadrant, axis=1)
+    df["character_ideology_quadrant"] = df.apply(quadrant, axis=1)
 
     return df
 
@@ -348,7 +348,7 @@ def compute_character_communities(edges: pd.DataFrame) -> pd.DataFrame:
             rows.append(
                 {
                     "character": character,
-                    "community": i,
+                    "character_network_community": i,
                 }
             )
 
@@ -369,12 +369,12 @@ def build_character_structure_triangulation(
     df = df[
         [
             "character",
-            "attached_cluster_label",
-            "ideology_quadrant",
-            "community",
+            "attached_audience_cluster",
+            "character_ideology_quadrant",
+            "character_network_community",
         ]
     ]
 
     return df.sort_values(
-        ["community", "attached_cluster_label"]
+        ["character_network_community", "attached_audience_cluster"]
     )

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import pandas as pd
 
+from analysis.pipelines.phase4_2_pipeline import PHASE4_2_TABLES_DIR
 from src.paths import PHASE4_TABLES_DIR, PHASE4_FIGURES_DIR
 from src.io_utils import load_respondent_clusters
 from src.config import CHARACTER_RATING_COLUMNS
@@ -611,7 +612,7 @@ def step_4319_character_profiles(
         attachment[
             [
                 "character",
-                "attached_cluster",
+                "attached_audience_cluster",
                 "attachment_strength",
             ]
         ],
@@ -622,9 +623,9 @@ def step_4319_character_profiles(
         metrics[
             [
                 "character",
-                "rating_range",
-                "rating_std",
-                "bridge_index",
+                "audience_rating_range",
+                "audience_rating_std",
+                "character_bridge_index",
                 "audience_variance",
             ]
         ],
@@ -632,7 +633,7 @@ def step_4319_character_profiles(
     )
 
     df = df.sort_values(
-        "rating_range",
+        "audience_rating_range",
         ascending=False,
     )
 

@@ -17,9 +17,9 @@ from analysis.pipelines.phase2_3_part2_pipeline import run_phase_2_3_part2
 def main() -> None:
     df: pd.DataFrame = load_clean_star_wars()
 
-    run_phase_2_3_part1(df)
+    # run_phase_2_3_part1(df)
 
-    # run_phase_2_3_part2(df)
+    run_phase_2_3_part2(df)
 
 
 if __name__ == "__main__":

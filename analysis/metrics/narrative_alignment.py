@@ -16,13 +16,13 @@ def compute_audience_bloc_dominance(
 
     results: list[dict] = []
 
-    for cluster, group in block_means.groupby("cluster"):
+    for audience_cluster, group in block_means.groupby("audience_cluster"):
 
         top_row = group.loc[group["mean_rating"].idxmax()]
 
         results.append(
             {
-                "cluster": cluster,
+                "audience_cluster": audience_cluster,
                 "dominant_character_cluster": int(
                     top_row["character_cluster"]
                 ),
@@ -30,7 +30,7 @@ def compute_audience_bloc_dominance(
             }
         )
 
-    return pd.DataFrame(results).sort_values("cluster")
+    return pd.DataFrame(results).sort_values("audience_cluster")
 
 
 # ==========================================================
@@ -43,7 +43,7 @@ def compute_audience_preference_gap(
 
     results: list[dict] = []
 
-    for cluster, group in block_means.groupby("cluster"):
+    for audience_cluster, group in block_means.groupby("audience_cluster"):
 
         sorted_group = group.sort_values(
             "mean_rating", ascending=False
@@ -57,7 +57,7 @@ def compute_audience_preference_gap(
 
         results.append(
             {
-                "cluster": cluster,
+                "audience_cluster": audience_cluster,
                 "top_bloc": top_bloc,
                 "top_bloc_label": CHARACTER_CLUSTER_LABELS[top_bloc],
                 "second_bloc": second_bloc,
@@ -70,8 +70,9 @@ def compute_audience_preference_gap(
 
     return (
         pd.DataFrame(results)
-        .sort_values("cluster")
+        .sort_values("audience_cluster")
     )
+
 
 # ==========================================================
 # Narrative Alignment Index
@@ -83,15 +84,15 @@ def compute_narrative_alignment_index(
 
     results: list[dict] = []
 
-    for cluster, group in block_means.groupby("cluster"):
+    for audience_cluster, group in block_means.groupby("audience_cluster"):
 
         alignment = group["mean_rating"].std()
 
         results.append(
             {
-                "cluster": cluster,
+                "audience_cluster": audience_cluster,
                 "alignment_index": float(alignment),
             }
         )
 
-    return pd.DataFrame(results).sort_values("cluster")
+    return pd.DataFrame(results).sort_values("audience_cluster")

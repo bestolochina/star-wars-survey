@@ -57,7 +57,7 @@ def plot_block_deviation_heatmap(
     heatmap_data = deviation_df.pivot(
         index="audience_cluster",
         columns="character_cluster",
-        values="deviation",
+        values="rating_deviation",
     )
 
     heatmap_data = heatmap_data.astype(float)
@@ -132,8 +132,10 @@ def plot_block_radar_profiles(
     pivot = deviation_df.pivot(
         index="audience_cluster",
         columns="character_cluster",
-        values="deviation",
+        values="rating_deviation",
     ).sort_index()
+
+    pivot = pivot.astype(float)
 
     labels = [f"Bloc {c}" for c in pivot.columns]
     angles = np.linspace(0, 2 * np.pi, len(labels), endpoint=False)

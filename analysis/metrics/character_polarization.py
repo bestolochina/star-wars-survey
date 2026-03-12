@@ -29,13 +29,13 @@ def compute_character_cluster_means(
     respondent_clusters :
         DataFrame with columns:
         - respondent_id
-        - cluster
+        - audience_cluster
 
     Returns
     -------
     DataFrame with columns:
         character
-        cluster
+        audience_cluster
         mean_rating
     """
 
@@ -49,7 +49,7 @@ def compute_character_cluster_means(
 
     character_columns = [
         c for c in df.columns
-        if c not in {"respondent_id", "cluster", "cluster_label"}
+        if c not in {"respondent_id", "audience_cluster", "cluster_label"}
     ]
 
     results: list[dict] = []
@@ -57,7 +57,7 @@ def compute_character_cluster_means(
     for character in character_columns:
 
         grouped = (
-            df.groupby("cluster")[character]
+            df.groupby("audience_cluster")[character]
             .mean()
             .reset_index()
         )
@@ -67,7 +67,7 @@ def compute_character_cluster_means(
             results.append(
                 {
                     "character": character,
-                    "cluster": int(row["cluster"]),
+                    "audience_cluster": int(row["audience_cluster"]),
                     "mean_rating": float(row[character]),
                 }
             )
@@ -75,7 +75,7 @@ def compute_character_cluster_means(
     result_df = pd.DataFrame(results)
 
     result_df = result_df.sort_values(
-        ["character", "cluster"]
+        ["character", "audience_cluster"]
     ).reset_index(drop=True)
 
     return result_df
@@ -98,7 +98,7 @@ def compute_character_alignment_matrix(
 
     matrix = means.pivot(
         index="character",
-        columns="cluster",
+        columns="audience_cluster",
         values="mean_rating",
     )
 
@@ -122,8 +122,8 @@ def compute_character_polarization_index(
     Compute polarization of each character across audience clusters.
 
     Polarization metrics:
-    - rating_range
-    - rating_std
+    - audience_rating_range
+    - audience_rating_std
     """
 
     matrix = compute_character_alignment_matrix(means)
@@ -131,16 +131,16 @@ def compute_character_polarization_index(
     result = pd.DataFrame(
         {
             "character": matrix.index,
-            "rating_range": matrix.max(axis=1)
+            "audience_rating_range": matrix.max(axis=1)
             - matrix.min(axis=1),
-            "rating_std": matrix.std(axis=1),
+            "audience_rating_std": matrix.std(axis=1),
         }
     )
 
     result = result.reset_index(drop=True)
 
     result = result.sort_values(
-        "rating_range",
+        "audience_rating_range",
         ascending=False,
     )
 
