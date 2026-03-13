@@ -1,4 +1,4 @@
-# analysis/phase5_1_pipeline.py
+# analysis/pipelines/phase5_1_pipeline.py
 
 from __future__ import annotations
 
@@ -15,6 +15,7 @@ from analysis.metrics.segmentation_strength import (
     compute_cramers_v,
     adjust_pvalues,
     check_min_expected,
+    compute_standardized_residuals,
 )
 
 
@@ -221,6 +222,133 @@ def step_516_demographic_association_robustness_checks(
 
 
 # ==========================================================
+# 5.1.7 Demographic Standardized Residuals
+# ==========================================================
+
+def step_517_demographic_standardized_residuals(
+    tables: dict,
+) -> None:
+
+    print("\n=== 5.1.7 Demographic Standardized Residuals ===")
+
+    residuals_dir = PHASE5_TABLES_DIR / "segmentation" / "residuals"
+    residuals_dir.mkdir(parents=True, exist_ok=True)
+
+    for demo, table in tables.items():
+
+        residuals = compute_standardized_residuals(table)
+
+        path = residuals_dir / f"audience_cluster_{demo}_standardized_residuals.csv"
+
+        residuals.to_csv(path)
+
+        print(f"\n{demo}")
+        print(residuals.round(2).to_string())
+        print(f"Saved → {path}")
+
+
+# ==========================================================
+# 5.1.8 Audience Cluster Demographic Profiles
+# ==========================================================
+
+def step_518_audience_cluster_demographic_profiles(
+    tables: dict,
+) -> pd.DataFrame:
+
+    print("\n=== 5.1.8 Audience Cluster Demographic Profiles ===")
+
+    rows = []
+
+    for demo, table in tables.items():
+
+        row_totals = table.sum(axis=1)
+
+        for cluster in table.index:
+
+            for category in table.columns:
+
+                count = table.loc[cluster, category]
+
+                percentage = count / row_totals.loc[cluster]
+
+                rows.append(
+                    {
+                        "audience_cluster": cluster,
+                        "demographic_variable": demo,
+                        "category": category,
+                        "percentage": percentage,
+                    }
+                )
+
+    df = pd.DataFrame(rows)
+
+    path = (
+        PHASE5_TABLES_DIR
+        / "segmentation"
+        / "audience_cluster_demographic_profiles.csv"
+    )
+
+    df.to_csv(path, index=False)
+
+    print(df.head().to_string())
+    print(f"Saved → {path}")
+
+    return df
+
+
+# ==========================================================
+# 5.1.9 Significant Demographic Deviations
+# ==========================================================
+
+def step_519_significant_demographic_deviations(
+    tables: dict,
+    threshold: float = 2.0,
+) -> pd.DataFrame:
+
+    print("\n=== 5.1.9 Significant Demographic Deviations ===")
+
+    rows = []
+
+    for demo, table in tables.items():
+
+        residuals = compute_standardized_residuals(table)
+
+        for cluster in residuals.index:
+
+            for category in residuals.columns:
+
+                value = residuals.loc[cluster, category]
+
+                if abs(value) >= threshold:
+
+                    rows.append(
+                        {
+                            "audience_cluster": cluster,
+                            "demographic_variable": demo,
+                            "category": category,
+                            "standardized_residual": value,
+                        }
+                    )
+
+    df = pd.DataFrame(rows)
+
+    path = (
+        PHASE5_TABLES_DIR
+        / "segmentation"
+        / "audience_cluster_significant_demographic_deviations.csv"
+    )
+
+    df.to_csv(path, index=False)
+
+    if not df.empty:
+        print(df.sort_values("standardized_residual", key=abs, ascending=False).to_string(index=False))
+
+    print(f"Saved → {path}")
+
+    return df
+
+
+# ==========================================================
 # Pipeline Entry
 # ==========================================================
 
@@ -243,3 +371,9 @@ def run_phase5_1(
     chisq = step_515_adjust_demographic_association_pvalues(chisq)
 
     step_516_demographic_association_robustness_checks(tables)
+
+    step_517_demographic_standardized_residuals(tables)
+
+    step_518_audience_cluster_demographic_profiles(tables)
+
+    step_519_significant_demographic_deviations(tables)

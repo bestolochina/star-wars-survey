@@ -88,3 +88,27 @@ def check_min_expected(
     _, _, _, expected = chi2_contingency(table)
 
     return (expected >= 5).all()
+
+
+def compute_standardized_residuals(
+    table: pd.DataFrame,
+) -> pd.DataFrame:
+    """
+    Compute standardized residuals for a contingency table.
+
+    residual = (observed - expected) / sqrt(expected)
+    """
+
+    observed = table.values
+
+    chi2, p, dof, expected = chi2_contingency(table)
+
+    residuals = (observed - expected) / np.sqrt(expected)
+
+    residual_df = pd.DataFrame(
+        residuals,
+        index=table.index,
+        columns=table.columns,
+    )
+
+    return residual_df

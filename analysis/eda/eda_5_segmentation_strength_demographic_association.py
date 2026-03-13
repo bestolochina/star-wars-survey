@@ -1,4 +1,4 @@
-# analysis/eda_5_segmentation_strength_demographic_association.py
+# analysis/eda/eda_5_segmentation_strength_demographic_association.py
 
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ def main() -> None:
 
     run_phase5_1(df)
 
-    run_phase5_2()
+    # run_phase5_2()
 
 
 if __name__ == "__main__":

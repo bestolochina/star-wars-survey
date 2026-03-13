@@ -1,4 +1,4 @@
-# analysis/phase5_2_pipeline.py
+# analysis/pipelines/phase5_2_pipeline.py
 
 from __future__ import annotations
 

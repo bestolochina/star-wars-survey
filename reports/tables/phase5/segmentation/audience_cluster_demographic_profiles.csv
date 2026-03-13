@@ -1,0 +1,76 @@
+audience_cluster,demographic_variable,category,percentage
+1,gender,Female,0.48788927335640137
+1,gender,Male,0.5121107266435986
+2,gender,Female,0.3770491803278688
+2,gender,Male,0.6229508196721312
+3,gender,Female,0.6482300884955752
+3,gender,Male,0.35176991150442477
+1,age_group,18-29,0.2422145328719723
+1,age_group,30-44,0.21107266435986158
+1,age_group,45-60,0.3079584775086505
+1,age_group,60+,0.23875432525951557
+2,age_group,18-29,0.2262295081967213
+2,age_group,30-44,0.32131147540983607
+2,age_group,45-60,0.25245901639344265
+2,age_group,60+,0.2
+3,age_group,18-29,0.1747787610619469
+3,age_group,30-44,0.2411504424778761
+3,age_group,45-60,0.27654867256637167
+3,age_group,60+,0.3075221238938053
+1,household_income,$0–24k,0.1673469387755102
+1,household_income,$25–49k,0.2530612244897959
+1,household_income,$50–99k,0.3020408163265306
+1,household_income,$100–149k,0.20408163265306123
+1,household_income,$150k+,0.07346938775510205
+2,household_income,$0–24k,0.12749003984063745
+2,household_income,$25–49k,0.199203187250996
+2,household_income,$50–99k,0.3745019920318725
+2,household_income,$100–149k,0.1593625498007968
+2,household_income,$150k+,0.1394422310756972
+3,household_income,$0–24k,0.17955801104972377
+3,household_income,$25–49k,0.20441988950276244
+3,household_income,$50–99k,0.35911602209944754
+3,household_income,$100–149k,0.1408839779005525
+3,household_income,$150k+,0.11602209944751381
+1,education_level,Less than HS,0.0
+1,education_level,High school,0.11888111888111888
+1,education_level,Some college / Associate,0.3531468531468531
+1,education_level,Bachelor’s,0.27972027972027974
+1,education_level,Graduate,0.24825174825174826
+2,education_level,Less than HS,0.006557377049180328
+2,education_level,High school,0.07868852459016394
+2,education_level,Some college / Associate,0.3081967213114754
+2,education_level,Bachelor’s,0.3442622950819672
+2,education_level,Graduate,0.26229508196721313
+3,education_level,Less than HS,0.011235955056179775
+3,education_level,High school,0.10561797752808989
+3,education_level,Some college / Associate,0.298876404494382
+3,education_level,Bachelor’s,0.3056179775280899
+3,education_level,Graduate,0.2786516853932584
+1,census_region,East North Central,0.16376306620209058
+1,census_region,East South Central,0.041811846689895474
+1,census_region,Middle Atlantic,0.11498257839721254
+1,census_region,Mountain,0.08013937282229965
+1,census_region,New England,0.04878048780487805
+1,census_region,Pacific,0.20905923344947736
+1,census_region,South Atlantic,0.1602787456445993
+1,census_region,West North Central,0.08710801393728224
+1,census_region,West South Central,0.09407665505226481
+2,census_region,East North Central,0.16393442622950818
+2,census_region,East South Central,0.036065573770491806
+2,census_region,Middle Atlantic,0.11147540983606558
+2,census_region,Mountain,0.07868852459016394
+2,census_region,New England,0.09836065573770492
+2,census_region,Pacific,0.16065573770491803
+2,census_region,South Atlantic,0.17704918032786884
+2,census_region,West North Central,0.08524590163934426
+2,census_region,West South Central,0.08852459016393442
+3,census_region,East North Central,0.18625277161862527
+3,census_region,East South Central,0.03325942350332594
+3,census_region,Middle Atlantic,0.12195121951219512
+3,census_region,Mountain,0.07095343680709534
+3,census_region,New England,0.06873614190687362
+3,census_region,Pacific,0.14634146341463414
+3,census_region,South Atlantic,0.15521064301552107
+3,census_region,West North Central,0.09312638580931264
+3,census_region,West South Central,0.12416851441241686
