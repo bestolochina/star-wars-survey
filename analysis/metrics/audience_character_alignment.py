@@ -6,6 +6,8 @@ import pandas as pd
 import numpy as np
 from scipy.stats import f_oneway
 
+from analysis.metrics.character_polarization import compute_character_alignment_matrix
+
 
 # ==========================================================
 # Audience–Character Alignment Matrix
@@ -177,3 +179,79 @@ def compute_character_segmentation_strength_across_audience_clusters(
     )
 
     return segmentation_df
+
+
+def compute_audience_cluster_character_affinity_profiles(
+    means: pd.DataFrame,
+) -> pd.DataFrame:
+    """
+    Build audience cluster character affinity profiles.
+
+    For each audience cluster:
+    - rank characters by mean rating
+    """
+
+    matrix = compute_character_alignment_matrix(means)
+
+    rows = []
+
+    for audience_cluster in matrix.columns:
+
+        cluster_ratings = matrix[audience_cluster].sort_values(
+            ascending=False
+        )
+
+        for rank, (character, mean_rating) in enumerate(
+            cluster_ratings.items(),
+            start=1,
+        ):
+
+            rows.append(
+                {
+                    "audience_cluster": audience_cluster,
+                    "character_rank": rank,
+                    "character": character,
+                    "character_mean_rating": mean_rating,
+                }
+            )
+
+    return pd.DataFrame(rows)
+
+
+def compute_audience_bloc_affinity(
+    means: pd.DataFrame,
+    blocs: pd.DataFrame,
+) -> pd.DataFrame:
+    """
+    Compute mean character ratings for each
+    audience cluster × ideological character bloc.
+    """
+
+    matrix = compute_character_alignment_matrix(means)
+
+    df = matrix.reset_index().rename(columns={"index": "character"})
+
+    df = df.merge(
+        blocs,
+        on="character",
+        how="left",
+    )
+
+    # Detect cluster columns (numeric)
+    value_cols = [
+        c for c in df.columns
+        if isinstance(c, (int, float))
+    ]
+
+    affinity = (
+        df
+        .groupby("character_ideological_bloc")[value_cols]
+        .mean()
+        .T
+    )
+
+    affinity.index.name = "audience_cluster"
+
+    affinity = affinity.reset_index()
+
+    return affinity.sort_values("audience_cluster")

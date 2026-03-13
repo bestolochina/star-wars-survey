@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 from src.config import AUDIENCE_CLUSTER_LABELS
 from analysis.utils.labels import add_audience_labels
+from sklearn.cluster import AgglomerativeClustering
 
 
 # ==========================================================
@@ -124,24 +125,91 @@ def compute_character_polarization_index(
     Polarization metrics:
     - audience_rating_range
     - audience_rating_std
+    - most_liked_audience_cluster
+    - least_liked_audience_cluster
     """
 
     matrix = compute_character_alignment_matrix(means)
 
-    result = pd.DataFrame(
-        {
-            "character": matrix.index,
-            "audience_rating_range": matrix.max(axis=1)
-            - matrix.min(axis=1),
-            "audience_rating_std": matrix.std(axis=1),
-        }
-    )
+    rows = []
 
-    result = result.reset_index(drop=True)
+    for character in matrix.index:
+
+        cluster_ratings = matrix.loc[character]
+
+        max_cluster = cluster_ratings.idxmax()
+        min_cluster = cluster_ratings.idxmin()
+
+        rows.append(
+            {
+                "character": character,
+                "audience_rating_range": cluster_ratings.max()
+                - cluster_ratings.min(),
+                "audience_rating_std": cluster_ratings.std(),
+                "most_liked_audience_cluster": max_cluster,
+                "least_liked_audience_cluster": min_cluster,
+            }
+        )
+
+    result = pd.DataFrame(rows)
 
     result = result.sort_values(
         "audience_rating_range",
         ascending=False,
     )
 
-    return result
+    return result.reset_index(drop=True)
+
+
+def compute_character_ideological_blocs(
+    means: pd.DataFrame,
+    n_blocs: int = 3,
+) -> pd.DataFrame:
+    """
+    Detect ideological blocs of characters based on
+    audience cluster rating patterns.
+    """
+
+    matrix = compute_character_alignment_matrix(means)
+
+    model = AgglomerativeClustering(
+        n_clusters=n_blocs,
+        metric="euclidean",
+        linkage="ward",
+    )
+
+    labels = model.fit_predict(matrix)
+
+    df = pd.DataFrame(
+        {
+            "character": matrix.index,
+            "character_ideological_bloc": labels + 1,
+        }
+    )
+
+    return df.sort_values(
+        "character_ideological_bloc"
+    ).reset_index(drop=True)
+
+
+def compute_character_bloc_summary(
+    blocs: pd.DataFrame,
+) -> pd.DataFrame:
+    """
+    Summarize characters belonging to each ideological bloc.
+    """
+
+    summary = (
+        blocs
+        .groupby("character_ideological_bloc")["character"]
+        .apply(lambda x: ", ".join(sorted(x)))
+        .reset_index()
+        .rename(
+            columns={
+                "character_ideological_bloc": "bloc",
+                "character": "characters",
+            }
+        )
+    )
+
+    return summary.sort_values("bloc")

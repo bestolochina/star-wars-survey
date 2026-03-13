@@ -19,7 +19,7 @@ def main() -> None:
 
     run_phase5_1(df)
 
-    # run_phase5_2()
+    run_phase5_2()
 
 
 if __name__ == "__main__":

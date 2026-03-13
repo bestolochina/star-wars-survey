@@ -8,6 +8,12 @@ from src.io_utils import load_clean_star_wars_with_audience_clusters
 from src.paths import PHASE4_TABLES_DIR, PHASE5_TABLES_DIR
 from src.config import CHARACTER_RATING_COLUMNS
 
+from analysis.metrics.character_polarization import (
+    compute_character_polarization_index,
+    compute_character_ideological_blocs,
+    compute_character_bloc_summary,
+)
+
 from analysis.metrics.audience_character_alignment import (
     build_audience_character_alignment_matrix,
     compute_audience_cluster_character_rankings,
@@ -15,6 +21,8 @@ from analysis.metrics.audience_character_alignment import (
     compute_character_divergence_across_audience_clusters,
     compute_audience_cluster_character_ideology_distance,
     compute_character_segmentation_strength_across_audience_clusters,
+    compute_audience_cluster_character_affinity_profiles,
+    compute_audience_bloc_affinity,
 )
 
 
@@ -194,6 +202,144 @@ def step_526_character_segmentation_strength_across_audience_clusters() -> pd.Da
 
 
 # ==========================================================
+# 5.2.7 Character Polarization Index
+# ==========================================================
+
+def step_527_character_polarization_index(
+    character_cluster_means: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 5.2.7 Character Polarization Index ===")
+
+    df = compute_character_polarization_index(
+        character_cluster_means
+    )
+
+    path = (
+        PHASE5_TABLES_DIR
+        / "alignment"
+        / "character_polarization_index.csv"
+    )
+
+    df.to_csv(path, index=False)
+
+    print(df.to_string())
+    print(f"Saved → {path}")
+
+    return df
+
+
+# ==========================================================
+# 5.2.8 Audience Cluster Character Affinity Profiles
+# ==========================================================
+
+def step_528_audience_cluster_character_affinity_profiles(
+    means: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 5.2.8 Audience Cluster Character Affinity Profiles ===")
+
+    df = compute_audience_cluster_character_affinity_profiles(
+        means
+    )
+
+    path = (
+        PHASE5_TABLES_DIR
+        / "alignment"
+        / "audience_cluster_character_affinity_profiles.csv"
+    )
+
+    df.to_csv(path, index=False)
+
+    print(df.to_string())
+    print(f"Saved → {path}")
+
+    return df
+
+
+# ==========================================================
+# 5.2.9 Character Ideological Blocs
+# ==========================================================
+
+def step_529_character_ideological_blocs(
+    means: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 5.2.9 Character Ideological Blocs ===")
+
+    df = compute_character_ideological_blocs(means)
+
+    path = (
+        PHASE5_TABLES_DIR
+        / "alignment"
+        / "character_ideological_blocs.csv"
+    )
+
+    df.to_csv(path, index=False)
+
+    print(df.to_string())
+    print(f"Saved → {path}")
+
+    return df
+
+
+# ==========================================================
+# 5.2.10 Character Block Summary
+# ==========================================================
+
+def step_5210_character_bloc_summary(
+    blocs: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 5.2.10 Character Bloc Summary ===")
+
+    df = compute_character_bloc_summary(blocs)
+
+    path = (
+        PHASE5_TABLES_DIR
+        / "alignment"
+        / "character_bloc_summary.csv"
+    )
+
+    df.to_csv(path, index=False)
+
+    print(df.to_string())
+    print(f"Saved → {path}")
+
+    return df
+
+
+# ==========================================================
+# 5.2.10 Audience × Character Bloc Affinity
+# ==========================================================
+
+def step_5211_audience_bloc_affinity(
+    means: pd.DataFrame,
+    blocs: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 5.2.11 Audience × Character Bloc Affinity ===")
+
+    df = compute_audience_bloc_affinity(
+        means,
+        blocs,
+    )
+
+    path = (
+        PHASE5_TABLES_DIR
+        / "alignment"
+        / "audience_bloc_affinity_matrix.csv"
+    )
+
+    df.to_csv(path, index=False)
+
+    print(df.to_string())
+    print(f"Saved → {path}")
+
+    return df
+
+
+# ==========================================================
 # Pipeline Entry
 # ==========================================================
 
@@ -231,3 +377,16 @@ def run_phase5_2() -> None:
     )
 
     step_526_character_segmentation_strength_across_audience_clusters()
+
+    step_527_character_polarization_index(means)
+
+    step_528_audience_cluster_character_affinity_profiles(means)
+
+    blocs = step_529_character_ideological_blocs(means)
+
+    step_5210_character_bloc_summary(blocs)
+
+    step_5211_audience_bloc_affinity(
+        means,
+        blocs,
+    )
