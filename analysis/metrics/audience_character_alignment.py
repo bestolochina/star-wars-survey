@@ -6,6 +6,8 @@ import pandas as pd
 import numpy as np
 from scipy.stats import f_oneway
 
+from src.config import CHARACTER_RATING_COLUMNS
+
 from analysis.metrics.character_polarization import compute_character_alignment_matrix
 
 
@@ -255,3 +257,140 @@ def compute_audience_bloc_affinity(
     affinity = affinity.reset_index()
 
     return affinity.sort_values("audience_cluster")
+
+
+def compute_cluster_ideology_index(
+    affinity: pd.DataFrame,
+) -> pd.DataFrame:
+    """
+    Compute ideological orientation of each audience cluster
+    based on hero vs villain bloc preference.
+    """
+
+    bloc_cols = [
+        c for c in affinity.columns
+        if isinstance(c, (int, float))
+    ]
+
+    # detect hero and villain blocs from overall ratings
+    bloc_means = affinity[bloc_cols].mean()
+
+    hero_bloc = bloc_means.idxmax()
+    villain_bloc = bloc_means.idxmin()
+
+    df = affinity.copy()
+
+    df["hero_bloc"] = hero_bloc
+    df["villain_bloc"] = villain_bloc
+
+    df["cluster_ideology_index"] = (
+        df[hero_bloc] - df[villain_bloc]
+    )
+
+    result = df[
+        ["audience_cluster", "cluster_ideology_index"]
+    ].sort_values("cluster_ideology_index", ascending=False)
+
+    result.columns.name = None
+
+    return result
+
+
+# ==========================================================
+# Audience Cluster Engagement Index
+# ==========================================================
+
+def compute_audience_cluster_engagement_index(
+    respondents: pd.DataFrame,
+) -> pd.DataFrame:
+    """
+    Measure how actively each audience cluster evaluates characters.
+    """
+
+    rating_cols = list(CHARACTER_RATING_COLUMNS.keys())
+
+    df = (
+        respondents
+        .groupby("audience_cluster")[rating_cols]
+        .apply(lambda x: x.notna().mean().mean())
+        .reset_index(name="engagement_index")
+        .sort_values("engagement_index", ascending=False)
+    )
+
+    return df
+
+
+# ==========================================================
+# Audience Cluster Character Rating Positivity Bias
+# ==========================================================
+
+def compute_audience_cluster_character_rating_positivity_bias(
+    respondents: pd.DataFrame,
+) -> pd.DataFrame:
+    """
+    Measure whether audience clusters systematically rate characters
+    higher or lower than the global average character rating.
+    """
+
+    rating_cols = list(CHARACTER_RATING_COLUMNS.keys())
+
+    cluster_means = (
+        respondents
+        .groupby("audience_cluster")[rating_cols]
+        .mean()
+        .mean(axis=1)
+        .reset_index(name="audience_cluster_mean_character_rating")
+    )
+
+    global_character_rating_mean = (
+        respondents[rating_cols]
+        .mean()
+        .mean()
+    )
+
+    cluster_means["audience_cluster_character_rating_positivity_bias"] = (
+        cluster_means["audience_cluster_mean_character_rating"]
+        - global_character_rating_mean
+    )
+
+    return cluster_means.sort_values("audience_cluster")
+
+
+# ==========================================================
+# Audience Cluster Character Preference Distance
+# ==========================================================
+
+from itertools import combinations
+import numpy as np
+
+
+def compute_audience_cluster_character_preference_distance(
+    means: pd.DataFrame,
+) -> pd.DataFrame:
+    """
+    Measure structural distinctiveness of audience clusters by computing
+    pairwise Euclidean distances between cluster character-rating profiles.
+    """
+
+    matrix = means.pivot(
+        index="audience_cluster",
+        columns="character",
+        values="mean_rating",
+    )
+
+    rows = []
+
+    for c1, c2 in combinations(matrix.index, 2):
+
+        v1 = matrix.loc[c1].values
+        v2 = matrix.loc[c2].values
+
+        distance = np.linalg.norm(v1 - v2)
+
+        rows.append({
+            "audience_cluster_1": c1,
+            "audience_cluster_2": c2,
+            "audience_cluster_character_preference_distance": distance,
+        })
+
+    return pd.DataFrame(rows)

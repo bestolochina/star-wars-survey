@@ -5,13 +5,20 @@ from __future__ import annotations
 import pandas as pd
 
 from src.io_utils import load_clean_star_wars_with_audience_clusters
-from src.paths import PHASE4_TABLES_DIR, PHASE5_TABLES_DIR
+from src.paths import PHASE4_TABLES_DIR, PHASE5_TABLES_DIR, PHASE5_FIGURES_DIR
 from src.config import CHARACTER_RATING_COLUMNS
+
+from analysis.visualization.phase5_plots import (
+    plot_audience_character_bloc_affinity_heatmap,
+    plot_audience_character_ideology_map,
+    plot_cluster_character_preference_profiles,
+)
 
 from analysis.metrics.character_polarization import (
     compute_character_polarization_index,
     compute_character_ideological_blocs,
     compute_character_bloc_summary,
+    compute_character_bloc_sizes,
 )
 
 from analysis.metrics.audience_character_alignment import (
@@ -23,6 +30,10 @@ from analysis.metrics.audience_character_alignment import (
     compute_character_segmentation_strength_across_audience_clusters,
     compute_audience_cluster_character_affinity_profiles,
     compute_audience_bloc_affinity,
+    compute_cluster_ideology_index,
+    compute_audience_cluster_engagement_index,
+    compute_audience_cluster_character_rating_positivity_bias,
+    compute_audience_cluster_character_preference_distance,
 )
 
 
@@ -33,6 +44,21 @@ from analysis.metrics.audience_character_alignment import (
 def _ensure_dirs() -> None:
 
     (PHASE5_TABLES_DIR / "alignment").mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    (PHASE5_TABLES_DIR / "segmentation").mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    (PHASE5_FIGURES_DIR / "alignment").mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    (PHASE5_FIGURES_DIR / "segmentation").mkdir(
         parents=True,
         exist_ok=True,
     )
@@ -310,7 +336,7 @@ def step_5210_character_bloc_summary(
 
 
 # ==========================================================
-# 5.2.10 Audience × Character Bloc Affinity
+# 5.2.11 Audience × Character Bloc Affinity
 # ==========================================================
 
 def step_5211_audience_bloc_affinity(
@@ -340,6 +366,236 @@ def step_5211_audience_bloc_affinity(
 
 
 # ==========================================================
+# 5.2.12 Audience × Character Bloc Affinity
+# ==========================================================
+
+def step_5212_character_bloc_sizes(
+    blocs: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 5.2.12 Character Bloc Sizes ===")
+
+    df = compute_character_bloc_sizes(blocs)
+
+    path = (
+        PHASE5_TABLES_DIR
+        / "alignment"
+        / "character_bloc_sizes.csv"
+    )
+
+    df.to_csv(path, index=False)
+
+    print(df.to_string())
+    print(f"Saved → {path}")
+
+    return df
+
+
+# ==========================================================
+# 5.2.13 Cluster Ideology Index
+# ==========================================================
+
+def step_5213_cluster_ideology_index(
+    affinity: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 5.2.13 Cluster Ideology Index ===")
+
+    df = compute_cluster_ideology_index(affinity)
+
+    path = (
+        PHASE5_TABLES_DIR
+        / "alignment"
+        / "cluster_ideology_index.csv"
+    )
+
+    df.to_csv(path, index=False)
+
+    print(df.to_string())
+    print(f"Saved → {path}")
+
+    return df
+
+
+# ==========================================================
+# 5.2.14 Audience Engagement Index
+# ==========================================================
+
+def step_5214_audience_cluster_engagement_index(
+    respondents: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 5.2.14 Audience Engagement Index ===")
+
+    df = compute_audience_cluster_engagement_index(
+        respondents
+    )
+
+    path = (
+        PHASE5_TABLES_DIR
+        / "alignment"
+        / "audience_cluster_engagement_index.csv"
+    )
+
+    df.to_csv(path, index=False)
+
+    print(df.to_string())
+    print(f"Saved → {path}")
+
+    return df
+
+
+# ==========================================================
+# 5.2.15 Audience × Character Bloc Affinity Heatmap
+# ==========================================================
+
+def step_5215_audience_character_bloc_affinity_heatmap(
+    affinity: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 5.2.15 Audience × Character Bloc Affinity Heatmap ===")
+
+    path = (
+        PHASE5_FIGURES_DIR
+        / "alignment"
+        / "audience_character_bloc_affinity_heatmap.png"
+    )
+
+    heatmap_df = plot_audience_character_bloc_affinity_heatmap(
+        affinity,
+        path,
+    )
+
+    print(f"Saved → {path}")
+
+    path = (
+            PHASE5_TABLES_DIR
+            / "alignment"
+            / "audience_character_bloc_affinity_heatmap.csv"
+    )
+
+    heatmap_df.to_csv(path, index=False)
+    print(heatmap_df.to_string())
+    print(f"Saved → {path}")
+
+    return heatmap_df
+
+
+# ==========================================================
+# 5.2.16 Audience Cluster Character Rating Positivity Bias
+# ==========================================================
+
+def step_5216_cluster_positivity_bias(
+    respondents: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 5.2.16 Audience Cluster Character Rating Positivity Bias ===")
+
+    df = compute_audience_cluster_character_rating_positivity_bias(respondents)
+
+    path = (
+        PHASE5_TABLES_DIR
+        / "alignment"
+        / "cluster_positivity_bias.csv"
+    )
+
+    df.to_csv(path, index=False)
+
+    print(df.to_string())
+    print(f"Saved → {path}")
+
+    return df
+
+
+# ==========================================================
+# 5.2.17 Audience Cluster Character Preference Distance
+# ==========================================================
+
+def step_5217_audience_cluster_character_preference_distance(
+    means: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 5.2.17 Audience Cluster Character Preference Distance ===")
+
+    df = compute_audience_cluster_character_preference_distance(means)
+
+    path = (
+        PHASE5_TABLES_DIR
+        / "alignment"
+        / "audience_cluster_character_preference_distance.csv"
+    )
+
+    df.to_csv(path, index=False)
+
+    print(df.to_string())
+    print(f"Saved → {path}")
+
+    return df
+
+
+# ==========================================================
+# 5.2.18 Audience × Character Ideology Map
+# ==========================================================
+
+def step_5218_audience_character_ideology_map(
+    character_coords: pd.DataFrame,
+    audience_coords: pd.DataFrame,
+) -> None:
+
+    print("\n=== 5.2.18 Audience × Character Ideology Map ===")
+
+    path = (
+        PHASE5_FIGURES_DIR
+        / "alignment"
+        / "audience_character_ideology_map.png"
+    )
+
+    plot_audience_character_ideology_map(
+        character_coords,
+        audience_coords,
+        path,
+    )
+
+    print(f"Saved → {path}")
+
+
+# ==========================================================
+# 5.2.19 Cluster Character Preference Profiles
+# ==========================================================
+
+def step_5219_cluster_character_preference_profiles(
+    respondents: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 5.2.19 Cluster Character Preference Profiles ===")
+
+    path = (
+        PHASE5_FIGURES_DIR
+        / "alignment"
+        / "cluster_character_preference_profiles.png"
+    )
+
+    profile_df = plot_cluster_character_preference_profiles(
+        respondents,
+        path,
+    )
+
+    print(f"Saved → {path}")
+
+    path = (
+        PHASE5_TABLES_DIR
+        / "alignment"
+        / "cluster_character_preference_profiles.csv"
+    )
+
+    profile_df.to_csv(path)
+    print(profile_df.to_string())
+    print(f"Saved → {path}")
+
+    return profile_df
+
+
+# ==========================================================
 # Pipeline Entry
 # ==========================================================
 
@@ -348,6 +604,8 @@ def run_phase5_2() -> None:
     print("=== PHASE 5.2: AUDIENCE–CHARACTER INTERACTION ===")
 
     _ensure_dirs()
+
+    respondents = load_clean_star_wars_with_audience_clusters()
 
     polarization_dir = PHASE4_TABLES_DIR / "polarization"
 
@@ -386,7 +644,24 @@ def run_phase5_2() -> None:
 
     step_5210_character_bloc_summary(blocs)
 
-    step_5211_audience_bloc_affinity(
-        means,
-        blocs,
+    affinity = step_5211_audience_bloc_affinity(means, blocs)
+
+    step_5212_character_bloc_sizes(blocs)
+
+    step_5213_cluster_ideology_index(affinity)
+
+    engagement = step_5214_audience_cluster_engagement_index(respondents)
+
+    heatmap = step_5215_audience_character_bloc_affinity_heatmap(affinity)
+
+    step_5216_cluster_positivity_bias(respondents)
+
+    step_5217_audience_cluster_character_preference_distance(means)
+
+    step_5218_audience_character_ideology_map(
+        character_coords,
+        audience_cluster_coords,
     )
+
+    step_5219_cluster_character_preference_profiles(respondents)
+

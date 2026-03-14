@@ -206,10 +206,28 @@ def compute_character_bloc_summary(
         .reset_index()
         .rename(
             columns={
-                "character_ideological_bloc": "bloc",
+                "character_ideological_bloc": "character_ideological_bloc",
                 "character": "characters",
             }
         )
     )
 
-    return summary.sort_values("bloc")
+    return summary.sort_values("character_ideological_bloc")
+
+
+def compute_character_bloc_sizes(
+    blocs: pd.DataFrame,
+) -> pd.DataFrame:
+    """
+    Compute number of characters in each ideological bloc.
+    """
+
+    sizes = (
+        blocs
+        .groupby("character_ideological_bloc")
+        .size()
+        .reset_index(name="character_count")
+        .sort_values("character_ideological_bloc")
+    )
+
+    return sizes
