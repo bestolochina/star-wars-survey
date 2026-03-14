@@ -1,0 +1,15 @@
+character,ideology_alignment_correlation,polarization_driver
+Emperor Palpatine,0.9890463044142658,ideology-driven
+Boba Fett,0.9519960996249427,ideology-driven
+Darth Vader,0.9308603444753106,ideology-driven
+Yoda,0.8914618506203467,ideology-driven
+Lando Calrissian,0.8033624922539376,ideology-driven
+C-3P0,0.6604527809952399,ideology-driven
+R2-D2,0.6172414092871596,ideology-driven
+Padme Amidala,-0.25410146614347257,mixed
+Princess Leia Organa,-0.2889758931984937,mixed
+Luke Skywalker,-0.2944123392884137,mixed
+Obi Wan Kenobi,-0.30682637089420306,mixed
+Han Solo,-0.5998021437782809,ideology-driven
+Jar-Jar Binks,-0.8549055638833225,ideology-driven
+Anakin Skywalker,-0.9999997552787123,ideology-driven
