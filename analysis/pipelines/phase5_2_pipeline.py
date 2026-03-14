@@ -19,6 +19,7 @@ from analysis.metrics.character_polarization import (
     compute_character_ideological_blocs,
     compute_character_bloc_summary,
     compute_character_bloc_sizes,
+    compute_character_cluster_polarization,
 )
 
 from analysis.metrics.audience_character_alignment import (
@@ -596,6 +597,32 @@ def step_5219_cluster_character_preference_profiles(
 
 
 # ==========================================================
+# 5.2.20 Character Polarization Index
+# ==========================================================
+
+def step_5220_character_cluster_polarization(
+    respondents: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 5.2.20 Character Polarization Index ===")
+
+    df = compute_character_cluster_polarization(respondents)
+
+    path = (
+        PHASE5_TABLES_DIR
+        / "alignment"
+        / "character_cluster_polarization.csv"
+    )
+
+    df.to_csv(path, index=False)
+
+    print(df.to_string())
+    print(f"Saved → {path}")
+
+    return df
+
+
+# ==========================================================
 # Pipeline Entry
 # ==========================================================
 
@@ -664,4 +691,6 @@ def run_phase5_2() -> None:
     )
 
     step_5219_cluster_character_preference_profiles(respondents)
+
+    step_5220_character_cluster_polarization(respondents)
 

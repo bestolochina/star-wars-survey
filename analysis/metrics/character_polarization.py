@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pandas as pd
 import numpy as np
-from src.config import AUDIENCE_CLUSTER_LABELS
+from src.config import AUDIENCE_CLUSTER_LABELS, CHARACTER_RATING_COLUMNS
 from analysis.utils.labels import add_audience_labels
 from sklearn.cluster import AgglomerativeClustering
 
@@ -231,3 +231,45 @@ def compute_character_bloc_sizes(
     )
 
     return sizes
+
+
+# ==========================================================
+# Character Polarization Across Audience Clusters
+# ==========================================================
+
+def compute_character_cluster_polarization(
+    respondents: pd.DataFrame,
+) -> pd.DataFrame:
+
+    rating_cols = list(CHARACTER_RATING_COLUMNS.keys())
+
+    cluster_means = (
+        respondents
+        .groupby("audience_cluster")[rating_cols]
+        .mean()
+    )
+
+    polarization = (
+        cluster_means
+        .max(axis=0) - cluster_means.min(axis=0)
+    )
+
+    df = (
+        polarization
+        .reset_index()
+        .rename(columns={
+            "index": "character_column",
+            0: "polarization_index"
+        })
+    )
+
+    df["character"] = df["character_column"].map(
+        CHARACTER_RATING_COLUMNS
+    )
+
+    df = df[["character", "polarization_index"]]
+
+    return df.sort_values(
+        "polarization_index",
+        ascending=False
+    )
