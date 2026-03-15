@@ -282,3 +282,22 @@ def compute_character_polarization_driver_decomposition(
     )
 
     return df
+
+
+def compute_ideological_sorting_strength(
+    driver_df: pd.DataFrame,
+) -> pd.DataFrame:
+
+    df = driver_df.copy()
+
+    strength = df["ideology_alignment_correlation"].abs().mean()
+
+    result = pd.DataFrame(
+        {
+            "ideological_sorting_strength": [strength],
+            "character_count": [len(df)],
+        }
+    )
+
+    return result
+

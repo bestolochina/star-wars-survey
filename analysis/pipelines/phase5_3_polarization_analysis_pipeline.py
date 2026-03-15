@@ -12,11 +12,13 @@ from analysis.metrics.polarization_analysis import (
     compute_character_polarization_summary,
     compute_narrative_polarization_index,
     compute_character_polarization_driver_decomposition,
+    compute_ideological_sorting_strength,
 )
 
 from analysis.visualization.polarization_plots import (
     plot_cluster_ideological_distance_heatmap,
     plot_character_polarization_ranking,
+    plot_character_polarization_map,
 )
 
 
@@ -233,6 +235,60 @@ def step_537_character_polarization_driver_decomposition(
 
 
 # ==========================================================
+# 5.3.8 Character Polarization Map
+# ==========================================================
+
+def step_538_character_polarization_map(
+    character_summary: pd.DataFrame,
+    driver_df: pd.DataFrame,
+) -> None:
+
+    print("\n=== 5.3.8 Character Polarization Map ===")
+
+    path = (
+        PHASE5_FIGURES_DIR
+        / "polarization"
+        / "character_polarization_map.png"
+    )
+
+    plot_character_polarization_map(
+        character_summary,
+        driver_df,
+        path,
+    )
+
+    print(f"Saved → {path}")
+
+
+# ==========================================================
+# 5.3.9 Ideological Sorting Strength
+# ==========================================================
+
+def step_539_ideological_sorting_strength(
+    driver_df: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 5.3.9 Ideological Sorting Strength ===")
+
+    df = compute_ideological_sorting_strength(
+        driver_df
+    )
+
+    path = (
+        PHASE5_TABLES_DIR
+        / "polarization"
+        / "ideological_sorting_strength.csv"
+    )
+
+    df.to_csv(path, index=False)
+
+    print(df.to_string())
+    print(f"Saved → {path}")
+
+    return df
+
+
+# ==========================================================
 # Pipeline Entry
 # ==========================================================
 
@@ -288,7 +344,17 @@ def run_phase5_3() -> None:
         character_summary
     )
 
-    step_537_character_polarization_driver_decomposition(
+    driver_df = step_537_character_polarization_driver_decomposition(
         alignment_matrix=alignment_matrix,
         cluster_ideology_index=cluster_ideology_index,
     )
+
+    step_538_character_polarization_map(
+        character_summary,
+        driver_df,
+    )
+
+    step_539_ideological_sorting_strength(
+        driver_df
+    )
+

@@ -133,3 +133,65 @@ def plot_cluster_character_preference_polarization(
     plt.close()
 
     return df
+
+
+def plot_character_polarization_map(
+    polarization_summary: pd.DataFrame,
+    driver_df: pd.DataFrame,
+    path,
+) -> None:
+
+    import matplotlib.pyplot as plt
+    import pandas as pd
+
+    df = polarization_summary.merge(
+        driver_df,
+        on="character",
+        how="left",
+    )
+
+    plt.figure(figsize=(7, 6))
+
+    color_map = {
+        "ideology-driven": "red",
+        "mixed": "orange",
+        "taste-driven": "blue",
+    }
+
+    colors = df["polarization_driver"].map(color_map)
+
+    plt.scatter(
+        df["ideology_alignment_correlation"],
+        df["character_rating_range_across_clusters"],
+        c=colors,
+    )
+
+    for _, row in df.iterrows():
+        plt.text(
+            row["ideology_alignment_correlation"],
+            row["character_rating_range_across_clusters"],
+            row["character"],
+            fontsize=8,
+        )
+
+    plt.axvline(0, linestyle="--", linewidth=1)
+    plt.axhline(
+        df["character_rating_range_across_clusters"].mean(),
+        linestyle=":",
+        linewidth=1,
+        color="gray",
+        label="Mean polarization"
+    )
+
+    plt.xlabel("Ideology Alignment Correlation")
+    plt.ylabel("Rating Range Across Clusters")
+    plt.title("Character Polarization Map")
+
+    for label, color in color_map.items():
+        plt.scatter([], [], c=color, label=label)
+
+    plt.legend(title="Polarization Driver")
+
+    plt.tight_layout()
+    plt.savefig(path, dpi=300)
+    plt.close()
