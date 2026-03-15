@@ -247,3 +247,60 @@ def reshape_cluster_character_preference_matrix(
     )
 
     return reshaped
+
+
+# ==========================================================
+# Character Narrative Roles
+# ==========================================================
+
+def compute_character_narrative_roles(
+    polarization_index: pd.DataFrame,
+    polarization_summary: pd.DataFrame,
+) -> pd.DataFrame:
+
+    df = polarization_index.merge(
+        polarization_summary,
+        on="character",
+    )
+
+    # use rating range as primary signal
+    p75 = df["audience_rating_range"].quantile(0.75)
+    p50 = df["audience_rating_range"].quantile(0.50)
+    p25 = df["audience_rating_range"].quantile(0.25)
+
+    roles: list[str] = []
+
+    for _, row in df.iterrows():
+
+        value = row["audience_rating_range"]
+
+        if value >= p75:
+            role = "narrative_lightning_rod"
+
+        elif value >= p50:
+            role = "contested_character"
+
+        elif value >= p25:
+            role = "narrative_catalyst"
+
+        elif value >= 0.35:
+            role = "narrative_consensus"
+
+        else:
+            role = "background_supporting_character"
+
+        roles.append(role)
+
+    df["narrative_role"] = roles
+
+    return df[
+        [
+            "character",
+            "audience_rating_range",
+            "audience_rating_std",
+            "character_mean_rating_divergence_across_clusters",
+            "narrative_role",
+        ]
+    ]
+
+

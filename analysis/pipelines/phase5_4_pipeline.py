@@ -13,6 +13,7 @@ from analysis.metrics.phase5_4_narrative_structure import (
     compute_cluster_narrative_extremeness,
     compute_audience_narrative_archetypes,
     reshape_cluster_character_preference_matrix,
+    compute_character_narrative_roles,
 )
 
 
@@ -175,6 +176,39 @@ def step_545_audience_narrative_archetypes(
 
 
 # ==========================================================
+# 5.4.6 Character Narrative Roles
+# ==========================================================
+
+def step_546_character_narrative_roles() -> None:
+
+    print("\n=== 5.4.6 Character Narrative Roles ===")
+
+    polarization_index = pd.read_csv(
+        PHASE5_TABLES_DIR / "alignment/character_polarization_index.csv"
+    )
+
+    polarization_summary = pd.read_csv(
+        PHASE5_TABLES_DIR / "polarization/character_polarization_summary.csv"
+    )
+
+    roles = compute_character_narrative_roles(
+        polarization_index,
+        polarization_summary,
+    )
+
+    print(roles.to_string())
+
+    path = (
+        PHASE5_TABLES_DIR / "narrative_structure/"
+        "character_narrative_roles.csv"
+    )
+
+    roles.to_csv(path, index=False)
+
+    print(f"Saved → {path}")
+
+
+# ==========================================================
 # Pipeline Entry
 # ==========================================================
 
@@ -243,3 +277,6 @@ def run_phase5_4() -> None:
         coherence,
         anchors,
     )
+
+    step_546_character_narrative_roles()
+
