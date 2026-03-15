@@ -6,6 +6,7 @@ from src.io_utils import load_clean_star_wars
 from analysis.pipelines.phase5_1_pipeline import run_phase5_1
 from analysis.pipelines.phase5_2_pipeline import run_phase5_2
 from analysis.pipelines.phase5_3_polarization_analysis_pipeline import run_phase5_3
+from analysis.pipelines.phase5_4_pipeline import run_phase5_4
 
 
 # ==========================================================
@@ -18,11 +19,13 @@ def main() -> None:
 
     df = load_clean_star_wars()
 
-    run_phase5_1(df)
+    # run_phase5_1(df)
 
-    run_phase5_2()
+    # run_phase5_2()
 
-    run_phase5_3()
+    # run_phase5_3()
+
+    run_phase5_4()
 
 
 if __name__ == "__main__":

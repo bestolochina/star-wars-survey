@@ -1,0 +1,4 @@
+audience_cluster,strongest_affinity_character,strongest_rejection_character,affinity_strength,rejection_strength
+1,Jar-Jar Binks,Obi Wan Kenobi,0.6511472674176058,-0.3774166208539489
+2,Darth Vader,Jar-Jar Binks,0.9746721642100331,-0.9552357113057983
+3,Padme Amidala,Darth Vader,0.45310238879292486,-1.6071167157255026
