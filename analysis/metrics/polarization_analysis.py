@@ -6,6 +6,8 @@ import pandas as pd
 import numpy as np
 from itertools import combinations
 
+from src.config import CHARACTER_RATING_COLUMNS
+
 
 # ==========================================================
 # Cluster Ideological Distance Matrix
@@ -301,3 +303,102 @@ def compute_ideological_sorting_strength(
 
     return result
 
+
+def compute_ideological_polarization_asymmetry(
+    polarization_summary: pd.DataFrame,
+    driver_df: pd.DataFrame,
+) -> pd.DataFrame:
+
+    df = polarization_summary.merge(
+        driver_df[["character", "ideology_alignment_correlation"]],
+        on="character",
+        how="left",
+    )
+
+    pos = df[
+        df["ideology_alignment_correlation"] > 0
+    ]["character_rating_range_across_clusters"]
+
+    neg = df[
+        df["ideology_alignment_correlation"] < 0
+    ]["character_rating_range_across_clusters"]
+
+    mean_pos = pos.mean()
+    mean_neg = neg.mean()
+
+    asymmetry_index = mean_pos - mean_neg
+
+    result = pd.DataFrame(
+        {
+            "mean_polarization_positive_alignment": [mean_pos],
+            "mean_polarization_negative_alignment": [mean_neg],
+            "ideological_polarization_asymmetry_index": [asymmetry_index],
+        }
+    )
+
+    return result
+
+
+def compute_cluster_narrative_profiles(
+    alignment_matrix: pd.DataFrame,
+    cluster_polarization_metrics: pd.DataFrame,
+) -> pd.DataFrame:
+
+    # ==========================================================
+    # Character columns (readable names used in analysis)
+    # ==========================================================
+
+    character_columns = list(CHARACTER_RATING_COLUMNS.values())
+
+    # ==========================================================
+    # Favorite / least liked characters
+    # ==========================================================
+
+    cluster_character_means = (
+        alignment_matrix
+        .groupby("audience_cluster")[character_columns]
+        .mean()
+    )
+
+    favorite_character = cluster_character_means.idxmax(axis=1)
+    least_liked_character = cluster_character_means.idxmin(axis=1)
+
+    # ==========================================================
+    # Base metrics
+    # ==========================================================
+
+    df = cluster_polarization_metrics.copy()
+
+    df["favorite_character"] = df["audience_cluster"].map(favorite_character)
+    df["least_liked_character"] = df["audience_cluster"].map(least_liked_character)
+
+    # ==========================================================
+    # Narrative classification
+    # ==========================================================
+
+    def classify_profile(row: pd.Series) -> str:
+
+        ideology = row["cluster_ideology_position"]
+        bias = row["cluster_character_rating_bias"]
+        engagement = row["cluster_audience_engagement_index"]
+
+        if engagement < 0.5:
+            return "low_engagement_audience"
+
+        # strong ideological alignment
+        if ideology >= 2:
+            return "dark_side_oriented_audience"
+
+        if ideology <= 0.8:
+            return "hero_oriented_audience"
+
+        # highly engaged but ideologically moderate
+        if engagement >= 0.8 and abs(bias) <= 0.05:
+            return "balanced_high_engagement_audience"
+
+        # everything else
+        return "mixed_narrative_audience"
+
+    df["narrative_profile"] = df.apply(classify_profile, axis=1)
+
+    return df

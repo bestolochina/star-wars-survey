@@ -141,9 +141,6 @@ def plot_character_polarization_map(
     path,
 ) -> None:
 
-    import matplotlib.pyplot as plt
-    import pandas as pd
-
     df = polarization_summary.merge(
         driver_df,
         on="character",

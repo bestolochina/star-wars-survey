@@ -13,6 +13,8 @@ from analysis.metrics.polarization_analysis import (
     compute_narrative_polarization_index,
     compute_character_polarization_driver_decomposition,
     compute_ideological_sorting_strength,
+    compute_ideological_polarization_asymmetry,
+    compute_cluster_narrative_profiles,
 )
 
 from analysis.visualization.polarization_plots import (
@@ -289,6 +291,69 @@ def step_539_ideological_sorting_strength(
 
 
 # ==========================================================
+# 5.3.10 Ideological Polarization Asymmetry
+# ==========================================================
+
+def step_5310_ideological_polarization_asymmetry(
+    character_summary: pd.DataFrame,
+    driver_df: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 5.3.10 Ideological Polarization Asymmetry ===")
+
+    df = compute_ideological_polarization_asymmetry(
+        character_summary,
+        driver_df,
+    )
+
+    path = (
+        PHASE5_TABLES_DIR
+        / "polarization"
+        / "ideological_polarization_asymmetry.csv"
+    )
+
+    df.to_csv(path, index=False)
+
+    print(df.to_string())
+    print(f"Saved → {path}")
+
+    return df
+
+
+# ==========================================================
+# 5.3.11 Cluster Narrative Profiles
+# ==========================================================
+
+def step_5311_cluster_narrative_profiles(
+    alignment_matrix: pd.DataFrame,
+    cluster_polarization_metrics: pd.DataFrame,
+) -> pd.DataFrame:
+
+
+    print("\n=== 5.3.11 Cluster Narrative Profiles ===")
+
+    df = compute_cluster_narrative_profiles(
+        alignment_matrix,
+        cluster_polarization_metrics
+    )
+
+    path = (
+        PHASE5_TABLES_DIR
+        / "narrative_profiles"
+        / "cluster_narrative_profiles.csv"
+    )
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    df.to_csv(path, index=False)
+
+    print(df.to_string())
+    print(f"Saved → {path}")
+
+    return df
+
+
+# ==========================================================
 # Pipeline Entry
 # ==========================================================
 
@@ -322,7 +387,7 @@ def run_phase5_3() -> None:
         cluster_ideology_index
     )
 
-    step_532_cluster_ideological_polarization_metrics(
+    cluster_polarization_metrics = step_532_cluster_ideological_polarization_metrics(
         cluster_ideology_index,
         engagement_index,
         positivity_bias,
@@ -356,5 +421,15 @@ def run_phase5_3() -> None:
 
     step_539_ideological_sorting_strength(
         driver_df
+    )
+
+    step_5310_ideological_polarization_asymmetry(
+        character_summary,
+        driver_df,
+    )
+
+    step_5311_cluster_narrative_profiles(
+        alignment_matrix,
+        cluster_polarization_metrics,
     )
 

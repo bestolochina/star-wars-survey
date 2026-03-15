@@ -1,0 +1,4 @@
+audience_cluster,cluster_ideology_position,cluster_audience_engagement_index,audience_cluster_mean_character_rating,cluster_character_rating_bias,favorite_character,least_liked_character,narrative_profile
+3,2.6840441690178576,0.3391003460207612,3.8889684302723424,-0.0931491299909743,Yoda,Darth Vader,low_engagement_audience
+2,0.9909366781028112,0.955069124423963,4.02133182790015,0.0392142676368334,Han Solo,Jar-Jar Binks,balanced_high_engagement_audience
+1,0.5849407358638841,0.9079578139980824,4.008280158636189,0.0261625983728719,Yoda,Jar-Jar Binks,hero_oriented_audience
