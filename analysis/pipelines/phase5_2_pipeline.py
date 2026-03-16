@@ -5,13 +5,14 @@ from __future__ import annotations
 import pandas as pd
 
 from src.io_utils import load_clean_star_wars_with_audience_clusters
-from src.paths import PHASE4_TABLES_DIR, PHASE5_TABLES_DIR, PHASE5_FIGURES_DIR
+from src.paths import PHASE4_TABLES_DIR, PHASE5_TABLES_DIR, PHASE5_FIGURES_DIR, PHASE3_TABLES_DIR
 from src.config import CHARACTER_RATING_COLUMNS
 
 from analysis.visualization.phase5_plots import (
     plot_audience_character_bloc_affinity_heatmap,
     plot_audience_character_ideology_map,
     plot_cluster_character_preference_profiles,
+    plot_audience_character_ideology_alignment_map,
 )
 
 from analysis.metrics.character_polarization import (
@@ -175,14 +176,14 @@ def step_524_character_divergence_across_audience_clusters(
 
 def step_525_audience_cluster_character_ideology_distance(
     audience_cluster_coords: pd.DataFrame,
-    character_coords: pd.DataFrame,
+    character_ideology_coordinates: pd.DataFrame,
 ) -> pd.DataFrame:
 
     print("\n=== 5.2.5 Audience Cluster–Character Ideological Distance ===")
 
     distance = compute_audience_cluster_character_ideology_distance(
         audience_cluster_coords,
-        character_coords,
+        character_ideology_coordinates,
     )
 
     path = (
@@ -535,25 +536,25 @@ def step_5217_audience_cluster_character_preference_distance(
 
 
 # ==========================================================
-# 5.2.18 Audience × Character Ideology Map
+# 5.2.18 Audience × Character Ideology Alignment Map
 # ==========================================================
 
-def step_5218_audience_character_ideology_map(
-    character_coords: pd.DataFrame,
-    audience_coords: pd.DataFrame,
+def step_5218_audience_character_ideology_alignment_map(
+        character_ideology_coordinates: pd.DataFrame,
+        audience_cluster_centroids: pd.DataFrame,
 ) -> None:
 
-    print("\n=== 5.2.18 Audience × Character Ideology Map ===")
+    print("\n=== 5.2.18 Audience × Character Ideology Alignment Map ===")
 
     path = (
         PHASE5_FIGURES_DIR
         / "alignment"
-        / "audience_character_ideology_map.png"
+        / "audience_character_ideology_alignment_map"
     )
 
-    plot_audience_character_ideology_map(
-        character_coords,
-        audience_coords,
+    plot_audience_character_ideology_alignment_map(
+        character_ideology_coordinates,
+        audience_cluster_centroids,
         path,
     )
 
@@ -640,8 +641,12 @@ def run_phase5_2() -> None:
         polarization_dir / "character_cluster_means.csv"
     )
 
-    character_coords = pd.read_csv(
-        polarization_dir / "character_ideology_coordinates.csv"
+    character_ideology_coordinates = pd.read_csv(
+        PHASE4_TABLES_DIR / "polarization" / "character_ideology_coordinates.csv"
+    )
+
+    audience_cluster_centroids = pd.read_csv(
+        PHASE3_TABLES_DIR / "audience_cluster_centroids.csv"
     )
 
     audience_cluster_coords = pd.read_csv(
@@ -658,7 +663,7 @@ def run_phase5_2() -> None:
 
     step_525_audience_cluster_character_ideology_distance(
         audience_cluster_coords,
-        character_coords,
+        character_ideology_coordinates,
     )
 
     step_526_character_segmentation_strength_across_audience_clusters()
@@ -685,9 +690,9 @@ def run_phase5_2() -> None:
 
     step_5217_audience_cluster_character_preference_distance(means)
 
-    step_5218_audience_character_ideology_map(
-        character_coords,
-        audience_cluster_coords,
+    step_5218_audience_character_ideology_alignment_map(
+        character_ideology_coordinates,
+        audience_cluster_centroids
     )
 
     step_5219_cluster_character_preference_profiles(respondents)
