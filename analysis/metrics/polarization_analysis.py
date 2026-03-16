@@ -402,3 +402,31 @@ def compute_cluster_narrative_profiles(
     df["narrative_profile"] = df.apply(classify_profile, axis=1)
 
     return df
+
+
+# ==========================================================
+# 5.3.1 Audience Cluster Character Mean Scores
+# ==========================================================
+
+def compute_audience_cluster_character_mean_scores(
+    alignment_matrix: pd.DataFrame,
+) -> pd.DataFrame:
+
+    """
+    Returns the audience cluster-character mean rating matrix.
+
+    Rows:
+        audience clusters
+
+    Columns:
+        characters
+
+    Values:
+        mean evaluation score
+    """
+
+    mean_scores = alignment_matrix.copy()
+
+    mean_scores.index.name = "audience_cluster"
+
+    return mean_scores

@@ -9,6 +9,8 @@ from scipy.cluster.hierarchy import linkage, fcluster
 from scipy.spatial.distance import squareform
 from sklearn.metrics import silhouette_score, adjusted_rand_score
 
+from analysis.transforms.imputation import knn_impute_matrix
+
 
 def compute_character_correlation(
     matrix: pd.DataFrame,
@@ -522,3 +524,50 @@ def hierarchical_respondent_clustering(
     )
 
     return Z, respondent_cluster_df, model
+
+
+# ==========================================================
+# Audience Cluster Ideological Centroids
+# ==========================================================
+
+def compute_audience_cluster_centroids(
+    matrix: pd.DataFrame,
+    pca,
+    respondent_clusters: pd.DataFrame,
+) -> pd.DataFrame:
+    """
+    Compute ideological centroids of audience clusters
+    in PCA space.
+    """
+
+    # Project respondents into PCA space
+    matrix_imputed = knn_impute_matrix(
+        matrix,
+        n_neighbors=5,
+        weights="distance",
+    )
+
+    pcs = pca.transform(matrix_imputed)
+
+    pcs_df = pd.DataFrame(
+        pcs[:, :2],
+        columns=["PC1", "PC2"],
+        index=matrix.index,
+    )
+
+    pcs_df = pcs_df.reset_index()
+
+    merged = pcs_df.merge(
+        respondent_clusters,
+        on="respondent_id",
+    )
+
+    centroids = (
+        merged
+        .groupby("audience_cluster")[["PC1", "PC2"]]
+        .mean()
+        .reset_index()
+    )
+
+    return centroids
+

@@ -14,7 +14,8 @@ from analysis.metrics.character_audience_structure_validation import (
     compute_silhouette,
     bootstrap_cluster_stability,
     compute_cluster_profiles,
-    hierarchical_respondent_clustering
+    hierarchical_respondent_clustering,
+    compute_audience_cluster_centroids,
 )
 from analysis.visualization.character_audience_structure_visualization import (
     plot_correlation_heatmap,
@@ -209,6 +210,37 @@ def step_321_audience_clustering(
 
 
 # ==========================================================
+# 3.2.2 Audience Cluster Ideological Centroids
+# ==========================================================
+
+def step_322_audience_cluster_centroids(
+        matrix: pd.DataFrame,
+        pca,
+        respondent_clusters: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 3.2.2 Audience Cluster Ideological Centroids ===")
+
+    path = PHASE3_TABLES_DIR / "audience_cluster_centroids.csv"
+
+    centroids = compute_audience_cluster_centroids(
+        matrix,
+        pca,
+        respondent_clusters,
+    )
+
+    centroids.to_csv(
+        path,
+        index=False,
+    )
+
+    print(centroids.to_string(index=False))
+    print(f"Saved → {path}")
+
+    return centroids
+
+
+# ==========================================================
 # 3.3.1 Cluster Validation
 # ==========================================================
 
@@ -322,6 +354,12 @@ def run_phase3(df: pd.DataFrame) -> None:
     audience_clusters = step_321_audience_clustering(
         matrix_std,
         n_clusters=3,
+    )
+
+    step_322_audience_cluster_centroids(
+        matrix_std,
+        pca,
+        audience_clusters,
     )
 
     # ------------------------------------------------

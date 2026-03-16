@@ -15,6 +15,7 @@ from analysis.metrics.polarization_analysis import (
     compute_ideological_sorting_strength,
     compute_ideological_polarization_asymmetry,
     compute_cluster_narrative_profiles,
+    compute_audience_cluster_character_mean_scores,
 )
 
 from analysis.visualization.polarization_plots import (
@@ -354,6 +355,34 @@ def step_5311_cluster_narrative_profiles(
 
 
 # ==========================================================
+# 5.3.12 Audience Cluster Character Mean Scores
+# ==========================================================
+
+def step_5312_audience_cluster_character_mean_scores(
+        audience_character_alignment_matrix: pd.DataFrame
+) -> pd.DataFrame:
+
+    print("\n=== 5.3.12 Audience Cluster Character Mean Scores ===")
+
+    audience_cluster_character_mean_scores = compute_audience_cluster_character_mean_scores(
+        audience_character_alignment_matrix
+    )
+
+    path = (
+            PHASE5_TABLES_DIR
+            / "polarization"
+            / "audience_cluster_character_mean_scores.csv"
+    )
+
+    audience_cluster_character_mean_scores.to_csv(path)
+
+    print(audience_cluster_character_mean_scores.to_string())
+    print(f"Saved → {path}")
+
+    return audience_cluster_character_mean_scores
+
+
+# ==========================================================
 # Pipeline Entry
 # ==========================================================
 
@@ -432,4 +461,6 @@ def run_phase5_3() -> None:
         alignment_matrix,
         cluster_polarization_metrics,
     )
+
+    cluster_character_mean_scores = step_5312_audience_cluster_character_mean_scores(alignment_matrix)
 
