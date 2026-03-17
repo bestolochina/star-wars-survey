@@ -7,6 +7,8 @@ from analysis.pipelines.phase5_1_pipeline import run_phase5_1
 from analysis.pipelines.phase5_2_pipeline import run_phase5_2
 from analysis.pipelines.phase5_3_polarization_analysis_pipeline import run_phase5_3
 from analysis.pipelines.phase5_4_pipeline import run_phase5_4
+from analysis.pipelines.phase5_5_visualization_pipeline import run_phase5_5
+
 
 
 # ==========================================================
@@ -26,6 +28,8 @@ def main() -> None:
     run_phase5_3()
 
     run_phase5_4()
+
+    run_phase5_5()
 
 
 if __name__ == "__main__":

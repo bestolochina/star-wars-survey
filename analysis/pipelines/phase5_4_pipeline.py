@@ -55,7 +55,7 @@ def step_541_cluster_narrative_deviation(
         / "cluster_narrative_deviation_matrix.csv"
     )
 
-    df.to_csv(path, index=False)
+    df.to_csv(path)
 
     print(df.to_string())
     print(f"Saved → {path}")
@@ -212,33 +212,6 @@ def step_546_character_narrative_roles() -> None:
     print(f"Saved → {path}")
 
 
-# # ==========================================================
-# # 5.4.7 Audience Character Ideology Alignment Map
-# # ==========================================================
-#
-# def step_547_audience_character_ideology_alignment_map(
-#         character_ideology_coordinates: pd.DataFrame,
-#         audience_cluster_centroids: pd.DataFrame,
-# ) -> None:
-#
-#     print("\n=== 5.4.7 Audience Character Ideology Alignment Map ===")
-#
-#     path = (
-#             PHASE5_FIGURES_DIR
-#             / "narrative_structure"
-#             / "audience_character_ideology_alignment_map.png"
-#     )
-#
-#     plot_audience_character_ideology_alignment_map(
-#         character_ideology_coordinates,
-#         audience_cluster_centroids,
-#         path,
-#     )
-#
-#     print(f"Saved → {path}")
-
-
-
 # ==========================================================
 # Pipeline Entry
 # ==========================================================
@@ -270,14 +243,6 @@ def run_phase5_4() -> None:
         narrative_dir
         / "cluster_narrative_profiles.csv"
     )
-
-    # character_ideology_coordinates = pd.read_csv(
-    #     PHASE4_TABLES_DIR / "polarization" / "character_ideology_coordinates.csv"
-    # )
-    #
-    # audience_cluster_centroids = pd.read_csv(
-    #     PHASE3_TABLES_DIR / "audience_cluster_centroids.csv"
-    # )
 
     # ------------------------------------------------------
     # Global character baseline
@@ -318,9 +283,4 @@ def run_phase5_4() -> None:
     )
 
     step_546_character_narrative_roles()
-
-    # step_547_audience_character_ideology_alignment_map(
-    #     character_ideology_coordinates,
-    #     audience_cluster_centroids
-    # )
 

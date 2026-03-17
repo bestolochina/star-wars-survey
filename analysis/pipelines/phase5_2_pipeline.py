@@ -10,7 +10,6 @@ from src.config import CHARACTER_RATING_COLUMNS
 
 from analysis.visualization.phase5_plots import (
     plot_audience_character_bloc_affinity_heatmap,
-    plot_audience_character_ideology_map,
     plot_cluster_character_preference_profiles,
     plot_audience_character_ideology_alignment_map,
 )
