@@ -502,3 +502,171 @@ def plot_character_ideology_force_field(
     plt.savefig(output_path, dpi=300)
 
     plt.close()
+
+
+# ==========================================================
+# Audience-Conditioned Character Networks
+# ==========================================================
+
+def plot_audience_conditioned_character_networks(
+    edges_df: pd.DataFrame,
+    community_df: pd.DataFrame,
+    output_path,
+) -> None:
+
+    import matplotlib.pyplot as plt
+    import networkx as nx
+
+    clusters = sorted(edges_df["cluster"].unique())
+    n_clusters = len(clusters)
+
+    # ------------------------------------------------------
+    # Layout setup (small multiples)
+    # ------------------------------------------------------
+
+    cols = min(3, n_clusters)
+    rows = int(np.ceil(n_clusters / cols))
+
+    fig, axes = plt.subplots(
+        rows,
+        cols,
+        figsize=(5 * cols, 5 * rows),
+    )
+
+    # Ensure axes is iterable
+    if n_clusters == 1:
+        axes = np.array([[axes]])
+    axes = axes.flatten()
+
+    # ------------------------------------------------------
+    # Plot each cluster network
+    # ------------------------------------------------------
+
+    for idx, cluster in enumerate(clusters):
+
+        ax = axes[idx]
+
+        cluster_edges = edges_df[
+            edges_df["cluster"] == cluster
+        ]
+
+        cluster_communities = community_df[
+            community_df["cluster"] == cluster
+        ]
+
+        G = nx.Graph()
+
+        # Add edges
+        for _, row in cluster_edges.iterrows():
+            G.add_edge(
+                row["char_1"],
+                row["char_2"],
+                weight=row["weight"],
+            )
+
+        if len(G.nodes) == 0:
+            ax.set_title(f"Cluster {cluster} (No edges)")
+            ax.axis("off")
+            continue
+
+        # --------------------------------------------------
+        # Layout (spring layout = readable structure)
+        # --------------------------------------------------
+
+        pos = nx.spring_layout(
+            G,
+            seed=42,
+            k=0.8,
+        )
+
+        # --------------------------------------------------
+        # Node colors by community
+        # --------------------------------------------------
+
+        community_map = dict(
+            zip(
+                cluster_communities["character"],
+                cluster_communities["community_id"],
+            )
+        )
+
+        node_colors = [
+            community_map.get(node, -1)
+            for node in G.nodes()
+        ]
+
+        # --------------------------------------------------
+        # Edge styling (positive vs negative)
+        # --------------------------------------------------
+
+        weights = np.array([
+            G[u][v]["weight"]
+            for u, v in G.edges()
+        ])
+
+        edge_colors = [
+            "green" if w > 0 else "red"
+            for w in weights
+        ]
+
+        edge_widths = [
+            1 + 4 * abs(w)
+            for w in weights
+        ]
+
+        # --------------------------------------------------
+        # Draw network
+        # --------------------------------------------------
+
+        nx.draw_networkx_nodes(
+            G,
+            pos,
+            node_size=500,
+            node_color=node_colors,
+            cmap=plt.cm.tab10,
+            ax=ax,
+        )
+
+        nx.draw_networkx_edges(
+            G,
+            pos,
+            edge_color=edge_colors,
+            width=edge_widths,
+            alpha=0.7,
+            ax=ax,
+        )
+
+        nx.draw_networkx_labels(
+            G,
+            pos,
+            font_size=8,
+            ax=ax,
+        )
+
+        # --------------------------------------------------
+        # Titles & cleanup
+        # --------------------------------------------------
+
+        ax.set_title(f"Cluster {cluster}")
+        ax.axis("off")
+
+    # ------------------------------------------------------
+    # Remove empty subplots
+    # ------------------------------------------------------
+
+    for j in range(idx + 1, len(axes)):
+        axes[j].axis("off")
+
+    # ------------------------------------------------------
+    # Global title
+    # ------------------------------------------------------
+
+    fig.suptitle(
+        "Audience-Conditioned Character Networks",
+        fontsize=14,
+    )
+
+    plt.tight_layout()
+
+    plt.savefig(output_path, dpi=300)
+    plt.close()
