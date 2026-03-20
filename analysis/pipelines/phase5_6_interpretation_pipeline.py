@@ -11,6 +11,8 @@ from src.paths import (
 )
 
 from analysis.transforms.correlation_matrix_from_edges import build_correlation_matrix_from_edges
+from analysis.transforms.coalition_ideology_mapping import build_coalition_ideology_mapping
+from analysis.interpretation.phase5_7_interpretation import classify_coalition, classify_audience_clusters
 
 from analysis.metrics.phase5_6_narrative_coalitions import (
     build_cluster_conditioned_edges,
@@ -21,6 +23,7 @@ from analysis.metrics.phase5_6_narrative_coalitions import (
 
 from analysis.visualization.phase5_plots import (
     plot_audience_conditioned_character_networks,
+    plot_coalition_ideology_map,
 )
 
 
@@ -159,7 +162,7 @@ def step_566_compute_community_metrics(
 
     print("\n=== 5.6.6 Community Metrics ===")
 
-    path = PHASE5_TABLES_DIR / "narrative_coalitions" / "community_metrics"
+    path = PHASE5_TABLES_DIR / "narrative_coalitions" / "community_metrics.csv"
 
     metrics_df = compute_community_metrics(
         edges_df,
@@ -174,6 +177,119 @@ def step_566_compute_community_metrics(
     print(f"Saved → {path}")
 
     return metrics_df
+
+
+# ==========================================================
+# 5.7.1 Coalition Typology
+# ==========================================================
+
+def step_571_classify_coalitions(
+    metrics_df: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 5.7.1 Coalition Typology ===")
+
+    path = PHASE5_TABLES_DIR / "narrative_coalitions" / "coalition_typology.csv"
+
+    metrics_df = metrics_df.copy()
+
+    metrics_df["coalition_type"] = metrics_df.apply(
+        classify_coalition,
+        axis=1,
+    )
+
+    metrics_df["coalition_type"] = metrics_df.apply(
+        classify_coalition,
+        axis=1,
+    )
+
+    metrics_df.to_csv(path, index=False)
+
+    print(metrics_df.to_string())
+
+    print(f"Saved → {path}")
+
+    return metrics_df
+
+
+# ==========================================================
+# 5.7.2 Audience Typology
+# ==========================================================
+
+def step_572_classify_audience_clusters(
+        metrics_df: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 5.7.2 Audience Typology ===")
+
+    path = PHASE5_TABLES_DIR / "narrative_coalitions" / "audience_typology.csv"
+
+    audience_typology = classify_audience_clusters(metrics_df)
+
+    audience_typology.to_csv(path, index=False)
+
+    print(audience_typology.to_string())
+
+    print(f"Saved → {path}")
+
+    return audience_typology
+
+
+# ==========================================================
+# 5.7.3 Coalition Ideological Positioning
+# ==========================================================
+
+def step_573_map_coalitions_to_ideology(
+    metrics_df: pd.DataFrame,
+    community_df: pd.DataFrame,
+    ideology_df: pd.DataFrame,
+    alignment_matrix: pd.DataFrame
+) -> pd.DataFrame:
+
+    print("\n=== 5.7.3 Coalition Ideology Mapping ===")
+
+    coalition_ideology = build_coalition_ideology_mapping(
+        community_df=community_df,
+        ideology_df=ideology_df,
+        metrics_df=metrics_df,
+        alignment_matrix=alignment_matrix
+    )
+
+    path = (
+        PHASE5_TABLES_DIR
+        / "narrative_coalitions"
+        / "coalition_ideology_mapping.csv"
+    )
+
+    coalition_ideology.to_csv(path, index=False)
+
+    print(coalition_ideology.to_string())
+    print(f"Saved → {path}")
+
+    return coalition_ideology
+
+# ==========================================================
+# 5.7.4 Coalition Ideology Map
+# ==========================================================
+
+def step_574_plot_coalition_ideology(
+    coalition_df: pd.DataFrame,
+) -> None:
+
+    print("\n=== 5.7.4 Coalition Ideology Map ===")
+
+    path = (
+        PHASE5_FIGURES_DIR
+        / "visualizations"
+        / "coalition_ideology_map.png"
+    )
+
+    plot_coalition_ideology_map(
+        coalition_df=coalition_df,
+        output_path=path,
+    )
+
+    print(f"Saved → {path}")
 
 
 # ==========================================================
@@ -222,6 +338,12 @@ def run_phase5_6() -> None:
         common_characters,
     ]
 
+    character_coords = pd.read_csv(
+        PHASE4_TABLES_DIR
+        / "polarization"
+        / "character_ideology_coordinates.csv"
+    )
+
     print(f"Characters used: {len(common_characters)}")
 
     # ------------------------------------------------------
@@ -246,3 +368,16 @@ def run_phase5_6() -> None:
         community_df,
         alignment_matrix,
     )
+
+    metrics_df = step_571_classify_coalitions(metrics_df)
+
+    audience_cluster_interpretation = step_572_classify_audience_clusters(metrics_df)
+
+    coalition_ideology = step_573_map_coalitions_to_ideology(
+        community_df=community_df,
+        metrics_df=metrics_df,
+        ideology_df=character_coords,
+        alignment_matrix=alignment_matrix,
+    )
+
+    step_574_plot_coalition_ideology(coalition_ideology)

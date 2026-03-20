@@ -670,3 +670,101 @@ def plot_audience_conditioned_character_networks(
 
     plt.savefig(output_path, dpi=300)
     plt.close()
+
+
+def plot_coalition_ideology_map(
+    coalition_df: pd.DataFrame,
+    output_path,
+) -> None:
+
+    import matplotlib.pyplot as plt
+
+    clusters = sorted(coalition_df["audience_cluster"].unique())
+
+    fig, axes = plt.subplots(
+        1,
+        len(clusters),
+        figsize=(6 * len(clusters), 6),
+        sharex=True,
+        sharey=True,
+    )
+
+    if len(clusters) == 1:
+        axes = [axes]
+
+    # -------------------------
+    # Color mapping
+    # -------------------------
+    color_map = {
+        "Strong Alliance": "tab:blue",
+        "Contested Bloc": "tab:orange",
+        "Antagonist Bloc": "tab:red",
+    }
+
+    for ax, cluster in zip(axes, clusters):
+
+        df = coalition_df[
+            coalition_df["audience_cluster"] == cluster
+        ]
+
+        for _, row in df.iterrows():
+
+            size = (row["n_characters"] ** 2) * 80
+
+            color = color_map.get(
+                row["coalition_type"],
+                "gray"
+            )
+
+            ax.scatter(
+                row["ideology_axis_1"],
+                row["ideology_axis_2"],
+                s=size,
+                alpha=0.7,
+                c=color,
+                edgecolor="black",
+            )
+
+            # Label with community id
+            ax.text(
+                row["ideology_axis_1"],
+                row["ideology_axis_2"],
+                str(row["community_id"]),
+                ha="center",
+                va="center",
+                fontsize=10,
+                weight="bold",
+            )
+
+        ax.set_title(f"Audience Cluster {cluster}")
+        ax.set_xlabel("Ideology Axis 1")
+        ax.set_ylabel("Ideology Axis 2")
+
+        ax.axhline(0)
+        ax.axvline(0)
+
+    # -------------------------
+    # Legend
+    # -------------------------
+    handles = [
+        plt.Line2D(
+            [0], [0],
+            marker='o',
+            color='w',
+            label=label,
+            markerfacecolor=color,
+            markersize=10,
+            markeredgecolor="black"
+        )
+        for label, color in color_map.items()
+    ]
+
+    fig.legend(
+        handles=handles,
+        loc="upper center",
+        ncol=3,
+    )
+
+    plt.tight_layout()
+    plt.savefig(output_path)
+    plt.close()
