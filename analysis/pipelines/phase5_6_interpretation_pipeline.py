@@ -16,6 +16,7 @@ from analysis.metrics.phase5_6_narrative_coalitions import (
     build_cluster_conditioned_edges,
     filter_edges,
     detect_communities,
+    compute_community_metrics,
 )
 
 from analysis.visualization.phase5_plots import (
@@ -75,7 +76,7 @@ def step_562_filter_edges(
 
     print(f"Edges after filtering: {len(filtered)}")
 
-    print(filtered.groupby("cluster").size())
+    print(filtered.groupby("audience_cluster").size())
 
     return filtered
 
@@ -110,8 +111,8 @@ def step_564_save_tables(
 
     out_dir = PHASE5_TABLES_DIR / "narrative_coalitions"
 
-    edges_path = out_dir / "cluster_character_network_edges.csv"
-    communities_path = out_dir / "cluster_character_communities.csv"
+    edges_path = out_dir / "audience_cluster_character_network_edges.csv"
+    communities_path = out_dir / "audience_cluster_character_communities.csv"
 
     edges_df.to_csv(edges_path, index=False)
     community_df.to_csv(communities_path, index=False)
@@ -144,6 +145,35 @@ def step_565_plot_networks(
     )
 
     print(f"Saved → {path}")
+
+
+# ==========================================================
+# 5.6.6 Community Metrics
+# ==========================================================
+
+def step_566_compute_community_metrics(
+    edges_df: pd.DataFrame,
+    community_df: pd.DataFrame,
+    alignment_matrix: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 5.6.6 Community Metrics ===")
+
+    path = PHASE5_TABLES_DIR / "narrative_coalitions" / "community_metrics"
+
+    metrics_df = compute_community_metrics(
+        edges_df,
+        community_df,
+        alignment_matrix,
+    )
+
+    metrics_df.to_csv(path, index=False)
+
+    print(metrics_df.to_string())
+
+    print(f"Saved → {path}")
+
+    return metrics_df
 
 
 # ==========================================================
@@ -210,3 +240,9 @@ def run_phase5_6() -> None:
     step_564_save_tables(edges_df, community_df)
 
     step_565_plot_networks(edges_df, community_df)
+
+    metrics_df = step_566_compute_community_metrics(
+        edges_df,
+        community_df,
+        alignment_matrix,
+    )

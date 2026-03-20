@@ -1,4 +1,4 @@
-cluster,char_1,char_2,correlation,weight
+audience_cluster,char_1,char_2,correlation,weight
 1,Boba Fett,Emperor Palpatine,0.4822779609847452,0.8087135882497841
 1,Boba Fett,Lando Calrissian,0.4088033236727236,0.6078937632485346
 1,C-3P0,R2-D2,0.7119399934625136,0.2138009678736963

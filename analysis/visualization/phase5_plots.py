@@ -517,7 +517,7 @@ def plot_audience_conditioned_character_networks(
     import matplotlib.pyplot as plt
     import networkx as nx
 
-    clusters = sorted(edges_df["cluster"].unique())
+    clusters = sorted(edges_df["audience_cluster"].unique())
     n_clusters = len(clusters)
 
     # ------------------------------------------------------
@@ -547,11 +547,11 @@ def plot_audience_conditioned_character_networks(
         ax = axes[idx]
 
         cluster_edges = edges_df[
-            edges_df["cluster"] == cluster
+            edges_df["audience_cluster"] == cluster
         ]
 
         cluster_communities = community_df[
-            community_df["cluster"] == cluster
+            community_df["audience_cluster"] == cluster
         ]
 
         G = nx.Graph()
@@ -565,7 +565,7 @@ def plot_audience_conditioned_character_networks(
             )
 
         if len(G.nodes) == 0:
-            ax.set_title(f"Cluster {cluster} (No edges)")
+            ax.set_title(f"Audience Cluster {cluster} (No edges)")
             ax.axis("off")
             continue
 
@@ -647,7 +647,7 @@ def plot_audience_conditioned_character_networks(
         # Titles & cleanup
         # --------------------------------------------------
 
-        ax.set_title(f"Cluster {cluster}")
+        ax.set_title(f"Audience Cluster {cluster}")
         ax.axis("off")
 
     # ------------------------------------------------------

@@ -20,11 +20,10 @@ def build_cluster_conditioned_edges(
 
     characters = correlation_matrix.columns.tolist()
 
-    for cluster in alignment_matrix.index:
+    for audience_cluster in alignment_matrix.index:
 
-        preferences = alignment_matrix.loc[cluster]
+        preferences = alignment_matrix.loc[audience_cluster]
 
-        # Optional normalization (recommended)
         if preferences.std() != 0:
             preferences = (preferences - preferences.mean()) / preferences.std()
 
@@ -44,7 +43,7 @@ def build_cluster_conditioned_edges(
 
                 edges.append(
                     {
-                        "cluster": cluster,
+                        "audience_cluster": audience_cluster,
                         "char_1": char_i,
                         "char_2": char_j,
                         "correlation": corr,
@@ -61,14 +60,8 @@ def build_cluster_conditioned_edges(
 
 def filter_edges(edges_df: pd.DataFrame, top_k: int = 3) -> pd.DataFrame:
 
-    # -------------------------
-    # 1. Keep only positive edges
-    # -------------------------
     edges_df = edges_df[edges_df["weight"] > 0]
 
-    # -------------------------
-    # 2. Strength filter
-    # -------------------------
     edges_df = edges_df[
         (edges_df["correlation"] >= 0.4) &
         (edges_df["weight"] >= 0.2)
@@ -76,13 +69,11 @@ def filter_edges(edges_df: pd.DataFrame, top_k: int = 3) -> pd.DataFrame:
 
     edges_df["abs_weight"] = edges_df["weight"].abs()
 
-    # -------------------------
-    # 3. Symmetric Top-K
-    # -------------------------
     selected_edges = []
 
-    for cluster in edges_df["cluster"].unique():
-        df_c = edges_df[edges_df["cluster"] == cluster]
+    for audience_cluster in edges_df["audience_cluster"].unique():
+
+        df_c = edges_df[edges_df["audience_cluster"] == audience_cluster]
 
         node_edges = {}
 
@@ -93,7 +84,12 @@ def filter_edges(edges_df: pd.DataFrame, top_k: int = 3) -> pd.DataFrame:
         keep = set()
 
         for node, edges in node_edges.items():
-            top_edges = sorted(edges, key=lambda x: abs(x["weight"]), reverse=True)[:top_k]
+            top_edges = sorted(
+                edges,
+                key=lambda x: abs(x["weight"]),
+                reverse=True
+            )[:top_k]
+
             for e in top_edges:
                 keep.add((e["char_1"], e["char_2"]))
 
@@ -105,16 +101,14 @@ def filter_edges(edges_df: pd.DataFrame, top_k: int = 3) -> pd.DataFrame:
 
     edges_df = pd.concat(selected_edges)
 
-    # -------------------------
-    # 4. REMOVE DUPLICATES (← HERE)
-    # -------------------------
+    # Normalize edge direction
     edges_df[["char_1", "char_2"]] = np.sort(
         edges_df[["char_1", "char_2"]].values,
         axis=1
     )
 
     edges_df = edges_df.drop_duplicates(
-        subset=["cluster", "char_1", "char_2"]
+        subset=["audience_cluster", "char_1", "char_2"]
     )
 
     return edges_df.drop(columns="abs_weight")
@@ -131,10 +125,10 @@ def detect_communities(edges_df: pd.DataFrame) -> pd.DataFrame:
 
     results = []
 
-    for cluster in edges_df["cluster"].unique():
+    for audience_cluster in edges_df["audience_cluster"].unique():
 
         cluster_edges = edges_df[
-            edges_df["cluster"] == cluster
+            edges_df["audience_cluster"] == audience_cluster
         ]
 
         G = nx.Graph()
@@ -146,19 +140,74 @@ def detect_communities(edges_df: pd.DataFrame) -> pd.DataFrame:
                 weight=row["weight"],
             )
 
-        # 🔥 Louvain (real communities)
         communities = louvain_communities(
             G,
             weight="weight",
-            resolution=1.2,  # tune this if needed
+            resolution=1.2,
         )
 
         for community_id, nodes in enumerate(communities):
             for node in nodes:
                 results.append({
-                    "cluster": cluster,
+                    "audience_cluster": audience_cluster,
                     "character": node,
                     "community_id": community_id,
                 })
+
+    return pd.DataFrame(results)
+
+
+def compute_community_metrics(
+    edges_df: pd.DataFrame,
+    community_df: pd.DataFrame,
+    alignment_matrix: pd.DataFrame,
+) -> pd.DataFrame:
+
+    results = []
+
+    for audience_cluster in community_df["audience_cluster"].unique():
+
+        cluster_edges = edges_df[
+            edges_df["audience_cluster"] == audience_cluster
+        ]
+
+        cluster_comms = community_df[
+            community_df["audience_cluster"] == audience_cluster
+        ]
+
+        preferences = alignment_matrix.loc[audience_cluster]
+
+        for comm_id in cluster_comms["community_id"].unique():
+
+            members = cluster_comms[
+                cluster_comms["community_id"] == comm_id
+            ]["character"].tolist()
+
+            sub_edges = cluster_edges[
+                (cluster_edges["char_1"].isin(members)) &
+                (cluster_edges["char_2"].isin(members))
+            ]
+
+            n = len(members)
+
+            possible_edges = n * (n - 1) / 2 if n > 1 else 1
+
+            density = len(sub_edges) / possible_edges if possible_edges > 0 else 0
+
+            mean_weight = (
+                sub_edges["weight"].mean()
+                if len(sub_edges) > 0 else 0
+            )
+
+            mean_pref = preferences[members].mean()
+
+            results.append({
+                "audience_cluster": audience_cluster,
+                "community_id": comm_id,
+                "n_characters": n,
+                "density": density,
+                "mean_weight": mean_weight,
+                "mean_preference": mean_pref,
+            })
 
     return pd.DataFrame(results)
