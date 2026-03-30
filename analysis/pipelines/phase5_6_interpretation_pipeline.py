@@ -4,16 +4,21 @@ from __future__ import annotations
 
 import pandas as pd
 
+from analysis.interpretation.audience_narrative_profile import build_audience_narrative_profiles
 from src.paths import (
     PHASE5_TABLES_DIR,
     PHASE4_TABLES_DIR,
     PHASE5_FIGURES_DIR,
+    PHASE3_TABLES_DIR,
 )
 
 from analysis.transforms.correlation_matrix_from_edges import build_correlation_matrix_from_edges
 from analysis.transforms.coalition_ideology_mapping import build_coalition_ideology_mapping
 from analysis.interpretation.phase5_7_interpretation import classify_coalition, classify_audience_clusters
-from analysis.transforms.coalition_roles import add_coalition_ideological_roles
+from analysis.interpretation.coalition_roles import add_coalition_ideological_roles
+from analysis.interpretation.narrative_identity import build_narrative_identity_reports
+from analysis.interpretation.audience_demographic_profile import build_audience_profiles
+from analysis.interpretation.narrative_intensity import compute_narrative_intensity
 
 from analysis.metrics.phase5_6_narrative_coalitions import (
     build_cluster_conditioned_edges,
@@ -318,11 +323,138 @@ def step_575_add_coalition_roles(
 
     return df
 
+
+# ==========================================================
+# 5.8.1 Narrative Identity Reports
+# ==========================================================
+
+def step_581_generate_narrative_identity(
+    coalition_roles: pd.DataFrame,
+    audience_typology: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 5.8.1 Narrative Identity Reports ===")
+
+    narrative_identity = build_narrative_identity_reports(
+        coalition_roles_df=coalition_roles,
+        audience_typology_df=audience_typology,
+    )
+
+    path = (
+        PHASE5_TABLES_DIR
+        / "narrative_coalitions"
+        / "narrative_identity_reports.csv"
+    )
+
+    narrative_identity.to_csv(path, index=False)
+
+    print(narrative_identity.to_string())
+    print(f"Saved → {path}")
+
+    return narrative_identity
+
+
+# ==========================================================
+# 5.8.2 Narrative Intensity
+# ==========================================================
+
+def step_582_compute_narrative_intensity(
+    coalition_roles_df: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 5.8.2 Narrative Intensity ===")
+
+    intensity_df = compute_narrative_intensity(coalition_roles_df)
+
+    path = (
+        PHASE5_TABLES_DIR
+        / "narrative_coalitions"
+        / "narrative_intensity.csv"
+    )
+
+    intensity_df.to_csv(path, index=False)
+
+    print(intensity_df.to_string())
+    print(f"Saved → {path}")
+
+    return intensity_df
+
+
+# ==========================================================
+# 5.8.3 Audience Profiles
+# ==========================================================
+
+def step_583_build_audience_profiles(
+    survey_df: pd.DataFrame,
+    cluster_labels: pd.Series,
+) -> pd.DataFrame:
+
+    print("\n=== 5.8.3 Audience Profiles ===")
+
+    demographics = [
+        "gender",
+        "age_group",
+        "education_level",
+        "household_income",
+    ]
+
+    profile_df = build_audience_profiles(
+        survey_df,
+        cluster_labels,
+        demographics,
+    )
+
+    path = (
+        PHASE5_TABLES_DIR
+        / "narrative_coalitions"
+        / "audience_profiles.csv"
+    )
+
+    profile_df.to_csv(path, index=False)
+
+    print(profile_df.to_string())
+    print(f"Saved → {path}")
+
+    return profile_df
+
+
+# ==========================================================
+# 5.8.4 Audience Narrative Profiles
+# ==========================================================
+
+def step_584_build_audience_narrative_profiles(
+    narrative_identity: pd.DataFrame,
+    narrative_intensity: pd.DataFrame,
+    audience_profiles: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 5.8.4 Audience Narrative Profiles ===")
+
+    result_df = build_audience_narrative_profiles(
+        narrative_identity,
+        narrative_intensity,
+        audience_profiles,
+    )
+
+    path = (
+        PHASE5_TABLES_DIR
+        / "narrative_coalitions"
+        / "audience_narrative_profiles.csv"
+    )
+
+    result_df.to_csv(path, index=False)
+
+    print(result_df.to_string())
+    print(f"Saved → {path}")
+
+    return result_df
+
+
 # ==========================================================
 # Pipeline Entry
 # ==========================================================
 
-def run_phase5_6() -> None:
+def run_phase5_6(clean_dataset: pd.DataFrame) -> None:
 
     print("=== PHASE 5.6: NARRATIVE COALITIONS ===")
 
@@ -372,6 +504,11 @@ def run_phase5_6() -> None:
 
     print(f"Characters used: {len(common_characters)}")
 
+    respondent_cluster_assignments = pd.read_csv(
+        PHASE3_TABLES_DIR
+        / "respondent_cluster_assignments.csv"
+    ).set_index("respondent_id")["audience_cluster"]
+
     # ------------------------------------------------------
     # Run Steps
     # ------------------------------------------------------
@@ -409,3 +546,21 @@ def run_phase5_6() -> None:
     step_574_plot_coalition_ideology(coalition_ideology)
 
     coalition_roles = step_575_add_coalition_roles(coalition_ideology)
+
+    narrative_identity = step_581_generate_narrative_identity(
+        coalition_roles,
+        audience_cluster_interpretation,
+    )
+
+    narrative_intensity = step_582_compute_narrative_intensity(coalition_roles)
+
+    audience_profiles = step_583_build_audience_profiles(
+        survey_df=clean_dataset,
+        cluster_labels=respondent_cluster_assignments
+    )
+
+    audience_narrative_profiles = step_584_build_audience_narrative_profiles(
+        narrative_identity=narrative_identity,
+        narrative_intensity=narrative_intensity,
+        audience_profiles=audience_profiles,
+    )

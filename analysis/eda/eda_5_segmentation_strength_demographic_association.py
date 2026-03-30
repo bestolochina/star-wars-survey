@@ -31,7 +31,7 @@ def main() -> None:
 
     # run_phase5_5()
 
-    run_phase5_6()
+    run_phase5_6(df)
 
 
 if __name__ == "__main__":

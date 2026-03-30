@@ -1,4 +1,4 @@
-# analysis/transforms/coalition_roles.py
+# analysis/interpretation/coalition_roles.py
 
 from __future__ import annotations
 
