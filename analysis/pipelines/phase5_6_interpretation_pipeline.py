@@ -13,6 +13,7 @@ from src.paths import (
 from analysis.transforms.correlation_matrix_from_edges import build_correlation_matrix_from_edges
 from analysis.transforms.coalition_ideology_mapping import build_coalition_ideology_mapping
 from analysis.interpretation.phase5_7_interpretation import classify_coalition, classify_audience_clusters
+from analysis.transforms.coalition_roles import add_coalition_ideological_roles
 
 from analysis.metrics.phase5_6_narrative_coalitions import (
     build_cluster_conditioned_edges,
@@ -293,6 +294,31 @@ def step_574_plot_coalition_ideology(
 
 
 # ==========================================================
+# 5.7.5 Coalition Ideological Roles
+# ==========================================================
+
+def step_575_add_coalition_roles(
+    coalition_ideology: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 5.7.5 Coalition Ideological Roles ===")
+
+    df = add_coalition_ideological_roles(coalition_ideology)
+
+    path = (
+        PHASE5_TABLES_DIR
+        / "narrative_coalitions"
+        / "coalition_ideology_roles.csv"
+    )
+
+    df.to_csv(path, index=False)
+
+    print(df.to_string())
+    print(f"Saved → {path}")
+
+    return df
+
+# ==========================================================
 # Pipeline Entry
 # ==========================================================
 
@@ -381,3 +407,5 @@ def run_phase5_6() -> None:
     )
 
     step_574_plot_coalition_ideology(coalition_ideology)
+
+    coalition_roles = step_575_add_coalition_roles(coalition_ideology)
