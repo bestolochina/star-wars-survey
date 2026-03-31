@@ -768,3 +768,112 @@ def plot_coalition_ideology_map(
     plt.tight_layout()
     plt.savefig(output_path)
     plt.close()
+
+
+def plot_cluster_narrative_role_profiles(
+    df: pd.DataFrame,
+    output_path,
+) -> None:
+
+    roles = [c for c in df.columns if c != "audience_cluster"]
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    for _, row in df.iterrows():
+        cluster = row["audience_cluster"]
+        values = [row[r] for r in roles]
+
+        ax.plot(roles, values, marker="o", label=f"Cluster {cluster}")
+
+    ax.set_title("Audience Narrative Role Affinity Profiles")
+    ax.set_xlabel("Narrative Role")
+    ax.set_ylabel("Mean Evaluation Score")
+
+    ax.legend()
+    plt.xticks(rotation=45)
+
+    plt.tight_layout()
+    plt.savefig(output_path)
+    plt.close()
+
+# analysis/visualization/phase5_plots.py
+
+import matplotlib.pyplot as plt
+
+
+def plot_fandom_ideology_map(
+    df,
+    output_path,
+):
+    fig, ax = plt.subplots(figsize=(10, 8))
+
+    # -------------------------
+    # Role colors (characters)
+    # -------------------------
+    role_colors = {
+        "narrative_lightning_rod": "red",
+        "narrative_consensus": "green",
+        "narrative_catalyst": "orange",
+        "background_supporting_character": "gray",
+        None: "gray",
+    }
+
+    # -------------------------
+    # Plot characters
+    # -------------------------
+    char_df = df[df["entity_type"] == "character"]
+
+    for _, row in char_df.iterrows():
+        ax.scatter(
+            row["ideology_axis_1"],
+            row["ideology_axis_2"],
+            color=role_colors.get(row["narrative_role"], "gray"),
+            s=80,
+            alpha=0.8,
+        )
+
+        ax.text(
+            row["ideology_axis_1"],
+            row["ideology_axis_2"],
+            row["entity_id"],
+            fontsize=8,
+        )
+
+    # -------------------------
+    # Plot clusters
+    # -------------------------
+    cluster_df = df[df["entity_type"] == "audience_cluster"]
+
+    for _, row in cluster_df.iterrows():
+        size = 200 + (row["hero_core_dominance"] or 0) * 50
+
+        ax.scatter(
+            row["ideology_axis_1"],
+            row["ideology_axis_2"],
+            marker="X",
+            s=size,
+            edgecolor="black",
+            linewidth=1.5,
+        )
+
+        ax.text(
+            row["ideology_axis_1"],
+            row["ideology_axis_2"],
+            f"C{int(row['entity_id'])}",
+            fontsize=10,
+            weight="bold",
+        )
+
+    # -------------------------
+    # Axes
+    # -------------------------
+    ax.axhline(0)
+    ax.axvline(0)
+
+    ax.set_xlabel("Ideology Axis 1")
+    ax.set_ylabel("Ideology Axis 2")
+    ax.set_title("Fandom Ideological Landscape")
+
+    plt.tight_layout()
+    plt.savefig(output_path)
+    plt.close()

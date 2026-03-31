@@ -2,9 +2,13 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pandas as pd
 
 from analysis.interpretation.audience_narrative_profile import build_audience_narrative_profiles
+from analysis.transforms.fandom_ideology_map import build_fandom_ideology_map_dataset
+from analysis.transforms.narrative_role_affinity import build_narrative_role_affinity
 from src.paths import (
     PHASE5_TABLES_DIR,
     PHASE4_TABLES_DIR,
@@ -30,6 +34,8 @@ from analysis.metrics.phase5_6_narrative_coalitions import (
 from analysis.visualization.phase5_plots import (
     plot_audience_conditioned_character_networks,
     plot_coalition_ideology_map,
+    plot_fandom_ideology_map,
+    plot_cluster_narrative_role_profiles,
 )
 
 
@@ -325,6 +331,60 @@ def step_575_add_coalition_roles(
 
 
 # ==========================================================
+# 5.7.6 Narrative Role Affinity
+# ==========================================================
+
+def step_576_narrative_role_affinity(
+    alignment_matrix: pd.DataFrame,
+    character_roles: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 5.7.6 Narrative Role Affinity ===")
+
+    df = build_narrative_role_affinity(
+        alignment_matrix,
+        character_roles,
+    )
+
+    path = (
+        PHASE5_TABLES_DIR
+        / "narrative_coalitions"
+        / "cluster_narrative_role_affinity.csv"
+    )
+
+    df.to_csv(path, index=False)
+
+    print(df.to_string())
+    print(f"Saved → {path}")
+
+    return df
+
+
+# ==========================================================
+# 5.7.7 Narrative Role Profiles Plot
+# ==========================================================
+
+def step_577_plot_narrative_role_profiles(
+    role_affinity_df: pd.DataFrame,
+) -> None:
+
+    print("\n=== 5.7.7 Narrative Role Profiles ===")
+
+    path = (
+        PHASE5_FIGURES_DIR
+        / "visualizations"
+        / "cluster_narrative_role_profiles.png"
+    )
+
+    plot_cluster_narrative_role_profiles(
+        role_affinity_df,
+        path,
+    )
+
+    print(f"Saved → {path}")
+
+
+# ==========================================================
 # 5.8.1 Narrative Identity Reports
 # ==========================================================
 
@@ -451,6 +511,63 @@ def step_584_build_audience_narrative_profiles(
 
 
 # ==========================================================
+# 5.9.1 Fandom Ideology Map (Enriched)
+# ==========================================================
+
+def step_591_plot_fandom_ideology_map(
+    character_coords: pd.DataFrame,
+    character_roles: pd.DataFrame,
+    coalition_roles: pd.DataFrame,
+    cluster_coords: pd.DataFrame,
+    audience_typology: pd.DataFrame,
+    narrative_intensity: pd.DataFrame,
+) -> pd.DataFrame:
+
+    print("\n=== 5.9.1 Fandom Ideology Map ===")
+
+    df = build_fandom_ideology_map_dataset(
+        character_coords=character_coords,
+        character_roles=character_roles,
+        coalition_roles=coalition_roles,
+        cluster_coords=cluster_coords,
+        audience_typology=audience_typology,
+        narrative_intensity=narrative_intensity,
+    )
+
+    # -------------------------
+    # Save dataset
+    # -------------------------
+    dataset_path = (
+        PHASE5_TABLES_DIR
+        / "ideology_map"
+        / "fandom_ideology_map_dataset.csv"
+    )
+
+    dataset_path.parent.mkdir(parents=True, exist_ok=True)
+    df.to_csv(dataset_path, index=False)
+
+    print(f"Saved dataset → {dataset_path}")
+
+    # -------------------------
+    # Plot
+    # -------------------------
+    plot_path = (
+        PHASE5_FIGURES_DIR
+        / "visualizations"
+        / "fandom_ideology_map.png"
+    )
+
+    plot_fandom_ideology_map(
+        df=df,
+        output_path=plot_path,
+    )
+
+    print(f"Saved plot → {plot_path}")
+
+    return df
+
+
+# ==========================================================
 # Pipeline Entry
 # ==========================================================
 
@@ -502,6 +619,13 @@ def run_phase5_6(clean_dataset: pd.DataFrame) -> None:
         / "character_ideology_coordinates.csv"
     )
 
+    cluster_coords = pd.read_csv(
+        PHASE4_TABLES_DIR
+        / "polarization"
+        / "audience_cluster_ideology_coordinates.csv"
+    )
+
+
     print(f"Characters used: {len(common_characters)}")
 
     respondent_cluster_assignments = pd.read_csv(
@@ -547,6 +671,19 @@ def run_phase5_6(clean_dataset: pd.DataFrame) -> None:
 
     coalition_roles = step_575_add_coalition_roles(coalition_ideology)
 
+    character_roles = pd.read_csv(
+        PHASE5_TABLES_DIR
+        / "narrative_structure"
+        / "character_narrative_roles.csv"
+    )
+
+    archetype_affinity = step_576_narrative_role_affinity(
+        alignment_matrix,
+        character_roles,
+    )
+
+    step_577_plot_narrative_role_profiles(archetype_affinity)
+
     narrative_identity = step_581_generate_narrative_identity(
         coalition_roles,
         audience_cluster_interpretation,
@@ -564,3 +701,12 @@ def run_phase5_6(clean_dataset: pd.DataFrame) -> None:
         narrative_intensity=narrative_intensity,
         audience_profiles=audience_profiles,
     )
+
+    fandom_map_df = step_591_plot_fandom_ideology_map(
+    character_coords=character_coords,
+    character_roles=character_roles,
+    coalition_roles=coalition_roles,
+    cluster_coords=cluster_coords,
+    audience_typology=audience_cluster_interpretation,
+    narrative_intensity=narrative_intensity,
+)
