@@ -7,7 +7,7 @@ import pandas as pd
 def build_fandom_ideology_map_dataset(
     character_coords: pd.DataFrame,
     character_roles: pd.DataFrame,
-    coalition_roles: pd.DataFrame,
+    character_coalitions: pd.DataFrame,
     cluster_coords: pd.DataFrame,
     audience_typology: pd.DataFrame,
     narrative_intensity: pd.DataFrame,
@@ -48,7 +48,7 @@ def build_fandom_ideology_map_dataset(
 
     # --- Coalition info
     char_df = char_df.merge(
-        coalition_roles[["character", "coalition_id", "ideological_role"]],
+        character_coalitions[["character", "coalition_id", "ideological_role"]],
         on="character",
         how="left",
     )
@@ -70,6 +70,11 @@ def build_fandom_ideology_map_dataset(
     # 2. Audience Clusters
     # ==========================================================
     cluster_df = cluster_coords.copy()
+
+    # Ensure consistent dtype for merging
+    cluster_df["audience_cluster"] = cluster_df["audience_cluster"].astype(int)
+    audience_typology["audience_cluster"] = audience_typology["audience_cluster"].astype(int)
+    narrative_intensity["audience_cluster"] = narrative_intensity["audience_cluster"].astype(int)
 
     # --- Typology
     cluster_df = cluster_df.merge(
