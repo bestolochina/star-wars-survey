@@ -587,6 +587,7 @@ def step_591_build_fandom_ideology_dataset(
 
 def step_592_plot_fandom_ideology_map(
     df: pd.DataFrame,
+    alignment_matrix,
 ) -> None:
 
     print("\n=== 5.9.2 Fandom Ideology Map (Enriched) ===")
@@ -599,6 +600,7 @@ def step_592_plot_fandom_ideology_map(
 
     plot_fandom_ideology_map(
         df=df,
+        alignment_matrix=alignment_matrix,
         output_path=path,
     )
 
@@ -754,5 +756,8 @@ def run_phase5_6(clean_dataset: pd.DataFrame) -> None:
     narrative_intensity=narrative_intensity,
 )
 
-    step_592_plot_fandom_ideology_map(fandom_map_df)
+    step_592_plot_fandom_ideology_map(
+        fandom_map_df,
+        alignment_matrix=alignment_matrix,  # NEW
+    )
 

@@ -6,6 +6,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from scipy.spatial import ConvexHull
 import numpy as np
+from adjustText import adjust_text
 
 
 from src.config import CHARACTER_RATING_COLUMNS
@@ -796,54 +797,106 @@ def plot_cluster_narrative_role_profiles(
     plt.savefig(output_path)
     plt.close()
 
-# analysis/visualization/phase5_plots.py
-
-import matplotlib.pyplot as plt
-
 
 def plot_fandom_ideology_map(
     df,
     output_path,
+    alignment_matrix=None,
 ):
+
     fig, ax = plt.subplots(figsize=(10, 8))
 
     # -------------------------
-    # Role colors (characters)
+    # Coalition colors
     # -------------------------
-    role_colors = {
-        "narrative_lightning_rod": "red",
-        "narrative_consensus": "green",
-        "narrative_catalyst": "orange",
-        "background_supporting_character": "gray",
-        None: "gray",
+    coalition_colors = {
+        "Hero Core": "#2E7D32",
+        "Pragmatic Hero Bloc": "#66BB6A",
+        "Mythic Hero Core": "#1B5E20",
+
+        "Dark Power Core": "#D32F2F",
+        "Contested Dark Core": "#F57C00",
+        "Rejected Dark Core": "#6A1B9A",
+
+        "Narrative Middle Ground": "#9E9E9E",
+        "Complex / Divided Field": "#8E24AA",
+        "Low-Engagement Field": "#90A4AE",
+
+        None: "#BDBDBD",
     }
 
-    # -------------------------
-    # Plot characters
-    # -------------------------
+    marker_map = {
+        "Hero Core": "o",
+        "Pragmatic Hero Bloc": "o",
+        "Mythic Hero Core": "o",
+
+        "Dark Power Core": "s",
+        "Contested Dark Core": "D",
+        "Rejected Dark Core": "^",
+    }
+
     char_df = df[df["entity_type"] == "character"]
+    cluster_df = df[df["entity_type"] == "audience_cluster"]
+
+    # ==========================================================
+    # Coalition regions
+    # ==========================================================
+    for role, group in char_df.groupby("coalition_role"):
+
+        if role is None or len(group) < 3:
+            continue
+
+        points = group[["ideology_axis_1", "ideology_axis_2"]].values
+
+        try:
+            hull = ConvexHull(points)
+            hull_points = points[hull.vertices]
+
+            ax.fill(
+                hull_points[:, 0],
+                hull_points[:, 1],
+                alpha=0.08,
+                color=coalition_colors.get(role, "#ccc"),
+                label=role,
+                zorder=1,
+            )
+        except:
+            continue
+
+    # ==========================================================
+    # Plot characters
+    # ==========================================================
+    texts = []  # collect labels for adjustment
 
     for _, row in char_df.iterrows():
+        color = coalition_colors.get(row["coalition_role"], "#BDBDBD")
+        marker = marker_map.get(row["coalition_role"], "o")
+
         ax.scatter(
             row["ideology_axis_1"],
             row["ideology_axis_2"],
-            color=role_colors.get(row["narrative_role"], "gray"),
-            s=80,
-            alpha=0.8,
+            color=color,
+            s=90,
+            marker=marker,
+            edgecolor="black",
+            linewidth=0.5,
+            alpha=0.9,
+            zorder=3,
         )
 
-        ax.text(
+        # store text (no offset!)
+        txt = ax.text(
             row["ideology_axis_1"],
             row["ideology_axis_2"],
             row["entity_id"],
             fontsize=8,
+            zorder=6,
         )
+        texts.append(txt)
 
-    # -------------------------
-    # Plot clusters
-    # -------------------------
-    cluster_df = df[df["entity_type"] == "audience_cluster"]
-
+    # ==========================================================
+    # Plot clusters (keep clean boxed labels)
+    # ==========================================================
     for _, row in cluster_df.iterrows():
         size = 200 + (row["hero_core_dominance"] or 0) * 50
 
@@ -852,27 +905,124 @@ def plot_fandom_ideology_map(
             row["ideology_axis_2"],
             marker="X",
             s=size,
-            edgecolor="black",
+            color="black",
+            edgecolor="white",
             linewidth=1.5,
+            zorder=5,
         )
 
         ax.text(
-            row["ideology_axis_1"],
-            row["ideology_axis_2"],
+            row["ideology_axis_1"] + 0.04,
+            row["ideology_axis_2"] + 0.04,
             f"C{int(row['entity_id'])}",
-            fontsize=10,
+            fontsize=11,
             weight="bold",
+            color="black",
+            bbox=dict(
+                facecolor="white",
+                edgecolor="black",
+                boxstyle="round,pad=0.2",
+                alpha=0.85,
+            ),
+            zorder=7,
         )
 
-    # -------------------------
-    # Axes
-    # -------------------------
-    ax.axhline(0)
-    ax.axvline(0)
+    # ==========================================================
+    # Attraction / Rejection vectors
+    # ==========================================================
+    if alignment_matrix is not None:
 
-    ax.set_xlabel("Ideology Axis 1")
-    ax.set_ylabel("Ideology Axis 2")
-    ax.set_title("Fandom Ideological Landscape")
+        for _, cluster in cluster_df.iterrows():
+
+            cluster_id = cluster["entity_id"]
+
+            if cluster_id not in alignment_matrix.index:
+                continue
+
+            scores = alignment_matrix.loc[cluster_id]
+
+            top_chars = scores.nlargest(2).index
+            bottom_chars = scores.nsmallest(1).index
+
+            for char in top_chars:
+                target = char_df[char_df["entity_id"] == char]
+                if target.empty:
+                    continue
+
+                ax.annotate(
+                    "",
+                    xy=(target.iloc[0]["ideology_axis_1"], target.iloc[0]["ideology_axis_2"]),
+                    xytext=(cluster["ideology_axis_1"], cluster["ideology_axis_2"]),
+                    arrowprops=dict(
+                        arrowstyle="->",
+                        color="green",
+                        lw=2,
+                        alpha=0.6,
+                        shrinkA=10,
+                        shrinkB=10,
+                    ),
+                    zorder=2,
+                )
+
+            for char in bottom_chars:
+                target = char_df[char_df["entity_id"] == char]
+                if target.empty:
+                    continue
+
+                ax.annotate(
+                    "",
+                    xy=(target.iloc[0]["ideology_axis_1"], target.iloc[0]["ideology_axis_2"]),
+                    xytext=(cluster["ideology_axis_1"], cluster["ideology_axis_2"]),
+                    arrowprops=dict(
+                        arrowstyle="->",
+                        color="red",
+                        lw=2,
+                        linestyle="dashed",
+                        alpha=0.6,
+                        shrinkA=10,
+                        shrinkB=10,
+                    ),
+                    zorder=2,
+                )
+
+    # ==========================================================
+    # Axes & styling
+    # ==========================================================
+    ax.axhline(0, linewidth=1)
+    ax.axvline(0, linewidth=1)
+
+    ax.set_xlabel("Heroism ← Ideology Axis 1 → Cynicism")
+    ax.set_ylabel("Order ↑ Ideology Axis 2 ↓ Chaos")
+
+    ax.set_title("Fandom Ideological Landscape", fontsize=14, weight="bold")
+
+    handles, labels = ax.get_legend_handles_labels()
+    by_label = dict(zip(labels, handles))
+
+    ax.legend(
+        by_label.values(),
+        by_label.keys(),
+        title="Coalition Roles",
+        fontsize=8,
+    )
+
+    # ==========================================================
+    # AUTO-ADJUST LABELS (THE KEY UPGRADE)
+    # ==========================================================
+    adjust_text(
+        texts,
+        ax=ax,
+        expand_points=(1.2, 1.4),
+        expand_text=(1.2, 1.4),
+        force_points=0.3,
+        force_text=0.5,
+        arrowprops=dict(
+            arrowstyle="-",
+            color="gray",
+            lw=0.5,
+            alpha=0.5,
+        ),
+    )
 
     plt.tight_layout()
     plt.savefig(output_path)
