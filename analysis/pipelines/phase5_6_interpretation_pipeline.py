@@ -550,6 +550,7 @@ def step_591_build_fandom_ideology_dataset(
     character_coords: pd.DataFrame,
     character_roles: pd.DataFrame,
     character_coalitions: pd.DataFrame,
+    community_metrics: pd.DataFrame,
     cluster_coords: pd.DataFrame,
     audience_typology: pd.DataFrame,
     narrative_intensity: pd.DataFrame,
@@ -561,6 +562,7 @@ def step_591_build_fandom_ideology_dataset(
         character_coords=character_coords,
         character_roles=character_roles,
         character_coalitions=character_coalitions,
+        community_metrics=community_metrics,
         cluster_coords=cluster_coords,
         audience_typology=audience_typology,
         narrative_intensity=narrative_intensity,
@@ -690,19 +692,19 @@ def run_phase5_6(clean_dataset: pd.DataFrame) -> None:
 
     step_565_plot_networks(edges_df, community_df)
 
-    metrics_df = step_566_compute_community_metrics(
+    community_metrics_df = step_566_compute_community_metrics(
         edges_df,
         community_df,
         alignment_matrix,
     )
 
-    metrics_df = step_571_classify_coalitions(metrics_df)
+    community_metrics_df = step_571_classify_coalitions(community_metrics_df)
 
-    audience_cluster_interpretation = step_572_classify_audience_clusters(metrics_df)
+    audience_cluster_interpretation = step_572_classify_audience_clusters(community_metrics_df)
 
     coalition_ideology = step_573_map_coalitions_to_ideology(
         community_df=community_df,
-        metrics_df=metrics_df,
+        metrics_df=community_metrics_df,
         ideology_df=character_coords,
         alignment_matrix=alignment_matrix,
     )
@@ -748,13 +750,14 @@ def run_phase5_6(clean_dataset: pd.DataFrame) -> None:
     )
 
     fandom_map_df = step_591_build_fandom_ideology_dataset(
-    character_coords=character_coords,
-    character_roles=character_roles,
-    character_coalitions=character_coalitions,
-    cluster_coords=cluster_coords,
-    audience_typology=audience_cluster_interpretation,
-    narrative_intensity=narrative_intensity,
-)
+        character_coords=character_coords,
+        character_roles=character_roles,
+        character_coalitions=character_coalitions,
+        community_metrics=community_metrics_df,  # 🔥 NEW
+        cluster_coords=cluster_coords,
+        audience_typology=audience_cluster_interpretation,
+        narrative_intensity=narrative_intensity,
+    )
 
     step_592_plot_fandom_ideology_map(
         fandom_map_df,
