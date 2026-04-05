@@ -1,28 +1,28 @@
 audience_cluster,character,coalition_id,ideological_role
-1,Lando Calrissian,0,Dark Power Core
 1,Boba Fett,0,Dark Power Core
 1,Emperor Palpatine,0,Dark Power Core
-1,Han Solo,1,Hero Core
-1,Luke Skywalker,1,Hero Core
-1,Princess Leia Organa,1,Hero Core
-1,Obi Wan Kenobi,2,Hero Core
-1,C-3P0,2,Hero Core
-1,R2-D2,2,Hero Core
-1,Yoda,2,Hero Core
+1,Lando Calrissian,0,Dark Power Core
+1,R2-D2,1,Hero Core
+1,Yoda,1,Hero Core
+1,C-3P0,1,Hero Core
+1,Obi Wan Kenobi,1,Hero Core
+1,Luke Skywalker,2,Hero Core
+1,Princess Leia Organa,2,Hero Core
+1,Han Solo,2,Hero Core
+2,R2-D2,0,Hero Core
 2,Han Solo,0,Hero Core
 2,C-3P0,0,Hero Core
-2,R2-D2,0,Hero Core
 2,Luke Skywalker,1,Hero Core
 2,Princess Leia Organa,1,Hero Core
-2,Obi Wan Kenobi,2,Hero Core
 2,Yoda,2,Hero Core
+2,Obi Wan Kenobi,2,Hero Core
 3,Boba Fett,0,Rejected Dark Core
-3,Darth Vader,0,Rejected Dark Core
 3,Emperor Palpatine,0,Rejected Dark Core
-3,C-3P0,1,Hero Core
+3,Darth Vader,0,Rejected Dark Core
 3,R2-D2,1,Hero Core
 3,Yoda,1,Hero Core
-3,Han Solo,2,Hero Core
+3,C-3P0,1,Hero Core
 3,Luke Skywalker,2,Hero Core
 3,Princess Leia Organa,2,Hero Core
+3,Han Solo,2,Hero Core
 3,Obi Wan Kenobi,2,Hero Core

@@ -803,19 +803,37 @@ def plot_fandom_ideology_map(
     output_path,
     alignment_matrix=None,
 ):
+    import matplotlib.pyplot as plt
+    import numpy as np
+    import pandas as pd
+    from scipy.stats import gaussian_kde
+    from matplotlib.lines import Line2D
+
+    # ---------------------------------------
+    # Style (Nature / Science-like)
+    # ---------------------------------------
+    plt.rcParams.update({
+        "font.family": "DejaVu Sans",
+        "font.size": 10,
+        "axes.titlesize": 14,
+        "axes.labelsize": 11,
+        "axes.linewidth": 0.8,
+        "xtick.labelsize": 9,
+        "ytick.labelsize": 9,
+    })
 
     fig, ax = plt.subplots(figsize=(12, 9))
 
-    # -------------------------
-    # Coalition colors
-    # -------------------------
+    # ---------------------------------------
+    # Color system (balanced + readable)
+    # ---------------------------------------
     coalition_colors = {
         "Hero Core": "#2E7D32",
         "Pragmatic Hero Bloc": "#66BB6A",
         "Mythic Hero Core": "#1B5E20",
 
-        "Dark Power Core": "#D32F2F",
-        "Contested Dark Core": "#F57C00",
+        "Dark Power Core": "#C62828",
+        "Contested Dark Core": "#EF6C00",
         "Rejected Dark Core": "#6A1B9A",
 
         "Narrative Middle Ground": "#9E9E9E",
@@ -835,24 +853,20 @@ def plot_fandom_ideology_map(
     char_df = df[df["entity_type"] == "character"].copy()
     cluster_df = df[df["entity_type"] == "audience_cluster"].copy()
 
-    # -------------------------
-    # Normalize strength (SAFE)
-    # -------------------------
-    if "total_strength" in char_df.columns:
-        char_df["total_strength"] = char_df["total_strength"].fillna(0)
+    # ---------------------------------------
+    # Strength normalization (robust)
+    # ---------------------------------------
+    char_df["total_strength"] = char_df.get("total_strength", 0).fillna(0)
+    max_strength = char_df["total_strength"].max()
 
-        max_strength = char_df["total_strength"].max()
-
-        if max_strength == 0 or pd.isna(max_strength):
-            char_df["strength_norm"] = 0.5
-        else:
-            char_df["strength_norm"] = char_df["total_strength"] / max_strength
-    else:
+    if max_strength == 0 or pd.isna(max_strength):
         char_df["strength_norm"] = 0.5
+    else:
+        char_df["strength_norm"] = char_df["total_strength"] / max_strength
 
-    # -------------------------
-    # KDE Coalition regions
-    # -------------------------
+    # ---------------------------------------
+    # Axis limits (expanded)
+    # ---------------------------------------
     margin = 0.5
 
     xmin = char_df["ideology_axis_1"].min() - margin
@@ -863,9 +877,29 @@ def plot_fandom_ideology_map(
     ax.set_xlim(xmin, xmax)
     ax.set_ylim(ymin, ymax)
 
-    xx, yy = np.mgrid[xmin:xmax:150j, ymin:ymax:150j]
+    # ---------------------------------------
+    # Grid for KDE
+    # ---------------------------------------
+    xx, yy = np.mgrid[xmin:xmax:200j, ymin:ymax:200j]
     positions = np.vstack([xx.ravel(), yy.ravel()])
 
+    # ---------------------------------------
+    # Smooth edge fade (journal style)
+    # ---------------------------------------
+    def _edge_fade_mask(xx, yy):
+        x_center = (xx.max() + xx.min()) / 2
+        y_center = (yy.max() + yy.min()) / 2
+
+        x_norm = (xx - x_center) / (xx.max() - xx.min())
+        y_norm = (yy - y_center) / (yy.max() - yy.min())
+
+        radius = np.sqrt(x_norm**2 + y_norm**2)
+
+        return np.exp(-3.0 * radius**2)
+
+    # ---------------------------------------
+    # KDE Coalition fields
+    # ---------------------------------------
     for role, group in char_df.groupby("coalition_role"):
 
         if pd.isna(role):
@@ -878,72 +912,68 @@ def plot_fandom_ideology_map(
 
         x = group["ideology_axis_1"].values
         y = group["ideology_axis_2"].values
-
         weights = group["strength_norm"].values
 
         if np.all(weights == 0):
             weights = None
 
         try:
-            kde = gaussian_kde(
-                np.vstack([x, y]),
-                weights=weights,
-            )
-
+            kde = gaussian_kde(np.vstack([x, y]), weights=weights)
             z = np.reshape(kde(positions).T, xx.shape)
 
-            if np.max(z) == 0 or np.isnan(z).all():
+            if np.isnan(z).all():
                 continue
 
-            z = z / np.max(z)
+            z = z / np.nanmax(z)
+
+            # Smooth fade
+            z *= _edge_fade_mask(xx, yy)
 
             ax.contourf(
                 xx,
                 yy,
                 z,
-                levels=[0.1, 0.3, 0.5, 0.7, 0.9],
-                alpha=0.25,
+                levels=np.linspace(0.05, 0.8, 6),
                 colors=[coalition_colors.get(role, "#ccc")],
+                alpha=0.25,
+                antialiased=True,
                 zorder=1,
             )
 
         except Exception:
             continue
 
-    # -------------------------
-    # Plot characters (scaled)
-    # -------------------------
+    # ---------------------------------------
+    # Characters (weighted size)
+    # ---------------------------------------
     for _, row in char_df.iterrows():
-
-        color = coalition_colors.get(row["coalition_role"], "#BDBDBD")
-        marker = marker_map.get(row["coalition_role"], "o")
 
         norm = row.get("strength_norm", 0.5)
         if pd.isna(norm):
             norm = 0.5
 
-        size = 50 + norm * 250
+        size = 60 + norm * 260
 
         ax.scatter(
             row["ideology_axis_1"],
             row["ideology_axis_2"],
-            color=color,
+            color=coalition_colors.get(row["coalition_role"], "#BDBDBD"),
             s=size,
-            marker=marker,
+            marker=marker_map.get(row["coalition_role"], "o"),
             edgecolor="black",
-            linewidth=0.5,
-            alpha=0.9,
+            linewidth=0.6,
+            alpha=0.95,
             zorder=3,
         )
 
-    # -------------------------
-    # Label characters
-    # -------------------------
+    # ---------------------------------------
+    # Labels (cleaner jitter)
+    # ---------------------------------------
     np.random.seed(42)
 
     for _, row in char_df.iterrows():
-        dx = (np.random.rand() - 0.5) * 0.08
-        dy = (np.random.rand() - 0.5) * 0.08
+        dx = (np.random.rand() - 0.5) * 0.06
+        dy = (np.random.rand() - 0.5) * 0.06
 
         ax.text(
             row["ideology_axis_1"] + dx,
@@ -954,19 +984,19 @@ def plot_fandom_ideology_map(
             zorder=4,
         )
 
-    # -------------------------
-    # Plot clusters
-    # -------------------------
+    # ---------------------------------------
+    # Clusters (bold anchors)
+    # ---------------------------------------
     for _, row in cluster_df.iterrows():
 
-        size = 300 + (row.get("hero_core_dominance", 0) or 0) * 80
+        size = 320 + (row.get("hero_core_dominance", 0) or 0) * 80
 
         ax.scatter(
             row["ideology_axis_1"],
             row["ideology_axis_2"],
             marker="X",
             s=size,
-            color="#000000",
+            color="black",
             edgecolor="white",
             linewidth=2,
             zorder=6,
@@ -978,92 +1008,59 @@ def plot_fandom_ideology_map(
             f"C{int(row['entity_id'])}",
             fontsize=11,
             weight="bold",
-            color="black",
+            ha="center",
+            va="center",
+            color="white",
             zorder=7,
         )
 
-    # -------------------------
-    # Attraction / Rejection vectors
-    # -------------------------
-    if alignment_matrix is not None:
-
-        for _, cluster in cluster_df.iterrows():
-
-            cluster_id = cluster["entity_id"]
-
-            if cluster_id not in alignment_matrix.index:
-                continue
-
-            scores = alignment_matrix.loc[cluster_id]
-
-            top_chars = scores.nlargest(2).index
-            bottom_chars = scores.nsmallest(1).index
-
-            for char in top_chars:
-                target = char_df[char_df["entity_id"] == char]
-                if target.empty:
-                    continue
-
-                ax.annotate(
-                    "",
-                    xy=(target.iloc[0]["ideology_axis_1"], target.iloc[0]["ideology_axis_2"]),
-                    xytext=(cluster["ideology_axis_1"], cluster["ideology_axis_2"]),
-                    arrowprops=dict(
-                        arrowstyle="->",
-                        color="green",
-                        lw=2,
-                        alpha=0.6,
-                        shrinkA=10,
-                        shrinkB=5,
-                    ),
-                    zorder=2,
-                )
-
-            for char in bottom_chars:
-                target = char_df[char_df["entity_id"] == char]
-                if target.empty:
-                    continue
-
-                ax.annotate(
-                    "",
-                    xy=(target.iloc[0]["ideology_axis_1"], target.iloc[0]["ideology_axis_2"]),
-                    xytext=(cluster["ideology_axis_1"], cluster["ideology_axis_2"]),
-                    arrowprops=dict(
-                        arrowstyle="->",
-                        color="red",
-                        lw=2,
-                        linestyle="dashed",
-                        alpha=0.6,
-                        shrinkA=10,
-                        shrinkB=5,
-                    ),
-                    zorder=2,
-                )
-
-    # -------------------------
-    # Axes
-    # -------------------------
-    ax.axhline(0, color="black", linewidth=1)
-    ax.axvline(0, color="black", linewidth=1)
+    # ---------------------------------------
+    # Axes styling
+    # ---------------------------------------
+    ax.axhline(0, color="black", linewidth=0.8, alpha=0.6)
+    ax.axvline(0, color="black", linewidth=0.8, alpha=0.6)
 
     ax.set_xlabel("Dark Alignment  ←  Ideology Axis 1  →  Hero Alignment")
     ax.set_ylabel("Moderate / Balanced  ↓  Ideology Axis 2  ↑  Extreme / Polarized")
 
-    ax.set_title("Fandom Ideological Landscape (KDE Weighted)")
+    ax.set_title("Fandom Ideological Landscape (Weighted KDE)", pad=12)
 
-    # -------------------------
-    # Legend
-    # -------------------------
-    handles, labels = ax.get_legend_handles_labels()
-    by_label = dict(zip(labels, handles))
+    # ---------------------------------------
+    # CLEAN LEGEND (manual, journal style)
+    # ---------------------------------------
+    legend_elements = []
+
+    for role, color in coalition_colors.items():
+        if role is None:
+            continue
+
+        legend_elements.append(
+            Line2D(
+                [0],
+                [0],
+                marker=marker_map.get(role, "o"),
+                color="w",
+                label=role,
+                markerfacecolor=color,
+                markeredgecolor="black",
+                markersize=8,
+            )
+        )
 
     ax.legend(
-        by_label.values(),
-        by_label.keys(),
+        handles=legend_elements,
         title="Coalition Roles",
+        frameon=False,
         fontsize=9,
+        title_fontsize=10,
         loc="upper right",
     )
+
+    # ---------------------------------------
+    # Final polish
+    # ---------------------------------------
+    for spine in ["top", "right"]:
+        ax.spines[spine].set_visible(False)
 
     plt.tight_layout()
     plt.savefig(output_path, dpi=300)
