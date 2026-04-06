@@ -1,18 +1,18 @@
-entity_id,entity_type,ideology_axis_1,ideology_axis_2,narrative_role,coalition_role,total_strength,cluster_type,polarization_strength,hero_core_dominance
-Anakin Skywalker,character,-0.3235117630620598,-0.3452140333176526,narrative_consensus,,,,,
-Boba Fett,character,-1.4101986022934556,0.4232243022220325,narrative_lightning_rod,Dark Power Core,10.80978544753123,,,
-C-3P0,character,0.9494547366756256,-0.1470837858426506,contested_character,Hero Core,45.5988332582169,,,
-Darth Vader,character,-1.6308467793278123,1.460900976676251,narrative_lightning_rod,Rejected Dark Core,6.31589187068639,,,
-Emperor Palpatine,character,-2.0101364122916,0.3124183659790724,narrative_lightning_rod,Dark Power Core,10.80978544753123,,,
-Han Solo,character,1.2784444313886634,0.269484875607597,contested_character,Hero Core,45.887674788468324,,,
-Jar-Jar Binks,character,-1.859194922900127,-1.3650624033047278,narrative_lightning_rod,,,,,
-Lando Calrissian,character,-0.5696253253093554,-0.0684740994657986,background_supporting_character,Dark Power Core,10.80978544753123,,,
-Luke Skywalker,character,1.141384570233659,0.1322152910713621,narrative_consensus,Hero Core,41.39365397670574,,,
-Obi Wan Kenobi,character,1.2608669638877044,0.1577079452936626,narrative_catalyst,Hero Core,45.7074625530448,,,
-Padme Amidala,character,-0.3184155024522036,-0.9015103710766476,contested_character,,,,,
-Princess Leia Organa,character,1.1199621974133644,0.1216071305873906,narrative_catalyst,Hero Core,41.39365397670574,,,
-R2-D2,character,1.1521013461830305,-0.0311253956418184,narrative_catalyst,Hero Core,45.5988332582169,,,
-Yoda,character,1.219715061854578,-0.019088798788062,narrative_consensus,Hero Core,41.09117439341021,,,
-1,audience_cluster,0.0905732144479436,0.0115105847364093,,,,Fragmented Narrative,2.4907289073037093,2.8588327086969394
-2,audience_cluster,0.2121202579448891,0.0772551855579613,,,,Multi-Core Strong Narrative,0.0,4.708114440195526
-3,audience_cluster,0.3302149155927388,-0.0564159397360177,,,,Polarized Narrative,2.8218026385251407,3.1952978242146033
+entity_id,entity_type,ideology_axis_1,ideology_axis_2,narrative_role,dominant_ideological_role,total_strength,polarization_index,cluster_type,polarization_strength,hero_core_dominance,cluster_size
+Anakin Skywalker,character,-0.3235117630620598,-0.3452140333176526,narrative_consensus,Unaligned,0.0,0.317702778356687,,,,
+Boba Fett,character,-1.4101986022934556,0.4232243022220325,narrative_lightning_rod,Dark Power Core,10.80978544753123,0.7478939924983093,,,,
+C-3P0,character,0.9494547366756256,-0.1470837858426506,contested_character,Hero Core,45.5988332582169,0.432820772694401,,,,
+Darth Vader,character,-1.6308467793278123,1.460900976676251,narrative_lightning_rod,Rejected Dark Core,6.315891870686391,1.7211925866236903,,,,
+Emperor Palpatine,character,-2.0101364122916,0.3124183659790724,narrative_lightning_rod,Dark Power Core,10.80978544753123,1.0170681007685414,,,,
+Han Solo,character,1.2784444313886634,0.269484875607597,contested_character,Hero Core,45.887674788468324,0.4091331564036231,,,,
+Jar-Jar Binks,character,-1.859194922900127,-1.3650624033047278,narrative_lightning_rod,Unaligned,0.0,1.0709219858156027,,,,
+Lando Calrissian,character,-0.5696253253093554,-0.0684740994657986,background_supporting_character,Dark Power Core,10.80978544753123,0.144859264477121,,,,
+Luke Skywalker,character,1.141384570233659,0.1322152910713621,narrative_consensus,Hero Core,41.39365397670574,0.2974567129248721,,,,
+Obi Wan Kenobi,character,1.2608669638877044,0.1577079452936626,narrative_catalyst,Hero Core,45.707462553044806,0.3816721132897604,,,,
+Padme Amidala,character,-0.3184155024522036,-0.9015103710766476,contested_character,Unaligned,0.0,0.6847090449082861,,,,
+Princess Leia Organa,character,1.1199621974133644,0.1216071305873906,narrative_catalyst,Hero Core,41.39365397670574,0.3327149041434758,,,,
+R2-D2,character,1.1521013461830305,-0.0311253956418184,narrative_catalyst,Hero Core,45.5988332582169,0.3270141689936914,,,,
+Yoda,character,1.219715061854578,-0.019088798788062,narrative_consensus,Hero Core,41.09117439341021,0.2711765764049818,,,,
+cluster_1,audience_cluster,0.0905732144479436,0.0115105847364093,,,,,Fragmented Narrative,2.4907289073037093,2.858832708696939,148
+cluster_2,audience_cluster,0.2121202579448891,0.0772551855579613,,,,,Multi-Core Strong Narrative,0.0,4.708114440195526,190
+cluster_3,audience_cluster,0.3302149155927388,-0.0564159397360177,,,,,Polarized Narrative,2.8218026385251402,3.1952978242146033,293

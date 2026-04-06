@@ -5,55 +5,88 @@ import pandas as pd
 
 
 # ==========================================================
+# Helper: Normalize cluster IDs
+# ==========================================================
+def _normalize_cluster_id(df: pd.DataFrame, col: str = "audience_cluster") -> pd.DataFrame:
+    df = df.copy()
+
+    if col in df.columns:
+        df[col] = pd.to_numeric(df[col], errors="coerce").astype("Int64")
+
+    return df
+
+
+# ==========================================================
 # Helper: Aggregate coalition roles per character (WEIGHTED)
 # ==========================================================
 def _aggregate_character_coalitions(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Collapse multiple coalition assignments per character
-    into a single dominant coalition using weighted strength.
-
-    Strength = mean_preference * n_characters
-    """
-
     df = df.copy()
 
-    # -----------------------------------
-    # Compute strength
-    # -----------------------------------
-    if "mean_preference" in df.columns and "n_characters" in df.columns:
+    if {"mean_preference", "n_characters"}.issubset(df.columns):
         df["strength"] = df["mean_preference"] * df["n_characters"]
-
     elif "mean_preference" in df.columns:
         df["strength"] = df["mean_preference"]
-
     elif "mean_weight" in df.columns:
         df["strength"] = df["mean_weight"]
-
     else:
-        df["strength"] = 1  # fallback
+        df["strength"] = 1.0
 
-    # -----------------------------------
-    # Aggregate strength per coalition
-    # -----------------------------------
     grouped = (
-        df.groupby(
-            ["character", "ideological_role"],  # 🔥 REMOVE coalition_id here
-            as_index=False,
-        )
+        df.groupby(["character", "ideological_role"], as_index=False)
         .agg(total_strength=("strength", "sum"))
     )
 
-    # -----------------------------------
-    # Pick strongest coalition per character
-    # -----------------------------------
     idx = grouped.groupby("character")["total_strength"].idxmax()
-    result = grouped.loc[idx].copy()
+    dominant = grouped.loc[idx].copy()
 
-    result = result.rename(columns={
-        "ideological_role": "coalition_role"
+    dominant = dominant.rename(columns={
+        "ideological_role": "dominant_ideological_role"
     })
 
-    return result[["character", "coalition_role", "total_strength"]]
+    return dominant[
+        ["character", "dominant_ideological_role", "total_strength"]
+    ]
+
+
+# ==========================================================
+# Helper: Normalize polarization input
+# ==========================================================
+def _prepare_character_polarization(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.copy()
+
+    if "polarization_index" in df.columns:
+        return df[["character", "polarization_index"]]
+
+    if "character_mean_rating_divergence_across_clusters" in df.columns:
+        return df.rename(columns={
+            "character_mean_rating_divergence_across_clusters": "polarization_index"
+        })[["character", "polarization_index"]]
+
+    if "character_rating_range_across_clusters" in df.columns:
+        return df.rename(columns={
+            "character_rating_range_across_clusters": "polarization_index"
+        })[["character", "polarization_index"]]
+
+    raise ValueError("Unsupported character_polarization format")
+
+
+# ==========================================================
+# Helper: Extract cluster size
+# ==========================================================
+def _extract_cluster_size(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.copy()
+
+    if "cluster_size" in df.columns:
+        return df[["audience_cluster", "cluster_size"]]
+
+    if {"audience_cluster", "count"}.issubset(df.columns):
+        return (
+            df.groupby("audience_cluster")["count"]
+            .max()
+            .reset_index(name="cluster_size")
+        )
+
+    raise ValueError("Unsupported audience_profiles format")
 
 
 # ==========================================================
@@ -63,14 +96,26 @@ def build_fandom_ideology_map_dataset(
     character_coords: pd.DataFrame,
     character_roles: pd.DataFrame,
     character_coalitions: pd.DataFrame,
-    community_metrics: pd.DataFrame,   # 🔥 NEW
+    community_metrics: pd.DataFrame,
     cluster_coords: pd.DataFrame,
     audience_typology: pd.DataFrame,
     narrative_intensity: pd.DataFrame,
+    character_polarization: pd.DataFrame | None = None,
+    audience_profiles: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
 
     # ==========================================================
-    # 1. Enrich character_coalitions with strength
+    # Normalize cluster IDs
+    # ==========================================================
+    cluster_coords = _normalize_cluster_id(cluster_coords)
+    audience_typology = _normalize_cluster_id(audience_typology)
+    narrative_intensity = _normalize_cluster_id(narrative_intensity)
+
+    if audience_profiles is not None:
+        audience_profiles = _normalize_cluster_id(audience_profiles)
+
+    # ==========================================================
+    # 1. Enrich coalition data
     # ==========================================================
     coalitions = character_coalitions.copy()
 
@@ -87,24 +132,19 @@ def build_fandom_ideology_map_dataset(
         left_on=["audience_cluster", "coalition_id"],
         right_on=["audience_cluster", "community_id"],
         how="left",
-    )
-
-    # Optional cleanup
-    coalitions = coalitions.drop(columns=["community_id"])
+    ).drop(columns=["community_id"], errors="ignore")
 
     # ==========================================================
     # 2. Characters
     # ==========================================================
     char_df = character_coords.copy()
 
-    # --- Roles
     char_df = char_df.merge(
         character_roles[["character", "narrative_role"]],
         on="character",
         how="left",
     )
 
-    # --- Aggregate coalition roles (weighted)
     coalition_agg = _aggregate_character_coalitions(coalitions)
 
     char_df = char_df.merge(
@@ -113,53 +153,71 @@ def build_fandom_ideology_map_dataset(
         how="left",
     )
 
-    # --- Standardize
-    char_df = char_df.rename(columns={
-        "character": "entity_id",
-    })
+    # --- Polarization
+    if character_polarization is not None:
+        pol_df = _prepare_character_polarization(character_polarization)
 
+        char_df = char_df.merge(
+            pol_df,
+            on="character",
+            how="left",
+        )
+    else:
+        char_df["polarization_index"] = None
+
+    # --- Fill missing meaningfully
+    char_df["dominant_ideological_role"] = char_df["dominant_ideological_role"].fillna("Unaligned")
+    char_df["total_strength"] = char_df["total_strength"].fillna(0)
+
+    char_df = char_df.rename(columns={"character": "entity_id"})
     char_df["entity_type"] = "character"
 
-    # --- Fill cluster-only fields
     char_df["cluster_type"] = None
     char_df["polarization_strength"] = None
     char_df["hero_core_dominance"] = None
+    char_df["cluster_size"] = None
 
     # ==========================================================
-    # 3. Audience Clusters
+    # 3. Audience clusters
     # ==========================================================
     cluster_df = cluster_coords.copy()
 
-    # dtype safety
-    cluster_df["audience_cluster"] = cluster_df["audience_cluster"].astype(int)
-    audience_typology["audience_cluster"] = audience_typology["audience_cluster"].astype(int)
-    narrative_intensity["audience_cluster"] = narrative_intensity["audience_cluster"].astype(int)
-
-    # --- Merge typology
     cluster_df = cluster_df.merge(
         audience_typology,
         on="audience_cluster",
         how="left",
     )
 
-    # --- Merge intensity
     cluster_df = cluster_df.merge(
         narrative_intensity,
         on="audience_cluster",
         how="left",
     )
 
-    # --- Standardize
+    if audience_profiles is not None:
+        cluster_size_df = _extract_cluster_size(audience_profiles)
+
+        cluster_df = cluster_df.merge(
+            cluster_size_df,
+            on="audience_cluster",
+            how="left",
+        )
+    else:
+        cluster_df["cluster_size"] = None
+
     cluster_df = cluster_df.rename(columns={
         "audience_cluster": "entity_id",
     })
 
+    # 🔥 Make cluster IDs explicit
+    cluster_df["entity_id"] = "cluster_" + cluster_df["entity_id"].astype(str)
+
     cluster_df["entity_type"] = "audience_cluster"
 
-    # --- Fill character-only fields
     cluster_df["narrative_role"] = None
-    cluster_df["coalition_role"] = None
+    cluster_df["dominant_ideological_role"] = None
     cluster_df["total_strength"] = None
+    cluster_df["polarization_index"] = None
 
     # ==========================================================
     # 4. Schema alignment
@@ -170,23 +228,40 @@ def build_fandom_ideology_map_dataset(
         "ideology_axis_1",
         "ideology_axis_2",
 
-        # character
         "narrative_role",
-        "coalition_role",
-        "total_strength",  # 🔥 NEW
+        "dominant_ideological_role",
+        "total_strength",
+        "polarization_index",
 
-        # cluster
         "cluster_type",
         "polarization_strength",
         "hero_core_dominance",
+        "cluster_size",
     ]
 
-    char_df = char_df[columns]
-    cluster_df = cluster_df[columns]
+    char_df = char_df.reindex(columns=columns)
+    cluster_df = cluster_df.reindex(columns=columns)
 
     # ==========================================================
-    # 5. Combine
+    # 5. Combine (SAFE CONCAT)
     # ==========================================================
-    df = pd.concat([char_df, cluster_df], ignore_index=True)
+
+    # Ensure consistent dtypes across both frames
+    for col in columns:
+        if col not in char_df.columns:
+            char_df[col] = pd.NA
+        if col not in cluster_df.columns:
+            cluster_df[col] = pd.NA
+
+    # Force consistent dtype (object is safest for mixed schema)
+    char_df = char_df.astype({col: "object" for col in columns})
+    cluster_df = cluster_df.astype({col: "object" for col in columns})
+
+    df = pd.concat(
+        [char_df, cluster_df],
+        ignore_index=True
+    )
+
+    df["entity_id"] = df["entity_id"].astype(str)
 
     return df

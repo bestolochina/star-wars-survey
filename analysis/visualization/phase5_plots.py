@@ -806,69 +806,82 @@ def plot_fandom_ideology_map(
     import matplotlib.pyplot as plt
     import numpy as np
     import pandas as pd
-    from scipy.stats import gaussian_kde
     from matplotlib.lines import Line2D
+    from scipy.spatial import ConvexHull
 
     # ---------------------------------------
-    # Style (Nature / Science-like)
+    # Style
     # ---------------------------------------
     plt.rcParams.update({
         "font.family": "DejaVu Sans",
         "font.size": 10,
         "axes.titlesize": 14,
         "axes.labelsize": 11,
-        "axes.linewidth": 0.8,
-        "xtick.labelsize": 9,
-        "ytick.labelsize": 9,
     })
 
     fig, ax = plt.subplots(figsize=(12, 9))
 
     # ---------------------------------------
-    # Color system (balanced + readable)
+    # Colors
     # ---------------------------------------
     coalition_colors = {
         "Hero Core": "#2E7D32",
         "Pragmatic Hero Bloc": "#66BB6A",
-        "Mythic Hero Core": "#1B5E20",
 
-        "Dark Power Core": "#C62828",
+        "Dark Power Core": "#D84343",
         "Contested Dark Core": "#EF6C00",
         "Rejected Dark Core": "#6A1B9A",
 
         "Narrative Middle Ground": "#9E9E9E",
-        None: "#BDBDBD",
+        "Unaligned": "#BDBDBD",
     }
 
     marker_map = {
         "Hero Core": "o",
         "Pragmatic Hero Bloc": "o",
-        "Mythic Hero Core": "o",
-
         "Dark Power Core": "s",
         "Contested Dark Core": "D",
         "Rejected Dark Core": "^",
+        "Narrative Middle Ground": "o",
+        "Unaligned": "o",
     }
 
+    # ---------------------------------------
+    # Split data
+    # ---------------------------------------
     char_df = df[df["entity_type"] == "character"].copy()
     cluster_df = df[df["entity_type"] == "audience_cluster"].copy()
 
     # ---------------------------------------
-    # Strength normalization (robust)
+    # Normalize role column
     # ---------------------------------------
-    char_df["total_strength"] = char_df.get("total_strength", 0).fillna(0)
-    max_strength = char_df["total_strength"].max()
+    if "coalition_role" not in char_df.columns and "dominant_ideological_role" in char_df.columns:
+        char_df["coalition_role"] = char_df["dominant_ideological_role"]
 
-    if max_strength == 0 or pd.isna(max_strength):
-        char_df["strength_norm"] = 0.5
-    else:
-        char_df["strength_norm"] = char_df["total_strength"] / max_strength
+    role_col = "coalition_role"
 
     # ---------------------------------------
-    # Axis limits (expanded)
+    # Fix dtypes
+    # ---------------------------------------
+    for col in ["total_strength", "polarization_index"]:
+        if col in char_df.columns:
+            char_df[col] = pd.to_numeric(char_df[col], errors="coerce").fillna(0)
+
+    if "cluster_size" in cluster_df.columns:
+        cluster_df["cluster_size"] = pd.to_numeric(cluster_df["cluster_size"], errors="coerce").fillna(0)
+
+    # ---------------------------------------
+    # Character sizing
+    # ---------------------------------------
+    strength_norm = char_df["total_strength"] / max(char_df["total_strength"].max(), 1)
+    pol_norm = char_df["polarization_index"] / max(char_df["polarization_index"].max(), 1)
+
+    char_df["size"] = 80 + 180 * strength_norm + 180 * pol_norm
+
+    # ---------------------------------------
+    # Axis limits
     # ---------------------------------------
     margin = 0.5
-
     xmin = char_df["ideology_axis_1"].min() - margin
     xmax = char_df["ideology_axis_1"].max() + margin
     ymin = char_df["ideology_axis_2"].min() - margin
@@ -878,135 +891,98 @@ def plot_fandom_ideology_map(
     ax.set_ylim(ymin, ymax)
 
     # ---------------------------------------
-    # Grid for KDE
+    # Quadrant shading
     # ---------------------------------------
-    xx, yy = np.mgrid[xmin:xmax:200j, ymin:ymax:200j]
-    positions = np.vstack([xx.ravel(), yy.ravel()])
-
-    # ---------------------------------------
-    # Smooth edge fade (journal style)
-    # ---------------------------------------
-    def _edge_fade_mask(xx, yy):
-        x_center = (xx.max() + xx.min()) / 2
-        y_center = (yy.max() + yy.min()) / 2
-
-        x_norm = (xx - x_center) / (xx.max() - xx.min())
-        y_norm = (yy - y_center) / (yy.max() - yy.min())
-
-        radius = np.sqrt(x_norm**2 + y_norm**2)
-
-        return np.exp(-3.0 * radius**2)
+    ax.axvspan(0, xmax, color="#E8F5E9", alpha=0.15, zorder=0)
+    ax.axvspan(xmin, 0, color="#FFEBEE", alpha=0.15, zorder=0)
 
     # ---------------------------------------
-    # KDE Coalition fields
+    # Convex hulls
     # ---------------------------------------
-    for role, group in char_df.groupby("coalition_role"):
+    def draw_hull(ax, x, y, color):
+        if len(x) < 3:
+            return
+        points = np.vstack([x, y]).T
+        hull = ConvexHull(points)
+        hull_pts = points[hull.vertices]
 
-        if pd.isna(role):
-            continue
+        ax.fill(
+            hull_pts[:, 0],
+            hull_pts[:, 1],
+            color=color,
+            alpha=0.08,
+            zorder=1,
+        )
 
-        group = group.dropna(subset=["ideology_axis_1", "ideology_axis_2"])
-
-        if len(group) < 3:
+    for role, group in char_df.groupby(role_col):
+        if role not in coalition_colors:
             continue
 
         x = group["ideology_axis_1"].values
         y = group["ideology_axis_2"].values
-        weights = group["strength_norm"].values
 
-        if np.all(weights == 0):
-            weights = None
-
-        try:
-            kde = gaussian_kde(np.vstack([x, y]), weights=weights)
-            z = np.reshape(kde(positions).T, xx.shape)
-
-            if np.isnan(z).all():
-                continue
-
-            z = z / np.nanmax(z)
-
-            # Smooth fade
-            z *= _edge_fade_mask(xx, yy)
-
-            ax.contourf(
-                xx,
-                yy,
-                z,
-                levels=np.linspace(0.05, 0.8, 6),
-                colors=[coalition_colors.get(role, "#ccc")],
-                alpha=0.25,
-                antialiased=True,
-                zorder=1,
-            )
-
-        except Exception:
-            continue
+        draw_hull(ax, x, y, coalition_colors[role])
 
     # ---------------------------------------
-    # Characters (weighted size)
+    # Plot characters
     # ---------------------------------------
     for _, row in char_df.iterrows():
-
-        norm = row.get("strength_norm", 0.5)
-        if pd.isna(norm):
-            norm = 0.5
-
-        size = 60 + norm * 260
-
         ax.scatter(
             row["ideology_axis_1"],
             row["ideology_axis_2"],
-            color=coalition_colors.get(row["coalition_role"], "#BDBDBD"),
-            s=size,
-            marker=marker_map.get(row["coalition_role"], "o"),
+            s=row["size"],
+            color=coalition_colors.get(row[role_col], "#BDBDBD"),
+            marker=marker_map.get(row[role_col], "o"),
             edgecolor="black",
             linewidth=0.6,
-            alpha=0.95,
             zorder=3,
         )
 
     # ---------------------------------------
-    # Labels (cleaner jitter)
+    # Smart labels
     # ---------------------------------------
-    np.random.seed(42)
-
     for _, row in char_df.iterrows():
-        dx = (np.random.rand() - 0.5) * 0.06
-        dy = (np.random.rand() - 0.5) * 0.06
+
+        x = row["ideology_axis_1"]
+        y = row["ideology_axis_2"]
+
+        dx = 0.04 if x >= 0 else -0.04
+        dy = 0.04 if y >= 0 else -0.04
 
         ax.text(
-            row["ideology_axis_1"] + dx,
-            row["ideology_axis_2"] + dy,
+            x + dx,
+            y + dy,
             row["entity_id"],
             fontsize=8,
-            alpha=0.9,
+            ha="left" if dx > 0 else "right",
+            va="bottom" if dy > 0 else "top",
             zorder=4,
         )
 
     # ---------------------------------------
-    # Clusters (bold anchors)
+    # Clusters (dominant anchors)
     # ---------------------------------------
     for _, row in cluster_df.iterrows():
 
-        size = 320 + (row.get("hero_core_dominance", 0) or 0) * 80
+        size = 500 + 1200 * (row["cluster_size"] / max(cluster_df["cluster_size"].max(), 1))
 
         ax.scatter(
             row["ideology_axis_1"],
             row["ideology_axis_2"],
-            marker="X",
+            marker="o",
             s=size,
             color="black",
             edgecolor="white",
-            linewidth=2,
+            linewidth=2.5,
+            alpha=0.9,
             zorder=6,
         )
 
         ax.text(
             row["ideology_axis_1"],
             row["ideology_axis_2"],
-            f"C{int(row['entity_id'])}",
-            fontsize=11,
+            f"C{str(row['entity_id']).replace('cluster_', '')}",
+            fontsize=12,
             weight="bold",
             ha="center",
             va="center",
@@ -1015,44 +991,35 @@ def plot_fandom_ideology_map(
         )
 
     # ---------------------------------------
-    # Axes styling
+    # Axes
     # ---------------------------------------
-    ax.axhline(0, color="black", linewidth=0.8, alpha=0.6)
-    ax.axvline(0, color="black", linewidth=0.8, alpha=0.6)
+    ax.axhline(0, color="black", linewidth=0.8)
+    ax.axvline(0, color="black", linewidth=0.8)
 
     ax.set_xlabel("Dark Alignment  ←  Ideology Axis 1  →  Hero Alignment")
-    ax.set_ylabel("Moderate / Balanced  ↓  Ideology Axis 2  ↑  Extreme / Polarized")
+    ax.set_ylabel("Moderation  ↓  Ideology Axis 2  ↑  Extremity")
 
-    ax.set_title("Fandom Ideological Landscape (Weighted KDE)", pad=12)
+    ax.set_title("Fandom Ideological Landscape")
 
     # ---------------------------------------
-    # CLEAN LEGEND (manual, journal style)
+    # Legend
     # ---------------------------------------
-    legend_elements = []
-
-    for role, color in coalition_colors.items():
-        if role is None:
-            continue
-
-        legend_elements.append(
-            Line2D(
-                [0],
-                [0],
-                marker=marker_map.get(role, "o"),
-                color="w",
-                label=role,
-                markerfacecolor=color,
-                markeredgecolor="black",
-                markersize=8,
-            )
-        )
+    legend_elements = [
+        Line2D([0], [0],
+               marker=marker_map.get(role, "o"),
+               color="w",
+               label=role,
+               markerfacecolor=color,
+               markeredgecolor="black",
+               markersize=8)
+        for role, color in coalition_colors.items()
+    ]
 
     ax.legend(
         handles=legend_elements,
         title="Coalition Roles",
         frameon=False,
         fontsize=9,
-        title_fontsize=10,
         loc="upper right",
     )
 

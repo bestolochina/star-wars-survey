@@ -212,11 +212,6 @@ def step_571_classify_coalitions(
         axis=1,
     )
 
-    metrics_df["coalition_type"] = metrics_df.apply(
-        classify_coalition,
-        axis=1,
-    )
-
     metrics_df.to_csv(path, index=False)
 
     print(metrics_df.to_string())
@@ -554,6 +549,8 @@ def step_591_build_fandom_ideology_dataset(
     cluster_coords: pd.DataFrame,
     audience_typology: pd.DataFrame,
     narrative_intensity: pd.DataFrame,
+    character_polarization: pd.DataFrame,
+    audience_profiles: pd.DataFrame,
 ) -> pd.DataFrame:
 
     print("\n=== 5.9.1 Fandom Ideology Dataset (Enriched) ===")
@@ -566,6 +563,8 @@ def step_591_build_fandom_ideology_dataset(
         cluster_coords=cluster_coords,
         audience_typology=audience_typology,
         narrative_intensity=narrative_intensity,
+        character_polarization=character_polarization,
+        audience_profiles=audience_profiles,
     )
 
     path = (
@@ -675,6 +674,12 @@ def run_phase5_6(clean_dataset: pd.DataFrame) -> None:
         / "respondent_cluster_assignments.csv"
     ).set_index("respondent_id")["audience_cluster"]
 
+    character_polarization = pd.read_csv(
+        PHASE5_TABLES_DIR
+        / "polarization"
+        / "character_polarization_summary.csv"
+    )
+
     # ------------------------------------------------------
     # Run Steps
     # ------------------------------------------------------
@@ -757,6 +762,8 @@ def run_phase5_6(clean_dataset: pd.DataFrame) -> None:
         cluster_coords=cluster_coords,
         audience_typology=audience_cluster_interpretation,
         narrative_intensity=narrative_intensity,
+        character_polarization=character_polarization,
+        audience_profiles=audience_profiles,
     )
 
     step_592_plot_fandom_ideology_map(
