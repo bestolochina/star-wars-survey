@@ -538,10 +538,10 @@ def step_584_build_audience_narrative_profiles(
 
 
 # ==========================================================
-# 5.9.1 Fandom Ideology Dataset (Enriched)
+# 5.8.5 Fandom Ideology Dataset (Enriched)
 # ==========================================================
 
-def step_591_build_fandom_ideology_dataset(
+def step_585_build_fandom_ideology_dataset(
     character_coords: pd.DataFrame,
     character_roles: pd.DataFrame,
     character_coalitions: pd.DataFrame,
@@ -553,7 +553,7 @@ def step_591_build_fandom_ideology_dataset(
     audience_profiles: pd.DataFrame,
 ) -> pd.DataFrame:
 
-    print("\n=== 5.9.1 Fandom Ideology Dataset (Enriched) ===")
+    print("\n=== 5.8.5 Fandom Ideology Dataset (Enriched) ===")
 
     df = build_fandom_ideology_map_dataset(
         character_coords=character_coords,
@@ -583,15 +583,15 @@ def step_591_build_fandom_ideology_dataset(
 
 
 # ==========================================================
-# 5.9.2 Fandom Ideology Dataset (Enriched)
+# 5.8.6 Fandom Ideology Dataset (Enriched)
 # ==========================================================
 
-def step_592_plot_fandom_ideology_map(
+def step_586_plot_fandom_ideology_map(
     df: pd.DataFrame,
     alignment_matrix,
 ) -> None:
 
-    print("\n=== 5.9.2 Fandom Ideology Map (Enriched) ===")
+    print("\n=== 5.8.6 Fandom Ideology Map (Enriched) ===")
 
     path = (
         PHASE5_FIGURES_DIR
@@ -754,7 +754,7 @@ def run_phase5_6(clean_dataset: pd.DataFrame) -> None:
         audience_profiles=audience_profiles,
     )
 
-    fandom_map_df = step_591_build_fandom_ideology_dataset(
+    fandom_map_df = step_585_build_fandom_ideology_dataset(
         character_coords=character_coords,
         character_roles=character_roles,
         character_coalitions=character_coalitions,
@@ -766,8 +766,7 @@ def run_phase5_6(clean_dataset: pd.DataFrame) -> None:
         audience_profiles=audience_profiles,
     )
 
-    step_592_plot_fandom_ideology_map(
+    step_586_plot_fandom_ideology_map(
         fandom_map_df,
         alignment_matrix=alignment_matrix,  # NEW
     )
-
