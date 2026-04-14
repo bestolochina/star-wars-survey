@@ -2,7 +2,7 @@ entity_id,entity_type,ideology_axis_1,ideology_axis_2,narrative_role,dominant_id
 Anakin Skywalker,character,-0.3235117630620598,-0.3452140333176526,narrative_consensus,Unaligned,0.0,0.317702778356687,,,,
 Boba Fett,character,-1.4101986022934556,0.4232243022220325,narrative_lightning_rod,Dark Power Core,10.80978544753123,0.7478939924983093,,,,
 C-3P0,character,0.9494547366756256,-0.1470837858426506,contested_character,Hero Core,45.5988332582169,0.432820772694401,,,,
-Darth Vader,character,-1.6308467793278123,1.460900976676251,narrative_lightning_rod,Rejected Dark Core,6.315891870686391,1.7211925866236903,,,,
+Darth Vader,character,-1.6308467793278123,1.460900976676251,narrative_lightning_rod,Rejected Dark Core,6.31589187068639,1.7211925866236903,,,,
 Emperor Palpatine,character,-2.0101364122916,0.3124183659790724,narrative_lightning_rod,Dark Power Core,10.80978544753123,1.0170681007685414,,,,
 Han Solo,character,1.2784444313886634,0.269484875607597,contested_character,Hero Core,45.887674788468324,0.4091331564036231,,,,
 Jar-Jar Binks,character,-1.859194922900127,-1.3650624033047278,narrative_lightning_rod,Unaligned,0.0,1.0709219858156027,,,,

@@ -32,6 +32,9 @@ def build_correlation_matrix_from_edges(
         matrix.loc[j, i] = w
 
     # diagonal = 1 (self-correlation)
-    np.fill_diagonal(matrix.values, 1.0)
+    matrix = matrix.copy()
+    values = matrix.to_numpy(copy=True)
+    np.fill_diagonal(values, 1.0)
+    matrix.loc[:, :] = values
 
     return matrix
